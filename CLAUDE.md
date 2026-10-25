@@ -88,7 +88,7 @@ stating the facts. The turn is only finished when the file exists on disk.
 
 - [x] Project scaffolding
 - [x] Slice 1: auth, clinics, roles (PostgreSQL 16, Prisma 7, RLS policies, exclusion constraints)
-- [x] Slice 2: patients (not started — `patient_id` nullable on Appointment until Slice 2 ships)
+- [x] Slice 2: Patient tables + RLS + migration (Patient, PatientMedicalProfile, enums Gender/BloodType, FK Appointment.patient_id nullable — API implementation next)
 - [x] Slice 3a: Appointment model, DoctorWorkingHours, DoctorTimeOff, Clinic.first_day_of_week
 - [x] Slice 3a: double-booking exclusion constraint via btree_gist
 - [x] Slice 3a: state machine with terminal statuses and per-role transition rules
