@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment
+.env
+.env.local
+.env.development
+.env.production
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+.coverage
+*.tsbuildinfo
+
+# Prisma
+packages/db/prisma/dev.db
+packages/db/prisma/dev.db-journal
+packages/db/prisma/migrations/
+packages/db/src/generated/
+
+# Testing
+*.log
+playwright-report/
+test-results/
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+node_modules/
+.env
+.env.*
+!.env.example
+*.db
+*.db-journal
+dist/
+.next/
+coverage/
+.design-backup-*/

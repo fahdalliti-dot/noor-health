@@ -1,0 +1,285 @@
+// ======================================
+// SCHEMA - Slice 1 Tables
+// ======================================
+
+// Datasource configuration
+datasource db {
+  provider = "sqlite"
+}
+
+// ENUMS
+
+enum Role {
+  admin
+  doctor
+  secretary
+}
+
+enum Plan {
+  trial
+  solo
+  clinic
+}
+
+enum SubscriptionStatus {
+  trialing
+  active
+  past_due
+  canceled
+}
+
+enum Action {
+  read
+  create
+  update
+  delete
+  export
+  login
+  logout
+  login_failed
+  permission_denied
+  two_fa_setup
+  two_fa_disabled
+  password_reset_requested
+  password_reset_completed
+  session_revoked
+  session_reuse_detected
+  invite_created
+  invite_accepted
+  user_deactivated
+  role_changed
+  clinical_access_granted
+}
+
+enum Locale {
+  fr
+  ar
+  en
+}
+
+enum Status {
+  active
+  suspended
+}
+
+enum AppointmentStatus {
+  scheduled
+  confirmed
+  arrived
+  in_progress
+  completed
+  cancelled
+  no_show
+}
+
+enum AppointmentSource {
+  staff
+  online
+}
+
+// ENTITIES
+
+model Clinic {
+  id                 String   @id @default(uuid())
+  name               String
+  city               String
+  address            String
+  phone              String
+  locale             Locale   @default(fr)
+  timezone           String   @default("Africa/Casablanca")
+  require_2fa_all    Boolean @default(false)
+  first_day_of_week  Int      @default(0) // 0=Monday (decision 8)
+  logo_key           String?
+  status             Status   @default(active)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  users          User[]
+  sessions       Session[]
+  subscription   Subscription?
+
+  // Slice 3 - reverse relations
+  appointments       Appointment[]
+  working_hours      DoctorWorkingHours[]
+  time_off           DoctorTimeOff[]
+
+  @@index([id])
+}
+
+model User {
+  id              String   @id @default(uuid())
+  clinic_id       String
+  clinic         Clinic @relation(fields: [clinic_id], references: [id])
+  email           String @unique
+  password_hash   String
+  full_name       String
+  role            Role
+  speciality      String?
+  license_number  String?
+  locale          Locale?
+  is_clinic_admin Boolean @default(false)
+  totp_secret     String?
+  totp_enabled_at DateTime?
+  is_active       Boolean @default(true)
+  last_login_at   DateTime?
+  deactivated_at  DateTime?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  sessions        Session[]
+  recovery_codes  RecoveryCode[]
+  invites_sent    Invite[]   @relation("InvitesSent")
+  invites_received Invite[]  @relation("InvitesReceived")
+
+  // Slice 3 - reverse relations
+  appointments_as_doctor  Appointment[]       @relation("AppointmentDoctor")
+  appointments_as_creator Appointment[]       @relation("AppointmentCreator")
+  working_hours  DoctorWorkingHours[]
+  time_off       DoctorTimeOff[]
+}
+
+model RecoveryCode {
+  id         String    @id @default(uuid())
+  user_id    String
+  code_hash  String
+  used_at    DateTime?
+  created_at DateTime  @default(now())
+
+  user       User      @relation(fields: [user_id], references: [id])
+}
+
+model Invite {
+  id          String    @id @default(uuid())
+  clinic_id   String
+  email       String
+  role        Role
+  token_hash  String    @unique
+  expires_at  DateTime
+  accepted_at DateTime?
+  revoked_at  DateTime?
+  invited_by  String
+
+  sent_by     User      @relation("InvitesSent", fields: [invited_by], references: [id])
+  received_by User      @relation("InvitesReceived", fields: [invited_by], references: [id])
+
+  @@index([token_hash])
+}
+
+model Session {
+  id                String    @id @default(uuid())
+  user_id           String
+  clinic_id         String
+  family_id         String    @default(uuid())
+  refresh_token_hash String   @unique
+  device_label      String?
+  ip                String?
+  created_at        DateTime  @default(now())
+  last_used_at      DateTime  @default(now())
+  expires_at        DateTime
+  revoked_at        DateTime?
+  revoked_reason    String?
+
+  user     User     @relation(fields: [user_id], references: [id])
+  clinic   Clinic  @relation(fields: [clinic_id], references: [id])
+}
+
+model Subscription {
+  id            String               @id @default(uuid())
+  clinic_id     String               @unique
+  clinic        Clinic               @relation(fields: [clinic_id], references: [id])
+  plan          Plan               @default(trial)
+  status        SubscriptionStatus @default(trialing)
+  trial_ends_at DateTime
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @updatedAt
+}
+
+model AuditLog {
+  id          String     @id @default(uuid())
+  clinic_id   String?
+  user_id     String?
+  action      Action
+  entity_type String?
+  entity_id   String?
+  request_id  String
+  ip          String?
+  user_agent  String?
+  metadata    Json
+  occurred_at DateTime @default(now())
+  token_hash  String?
+  used_at     DateTime?
+  expires_at  DateTime?
+
+  @@index([clinic_id, occurred_at])
+  @@index([clinic_id, entity_type, entity_id])
+}
+
+// ======================================
+// SLICE 3 - Appointments & Agenda
+// ======================================
+
+model Appointment {
+  id           String            @id @default(uuid())
+  clinic_id    String
+  patient_id   String?          // FK Patient (nullable until Slice 2 ships Patient model)
+  doctor_id    String
+  starts_at    DateTime
+  ends_at      DateTime
+  status       AppointmentStatus @default(scheduled)
+  reason       String?
+  source       AppointmentSource @default(staff)
+  cancelled_at DateTime?
+  cancel_reason String?
+  created_by   String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  clinic           Clinic @relation(fields: [clinic_id], references: [id])
+  doctor           User   @relation("AppointmentDoctor", fields: [doctor_id], references: [id])
+  created_by_user  User   @relation("AppointmentCreator", fields: [created_by], references: [id])
+
+  // Adjacent appointments (end = next start) are allowed because [) is half-open.
+  // Only active statuses participate in the double-booking exclusion constraint.
+  @@index([clinic_id, doctor_id, starts_at])
+  @@index([clinic_id, starts_at])
+  @@index([clinic_id, status])
+}
+
+model DoctorWorkingHours {
+  id                String @id @default(uuid())
+  clinic_id         String
+  doctor_id         String
+  weekday           Int    // 0=Monday .. 6=Sunday (decision 8)
+  start_minutes     Int    // minutes from midnight in clinic timezone
+  end_minutes       Int
+  slot_length_minutes Int  @default(30)
+  is_active         Boolean @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinic_id], references: [id])
+  doctor User   @relation(fields: [doctor_id], references: [id])
+
+  @@unique([clinic_id, doctor_id, weekday, start_minutes])
+  @@index([clinic_id, doctor_id])
+}
+
+model DoctorTimeOff {
+  id         String   @id @default(uuid())
+  clinic_id  String
+  doctor_id  String
+  start_at   DateTime
+  end_at     DateTime
+  reason     String?
+  created_at DateTime @default(now())
+
+  clinic Clinic @relation(fields: [clinic_id], references: [id])
+  doctor User   @relation(fields: [doctor_id], references: [id])
+
+  @@index([clinic_id, doctor_id, start_at, end_at])
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated"
+}

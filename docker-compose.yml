@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: saas-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: saas_clinics
+      POSTGRES_USER: saas_user
+      POSTGRES_PASSWORD: saas_pass
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "saas_user", "-d", "saas_clinics"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mailpit:
+    image: docker.io/frgnc/mailpit:latest
+    container_name: saas-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8025/api/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:

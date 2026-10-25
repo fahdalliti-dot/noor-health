@@ -1,0 +1,27 @@
+{
+  "direction": "ltr",
+  "auth": {
+    "login": "Connexion à votre espace médical",
+    "2fa_setup": "Vérification en deux étapes"
+  },
+  "placeholder": {
+    "email": "medecin@cabinet.ma",
+    "password": "Votre mot de passe",
+    "totp": "Code à 6 chiffres"
+  },
+  "submitting": "Connexion en cours...",
+  "login": "Se connecter",
+  "no_account": "Pas encore de compte ?",
+  "register": "Demandez une invitation",
+  "challenge": "Sécurité",
+  "enter_2fa_code": "Entrez le code généré par votre application d'authentification (Google Authenticator, etc.)",
+  "verifying": "Vérification en cours...",
+  "verify": "Valider",
+  "resend_code": "Besoin d'aide ?",
+  "here": "ici",
+  "2fa_invalid": "Code de vérification invalide ou expiré",
+  "logout": "Déconnexion",
+  "logout_confirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  "logout_yes": "Déconnecter",
+  "logout_no": "Annuler"
+}

@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@shared/*": ["../../packages/shared/*"],
+      "@shared/utils/*": ["../../packages/shared/utils/*"],
+      "@prisma/client": ["../../packages/db/src/generated/client"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "../../packages/shared/**/*.ts",
+    "../../packages/shared/**/*.d.ts",
+    "../../packages/db/src/generated/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
