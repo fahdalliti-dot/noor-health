@@ -19,7 +19,6 @@ out/
 # Prisma
 packages/db/prisma/dev.db
 packages/db/prisma/dev.db-journal
-packages/db/prisma/migrations/
 packages/db/src/generated/
 
 # Testing
@@ -47,9 +46,3 @@ dist/
 .next/
 coverage/
 .design-backup-*/
-
-# Prisma
-packages/db/prisma/dev.db
-packages/db/prisma/dev.db-journal
-packages/db/prisma/migrations/
-packages/db/src/generated/
