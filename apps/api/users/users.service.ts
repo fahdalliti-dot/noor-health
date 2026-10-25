@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { User } from '../db/client';
+import { User } from '@doctors-morocco/db';
 import { AuthRepository } from '../db/repository';
 
 @Injectable()

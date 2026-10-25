@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User, Role } from '../db/client';
+import { User, Role } from '@doctors-morocco/db';
 import { comparePasswords, hashPassword } from '@shared/utils/password';
 import { AuthRepository } from '../db/repository';
 import { SpeakeasyService } from '@shared/utils/speakeasy';

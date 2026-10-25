@@ -4,7 +4,7 @@ import { Roles } from '../decorators/roles.decorator';
 import { GetUser } from '../decorators/user.decorator';
 import { ResponseFormat } from '../decorators/response.decorator';
 import { ClinicsService } from './clinics.service';
-import type { Clinic } from '../db/client';
+import type { Clinic } from '@doctors-morocco/db';
 
 @Controller('clinic')
 export class ClinicsController {

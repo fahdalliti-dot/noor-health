@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
-import { Action } from '../db/client';
+import { Action } from '@doctors-morocco/db';
 
 export interface AuditLogEntry {
   action: string;

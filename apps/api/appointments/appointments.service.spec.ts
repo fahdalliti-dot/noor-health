@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { AppointmentsService } from '@/appointments/appointments.service';
-import type { User, Role } from '@/db/client';
+import type { User, Role } from '@doctors-morocco/db';
 
 function createMockPrisma() {
   return {

@@ -1,12 +1,17 @@
 // Prisma 7 config file
-const { defineConfig } = require('prisma/config');
+// Reads datasource.url from process.env.DATABASE_URL (loaded from root .env)
+import { defineConfig } from 'prisma/config';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-module.exports = defineConfig({
-  schema: 'schema.prisma',
+// Load root .env (no copies or symlinks)
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
+export default defineConfig({
+  schema: './schema.prisma',
   migrations: {
-    path: 'prisma/migrations'
+    path: './migrations',
   },
-  datasource: {
-    url: 'file:./dev.db'
-  }
+  // datasource.url is read from process.env.DATABASE_URL automatically
+  // Prisma 7 picks up DATABASE_URL from the environment
 });

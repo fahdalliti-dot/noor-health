@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { User, Clinic, Session, Invite, Subscription, RecoveryCode, AuditLog, Role, Action } from './client';
+import { User, Clinic, Session, Invite, Subscription, RecoveryCode, AuditLog, Role, Action } from '@doctors-morocco/db';
 
 @Injectable()
 export class AuthRepository {
@@ -187,7 +187,7 @@ export class AuthRepository {
     });
   }
 
-  async findPasswordResetToken(tokenHash: string) {
+  async findPasswordResetToken(tokenHash: string): Promise<any | null> {
     return this.prisma.auditLog.findFirst({
       where: {
         token_hash: tokenHash,

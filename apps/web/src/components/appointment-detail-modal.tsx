@@ -35,19 +35,20 @@ export function AppointmentDetailModal({
 
   if (!appointment) return null;
 
+  const appt = appointment;
   const tz = timezone || 'Africa/Casablanca';
-  const start = DateTime.fromISO(appointment.starts_at).setZone(tz);
-  const end = DateTime.fromISO(appointment.ends_at).setZone(tz);
+  const start = DateTime.fromISO(appt.starts_at).setZone(tz);
+  const end = DateTime.fromISO(appt.ends_at).setZone(tz);
 
-  const canCancel = (isDoctor && appointment.doctor_id === doctorId) || isSecretary;
+  const canCancel = (isDoctor && appt.doctor_id === doctorId) || isSecretary;
   const canMarkArrived = isSecretary;
-  const canMarkCompleted = isDoctor && appointment.doctor_id === doctorId;
+  const canMarkCompleted = isDoctor && appt.doctor_id === doctorId;
 
   async function markStatus(status: string, cancel_reason?: string | null) {
     setBusy(true);
     setError(null);
     try {
-      await changeStatus(appointment.id, { status, cancel_reason: cancel_reason ?? null });
+      await changeStatus(appt.id, { status, cancel_reason: cancel_reason ?? null });
       onUpdated();
       onOpenChange(false);
     } catch (e: any) {
@@ -69,7 +70,7 @@ export function AppointmentDetailModal({
             <Dialog.Title className="text-lg font-bold text-gray-900">
               Détail du rendez-vous
             </Dialog.Title>
-            <AppointmentStatusBadge status={appointment.status} />
+            <AppointmentStatusBadge status={appt.status} />
           </div>
 
           <div className="space-y-2 text-sm">
@@ -87,10 +88,10 @@ export function AppointmentDetailModal({
               <span className="text-gray-500">Motif : </span>
               <span className="text-gray-900">{appointment.reason || '—'}</span>
             </div>
-            {appointment.cancel_reason && (
+            {appt.cancel_reason && (
               <div>
-                <span className="text-gray-500">Raison de l'annulation : </span>
-                <span className="text-gray-900">{appointment.cancel_reason}</span>
+                <span className="text-gray-500">Raison de l&apos;annulation : </span>
+                <span className="text-gray-900">{appt.cancel_reason}</span>
               </div>
             )}
           </div>
@@ -102,7 +103,7 @@ export function AppointmentDetailModal({
           )}
 
           <div className="mt-5 flex flex-wrap gap-2">
-            {canMarkArrived && appointment.status === 'confirmed' && (
+            {canMarkArrived && appt.status === 'confirmed' && (
               <Button
                 size="sm"
                 disabled={busy}
@@ -112,7 +113,7 @@ export function AppointmentDetailModal({
                 Arrivé
               </Button>
             )}
-            {canMarkCompleted && appointment.status === 'in_progress' && (
+            {canMarkCompleted && appt.status === 'in_progress' && (
               <Button
                 size="sm"
                 disabled={busy}
@@ -122,7 +123,7 @@ export function AppointmentDetailModal({
                 Terminé
               </Button>
             )}
-            {canCancel && appointment.status !== 'cancelled' && (
+            {canCancel && appt.status !== 'cancelled' && (
               <Button
                 variant="outline"
                 size="sm"

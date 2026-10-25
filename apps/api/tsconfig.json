@@ -19,14 +19,14 @@
       "@/*": ["./*"],
       "@shared/*": ["../../packages/shared/*"],
       "@shared/utils/*": ["../../packages/shared/utils/*"],
-      "@prisma/client": ["../../packages/db/src/generated/client"]
+      "@doctors-morocco/db": ["../../packages/db/src/index.ts"]
     }
   },
   "include": [
     "**/*.ts",
     "../../packages/shared/**/*.ts",
     "../../packages/shared/**/*.d.ts",
-    "../../packages/db/src/generated/**/*.ts"
+    "../../packages/db/src/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

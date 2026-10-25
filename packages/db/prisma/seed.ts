@@ -1,12 +1,8 @@
 import { PrismaClient } from '../src/generated/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
-import { hashPassword } from '../../shared/utils/password';
+import { hashPassword } from '../../packages/shared/utils/password';
 
-// Prisma 7 requires a driver adapter even for SQLite.
-// The seed lives in packages/db/prisma/, so the DB file is at the project root.
-const dbUrl = process.env.DATABASE_URL || 'file:./dev.db';
-const adapter = new PrismaLibSql({ url: dbUrl });
-const db = new PrismaClient({ adapter });
+// Prisma 7 with PostgreSQL driver adapter
+const db = new PrismaClient();
 
 async function main() {
   console.log('Starting seed...');
@@ -35,6 +31,7 @@ async function main() {
       locale: 'fr',
       timezone: 'Africa/Casablanca',
       require_2fa_all: false,
+      first_day_of_week: 0,
     },
   });
 
@@ -47,6 +44,7 @@ async function main() {
       locale: 'fr',
       timezone: 'Africa/Casablanca',
       require_2fa_all: false,
+      first_day_of_week: 0,
     },
   });
 
@@ -60,6 +58,7 @@ async function main() {
       locale: 'fr',
       timezone: 'Africa/Casablanca',
       require_2fa_all: false,
+      first_day_of_week: 0,
     },
   });
 
@@ -76,6 +75,7 @@ async function main() {
       clinic_id: clinicA.id,
       is_clinic_admin: true,
       is_active: true,
+      failed_login_attempts: 0,
     },
   });
 
@@ -90,6 +90,7 @@ async function main() {
       clinic_id: clinicA.id,
       is_clinic_admin: false,
       is_active: true,
+      failed_login_attempts: 0,
     },
   });
 
@@ -102,6 +103,8 @@ async function main() {
       clinic_id: clinicA.id,
       is_clinic_admin: false,
       is_active: true,
+      failed_login_attempts: 0,
+      clinical_access: false,
     },
   });
 
@@ -115,6 +118,7 @@ async function main() {
       clinic_id: clinicB.id,
       is_clinic_admin: true,
       is_active: true,
+      failed_login_attempts: 0,
     },
   });
 
@@ -129,6 +133,7 @@ async function main() {
       clinic_id: clinicB.id,
       is_clinic_admin: false,
       is_active: true,
+      failed_login_attempts: 0,
     },
   });
 
@@ -141,6 +146,8 @@ async function main() {
       clinic_id: clinicB.id,
       is_clinic_admin: false,
       is_active: true,
+      failed_login_attempts: 0,
+      clinical_access: false,
     },
   });
 
@@ -156,6 +163,7 @@ async function main() {
       clinic_id: soloClinic.id,
       is_clinic_admin: true, // Solo doctor acts as admin
       is_active: true,
+      failed_login_attempts: 0,
     },
   });
 
@@ -193,7 +201,7 @@ async function main() {
         refresh_token_hash: await hashPassword('sample-refresh-token-1'),
         device_label: 'Chrome on Windows',
         ip: '127.0.0.1',
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expires_at: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours
       },
       {
         user_id: clinicADoctor.id,
@@ -202,7 +210,7 @@ async function main() {
         refresh_token_hash: await hashPassword('sample-refresh-token-2'),
         device_label: 'Safari on iPad',
         ip: '127.0.0.1',
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expires_at: new Date(Date.now() + 12 * 60 * 60 * 1000),
       },
     ],
   });
@@ -241,6 +249,26 @@ async function main() {
     ],
   });
 
+  // Create PasswordResetToken entries for seed/demo
+  await db.passwordResetToken.createMany({
+    data: [
+      {
+        clinic_id: clinicA.id,
+        user_id: clinicADoctor.id,
+        token_hash: await hashPassword('sample-reset-token-1'),
+        expires_at: new Date(Date.now() + 30 * 60 * 1000), // 30 min
+        used_at: null,
+      },
+      {
+        clinic_id: clinicB.id,
+        user_id: clinicBDoctor.id,
+        token_hash: await hashPassword('sample-reset-token-2'),
+        expires_at: new Date(Date.now() + 30 * 60 * 1000),
+        used_at: null,
+      },
+    ],
+  });
+
   // ======================================
   // SLICE 3 - Appointments & Agenda seed data
   // ======================================
@@ -257,6 +285,7 @@ async function main() {
       start_minutes: 480,  // 08:00
       end_minutes: 720,    // 12:00
       is_active: true,
+      slot_length_minutes: 30,
     });
     // Afternoon slot
     workingHoursA.push({
@@ -266,6 +295,7 @@ async function main() {
       start_minutes: 810,  // 13:30
       end_minutes: 1050,   // 17:30
       is_active: true,
+      slot_length_minutes: 30,
     });
   }
   await db.doctorWorkingHours.createMany({ data: workingHoursA });
@@ -318,7 +348,7 @@ async function main() {
   // A confirmed appointment at 09:00-09:30 (first slot of the morning)
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null, // Patient model not yet built (Slice 2)
+    patient_id: null,
     doctor_id: clinicADoctor.id,
     starts_at: new Date(baseDate.getTime()),
     ends_at: new Date(baseDate.getTime() + 30 * 60 * 1000),
@@ -431,6 +461,45 @@ async function main() {
       source: 'online',
       created_by: clinicBDoctor.id,
     },
+  });
+
+  // Create audit log entries
+  await db.auditLog.createMany({
+    data: [
+      {
+        clinic_id: clinicA.id,
+        user_id: clinicAAAdmin.id,
+        action: 'login',
+        entity_type: 'User',
+        entity_id: clinicAAAdmin.id,
+        request_id: 'seed-init',
+        ip: '127.0.0.1',
+        user_agent: 'seed-script',
+        metadata: {},
+      },
+      {
+        clinic_id: clinicA.id,
+        user_id: clinicADoctor.id,
+        action: 'login',
+        entity_type: 'User',
+        entity_id: clinicADoctor.id,
+        request_id: 'seed-init',
+        ip: '127.0.0.1',
+        user_agent: 'seed-script',
+        metadata: {},
+      },
+      {
+        clinic_id: null, // platform action
+        user_id: null,
+        action: 'invite_created',
+        entity_type: 'Clinic',
+        entity_id: clinicA.id,
+        request_id: 'seed-init',
+        ip: '127.0.0.1',
+        user_agent: 'seed-script',
+        metadata: {},
+      },
+    ],
   });
 
   console.log('Seed completed successfully.');

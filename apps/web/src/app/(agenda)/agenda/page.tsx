@@ -76,10 +76,9 @@ export default function AgendaPage() {
     setModalOpen(true);
   }
 
-  async function handleCreate(data: any) {
-    await createAppointment(data);
-    setModalOpen(false);
+  async function handleCreate() {
     await load();
+    setModalOpen(false);
     setToast('Rendez-vous créé');
   }
 

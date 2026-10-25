@@ -1,0 +1,36 @@
+{
+  "name": "@doctors-morocco/db",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./generated": {
+      "types": "./dist/generated/index.d.ts",
+      "import": "./dist/generated/index.js",
+      "default": "./dist/generated/index.js"
+    }
+  },
+  "scripts": {
+    "postinstall": "prisma generate",
+    "build": "tsc && prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "prisma:status": "prisma migrate status"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.10.1",
+    "@prisma/adapter-pg": "^7.10.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "prisma": "^7.10.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

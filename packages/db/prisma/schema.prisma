@@ -3,8 +3,9 @@
 // ======================================
 
 // Datasource configuration
+// The connection URL is read from process.env.DATABASE_URL via prisma.config.ts
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ENUMS
@@ -129,7 +130,6 @@ model User {
   sessions        Session[]
   recovery_codes  RecoveryCode[]
   invites_sent    Invite[]   @relation("InvitesSent")
-  invites_received Invite[]  @relation("InvitesReceived")
 
   // Slice 3 - reverse relations
   appointments_as_doctor  Appointment[]       @relation("AppointmentDoctor")
@@ -160,7 +160,6 @@ model Invite {
   invited_by  String
 
   sent_by     User      @relation("InvitesSent", fields: [invited_by], references: [id])
-  received_by User      @relation("InvitesReceived", fields: [invited_by], references: [id])
 
   @@index([token_hash])
 }
@@ -282,4 +281,5 @@ model DoctorTimeOff {
 generator client {
   provider = "prisma-client"
   output   = "../src/generated"
+  previewFeatures = []
 }

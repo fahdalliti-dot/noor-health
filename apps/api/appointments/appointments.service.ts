@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../db/prisma.service';
 import { AuditLogRepository } from '../audit/audit-log.repository';
-import { User } from '../db/client';
+import { User } from '@doctors-morocco/db';
 import {
   CreateAppointmentDto,
   UpdateAppointmentDto,
