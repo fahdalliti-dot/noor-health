@@ -87,7 +87,7 @@ stating the facts. The turn is only finished when the file exists on disk.
 ## Current status
 
 - [x] Project scaffolding
-- [x] Slice 1: auth, clinics, roles
+- [x] Slice 1: auth, clinics, roles (PostgreSQL 16, Prisma 7, RLS policies, exclusion constraints)
 - [x] Slice 2: patients (not started — `patient_id` nullable on Appointment until Slice 2 ships)
 - [x] Slice 3a: Appointment model, DoctorWorkingHours, DoctorTimeOff, Clinic.first_day_of_week
 - [x] Slice 3a: double-booking exclusion constraint via btree_gist
@@ -99,6 +99,8 @@ stating the facts. The turn is only finished when the file exists on disk.
 - [x] Slice 3a: availability tests pass (6/6)
 - [x] Prisma relation ambiguity fixed
 - [x] Database seeded with demo data (clinics, users, working hours, time off, appointments in every status)
+- [x] PostgreSQL exclusion constraint (btree_gist) verified: overlapping active slots rejected (23P01), adjacent allowed, non-active statuses allowed
+- [x] PostgreSQL RLS tenant isolation verified: saas_app role blocked from cross-clinic reads/writes via `app.clinic_id` session variable
 - [x] Password hashing and TOTP 2FA implemented
 - [x] Seed script executed successfully
 - [x] Typecheck passing across all workspaces (`pnpm typecheck`)

@@ -78,6 +78,25 @@ enum AppointmentSource {
   online
 }
 
+enum Gender {
+  male
+  female
+  other
+  unknown
+}
+
+enum BloodType {
+  A_positive
+  A_negative
+  B_positive
+  B_negative
+  AB_positive
+  AB_negative
+  O_positive
+  O_negative
+  unknown
+}
+
 // ENTITIES
 
 model Clinic {
@@ -104,6 +123,9 @@ model Clinic {
   appointments  Appointment[]
   working_hours DoctorWorkingHours[]
   time_off      DoctorTimeOff[]
+
+  // Slice 2 - reverse relations
+  patients      Patient[]
 
   @@index([id])
 }
@@ -236,7 +258,7 @@ model AuditLog {
 model Appointment {
   id            String            @id @default(uuid())
   clinic_id     String
-  patient_id    String? // FK Patient (nullable until Slice 2 ships Patient model)
+  patient_id    String? // nullable now; will be non-nullable after follow-up migration
   doctor_id     String
   starts_at     DateTime
   ends_at       DateTime
@@ -249,9 +271,10 @@ model Appointment {
   created_at    DateTime          @default(now())
   updated_at    DateTime          @updatedAt
 
-  clinic          Clinic @relation(fields: [clinic_id], references: [id])
-  doctor          User   @relation("AppointmentDoctor", fields: [doctor_id], references: [id])
-  created_by_user User   @relation("AppointmentCreator", fields: [created_by], references: [id])
+  clinic          Clinic   @relation(fields: [clinic_id], references: [id])
+  patient         Patient? @relation(fields: [patient_id], references: [id])
+  doctor          User     @relation("AppointmentDoctor", fields: [doctor_id], references: [id])
+  created_by_user User     @relation("AppointmentCreator", fields: [created_by], references: [id])
 
   // Adjacent appointments (end = next start) are allowed because [) is half-open.
   // Only active statuses participate in the double-booking exclusion constraint.
@@ -292,6 +315,53 @@ model DoctorTimeOff {
   doctor User   @relation(fields: [doctor_id], references: [id])
 
   @@index([clinic_id, doctor_id, start_at, end_at])
+}
+
+// ======================================
+// SLICE 2 - Patient Records
+// ======================================
+
+model Patient {
+  id                    String   @id @default(uuid())
+  clinic_id             String
+  file_number           Int      @default(0) // per-clinic sequence (composite unique with clinic_id)
+  first_name            String
+  last_name             String
+  birth_date            DateTime // stored as date (UTC midnight)
+  gender                Gender
+  phone                 String?
+  email                 String?
+  address               String?
+  emergency_contact_name String?
+  emergency_contact_phone String?
+  cin                   String?  // encrypted AES-256-GCM (Moroccan CIN/JINC)
+  cin_hash              String?  // HMAC-SHA256 blind index (peppered) for duplicate lookup
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+  deleted_at            DateTime? // soft delete (CLAUDE.md rule #7)
+
+  clinic          Clinic               @relation(fields: [clinic_id], references: [id])
+  medical_profile PatientMedicalProfile?
+  appointments    Appointment[]
+
+  @@unique([clinic_id, file_number])
+  @@index([clinic_id, first_name, last_name])
+  @@index([clinic_id, deleted_at])
+}
+
+model PatientMedicalProfile {
+  id                   String   @id @default(uuid())
+  patient_id           String   @unique
+  height_cm            Int?     // cm
+  weight_kg            Float?   // kg
+  blood_type           BloodType?
+  allergies            Json?    // string[]
+  chronic_conditions   Json?    // string[]
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+  deleted_at           DateTime? // soft delete
+
+  patient Patient @relation(fields: [patient_id], references: [id])
 }
 
 generator client {
