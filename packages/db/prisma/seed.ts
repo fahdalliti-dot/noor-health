@@ -1,8 +1,9 @@
-import { PrismaClient } from '../src/generated/client';
-import { hashPassword } from '../../packages/shared/utils/password';
+import { createPrismaClient } from '../src/index';
+import { hashPassword } from '../../shared/utils/password';
 
-// Prisma 7 with PostgreSQL driver adapter
-const db = new PrismaClient();
+// Prisma 7 requires a driver adapter. Uses DATABASE_URL (saas_owner role)
+// so the seed can create/wipe tenant tables without RLS interference.
+const db = createPrismaClient(process.env.DATABASE_URL as string);
 
 async function main() {
   console.log('Starting seed...');
@@ -75,7 +76,6 @@ async function main() {
       clinic_id: clinicA.id,
       is_clinic_admin: true,
       is_active: true,
-      failed_login_attempts: 0,
     },
   });
 
@@ -90,7 +90,6 @@ async function main() {
       clinic_id: clinicA.id,
       is_clinic_admin: false,
       is_active: true,
-      failed_login_attempts: 0,
     },
   });
 
@@ -103,8 +102,6 @@ async function main() {
       clinic_id: clinicA.id,
       is_clinic_admin: false,
       is_active: true,
-      failed_login_attempts: 0,
-      clinical_access: false,
     },
   });
 
@@ -118,7 +115,6 @@ async function main() {
       clinic_id: clinicB.id,
       is_clinic_admin: true,
       is_active: true,
-      failed_login_attempts: 0,
     },
   });
 
@@ -133,7 +129,6 @@ async function main() {
       clinic_id: clinicB.id,
       is_clinic_admin: false,
       is_active: true,
-      failed_login_attempts: 0,
     },
   });
 
@@ -146,8 +141,6 @@ async function main() {
       clinic_id: clinicB.id,
       is_clinic_admin: false,
       is_active: true,
-      failed_login_attempts: 0,
-      clinical_access: false,
     },
   });
 
@@ -163,7 +156,6 @@ async function main() {
       clinic_id: soloClinic.id,
       is_clinic_admin: true, // Solo doctor acts as admin
       is_active: true,
-      failed_login_attempts: 0,
     },
   });
 
