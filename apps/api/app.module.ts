@@ -11,6 +11,7 @@ import { SessionsModule } from './sessions/sessions.module';
 import { AuditModule } from './audit/audit.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { DoctorsModule } from './doctors/doctors.module';
+import { PatientsModule } from './patients/patients.module';
 import { DatabaseExceptionFilter } from './filters/database-exception.filter';
 
 @Module({
@@ -35,6 +36,7 @@ import { DatabaseExceptionFilter } from './filters/database-exception.filter';
     AuditModule,
     AppointmentsModule,
     DoctorsModule,
+    PatientsModule,
   ],
   controllers: [],
   providers: [
