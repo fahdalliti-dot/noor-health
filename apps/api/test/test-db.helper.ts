@@ -1,13 +1,12 @@
-import { PrismaClient } from '@doctors-morocco/db';
+import { createPrismaClient } from '@doctors-morocco/db';
+import type { PrismaClient } from '@doctors-morocco/db';
 
 /**
  * Creates a PrismaClient pointing at the test PostgreSQL database.
  * Uses TEST_DATABASE_URL (owner role) for test schema operations.
  */
 export function createTestPrisma(): PrismaClient {
-  return new PrismaClient({
-    log: ['error'],
-  } as any);
+  return createPrismaClient(process.env.TEST_DATABASE_URL as string);
 }
 
 /**

@@ -81,61 +81,63 @@ enum AppointmentSource {
 // ENTITIES
 
 model Clinic {
-  id                 String   @id @default(uuid())
-  name               String
-  city               String
-  address            String
-  phone              String
-  locale             Locale   @default(fr)
-  timezone           String   @default("Africa/Casablanca")
-  require_2fa_all    Boolean @default(false)
-  first_day_of_week  Int      @default(0) // 0=Monday (decision 8)
-  logo_key           String?
-  status             Status   @default(active)
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  id                String   @id @default(uuid())
+  name              String
+  city              String
+  address           String
+  phone             String
+  locale            Locale   @default(fr)
+  timezone          String   @default("Africa/Casablanca")
+  require_2fa_all   Boolean  @default(false)
+  first_day_of_week Int      @default(0) // 0=Monday (decision 8)
+  logo_key          String?
+  status            Status   @default(active)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 
-  users          User[]
-  sessions       Session[]
-  subscription   Subscription?
+  users                 User[]
+  sessions              Session[]
+  password_reset_tokens PasswordResetToken[]
+  subscription          Subscription?
 
   // Slice 3 - reverse relations
-  appointments       Appointment[]
-  working_hours      DoctorWorkingHours[]
-  time_off           DoctorTimeOff[]
+  appointments  Appointment[]
+  working_hours DoctorWorkingHours[]
+  time_off      DoctorTimeOff[]
 
   @@index([id])
 }
 
 model User {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   clinic_id       String
-  clinic         Clinic @relation(fields: [clinic_id], references: [id])
-  email           String @unique
+  clinic          Clinic    @relation(fields: [clinic_id], references: [id])
+  email           String    @unique
   password_hash   String
   full_name       String
   role            Role
   speciality      String?
   license_number  String?
   locale          Locale?
-  is_clinic_admin Boolean @default(false)
+  is_clinic_admin Boolean   @default(false)
   totp_secret     String?
   totp_enabled_at DateTime?
-  is_active       Boolean @default(true)
+  is_active       Boolean   @default(true)
   last_login_at   DateTime?
   deactivated_at  DateTime?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
 
-  sessions        Session[]
-  recovery_codes  RecoveryCode[]
-  invites_sent    Invite[]   @relation("InvitesSent")
+  sessions              Session[]
+  recovery_codes        RecoveryCode[]
+  password_reset_tokens PasswordResetToken[]
+  invites_sent          Invite[]             @relation("InvitesSent")
 
   // Slice 3 - reverse relations
-  appointments_as_doctor  Appointment[]       @relation("AppointmentDoctor")
-  appointments_as_creator Appointment[]       @relation("AppointmentCreator")
-  working_hours  DoctorWorkingHours[]
-  time_off       DoctorTimeOff[]
+  appointments_as_doctor  Appointment[]        @relation("AppointmentDoctor")
+  appointments_as_creator Appointment[]        @relation("AppointmentCreator")
+  working_hours           DoctorWorkingHours[]
+  time_off                DoctorTimeOff[]
 }
 
 model RecoveryCode {
@@ -145,7 +147,7 @@ model RecoveryCode {
   used_at    DateTime?
   created_at DateTime  @default(now())
 
-  user       User      @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [user_id], references: [id])
 }
 
 model Invite {
@@ -159,33 +161,33 @@ model Invite {
   revoked_at  DateTime?
   invited_by  String
 
-  sent_by     User      @relation("InvitesSent", fields: [invited_by], references: [id])
+  sent_by User @relation("InvitesSent", fields: [invited_by], references: [id])
 
   @@index([token_hash])
 }
 
 model Session {
-  id                String    @id @default(uuid())
-  user_id           String
-  clinic_id         String
-  family_id         String    @default(uuid())
-  refresh_token_hash String   @unique
-  device_label      String?
-  ip                String?
-  created_at        DateTime  @default(now())
-  last_used_at      DateTime  @default(now())
-  expires_at        DateTime
-  revoked_at        DateTime?
-  revoked_reason    String?
+  id                 String    @id @default(uuid())
+  user_id            String
+  clinic_id          String
+  family_id          String    @default(uuid())
+  refresh_token_hash String    @unique
+  device_label       String?
+  ip                 String?
+  created_at         DateTime  @default(now())
+  last_used_at       DateTime  @default(now())
+  expires_at         DateTime
+  revoked_at         DateTime?
+  revoked_reason     String?
 
-  user     User     @relation(fields: [user_id], references: [id])
-  clinic   Clinic  @relation(fields: [clinic_id], references: [id])
+  user   User   @relation(fields: [user_id], references: [id])
+  clinic Clinic @relation(fields: [clinic_id], references: [id])
 }
 
 model Subscription {
-  id            String               @id @default(uuid())
-  clinic_id     String               @unique
-  clinic        Clinic               @relation(fields: [clinic_id], references: [id])
+  id            String             @id @default(uuid())
+  clinic_id     String             @unique
+  clinic        Clinic             @relation(fields: [clinic_id], references: [id])
   plan          Plan               @default(trial)
   status        SubscriptionStatus @default(trialing)
   trial_ends_at DateTime
@@ -193,8 +195,22 @@ model Subscription {
   updated_at    DateTime           @updatedAt
 }
 
+model PasswordResetToken {
+  id         String    @id @default(uuid())
+  clinic_id  String
+  user_id    String
+  token_hash String    @unique
+  expires_at DateTime
+  used_at    DateTime?
+
+  clinic Clinic @relation(fields: [clinic_id], references: [id])
+  user   User   @relation(fields: [user_id], references: [id])
+
+  @@index([clinic_id, user_id])
+}
+
 model AuditLog {
-  id          String     @id @default(uuid())
+  id          String    @id @default(uuid())
   clinic_id   String?
   user_id     String?
   action      Action
@@ -204,7 +220,7 @@ model AuditLog {
   ip          String?
   user_agent  String?
   metadata    Json
-  occurred_at DateTime @default(now())
+  occurred_at DateTime  @default(now())
   token_hash  String?
   used_at     DateTime?
   expires_at  DateTime?
@@ -218,24 +234,24 @@ model AuditLog {
 // ======================================
 
 model Appointment {
-  id           String            @id @default(uuid())
-  clinic_id    String
-  patient_id   String?          // FK Patient (nullable until Slice 2 ships Patient model)
-  doctor_id    String
-  starts_at    DateTime
-  ends_at      DateTime
-  status       AppointmentStatus @default(scheduled)
-  reason       String?
-  source       AppointmentSource @default(staff)
-  cancelled_at DateTime?
+  id            String            @id @default(uuid())
+  clinic_id     String
+  patient_id    String? // FK Patient (nullable until Slice 2 ships Patient model)
+  doctor_id     String
+  starts_at     DateTime
+  ends_at       DateTime
+  status        AppointmentStatus @default(scheduled)
+  reason        String?
+  source        AppointmentSource @default(staff)
+  cancelled_at  DateTime?
   cancel_reason String?
-  created_by   String
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_by    String
+  created_at    DateTime          @default(now())
+  updated_at    DateTime          @updatedAt
 
-  clinic           Clinic @relation(fields: [clinic_id], references: [id])
-  doctor           User   @relation("AppointmentDoctor", fields: [doctor_id], references: [id])
-  created_by_user  User   @relation("AppointmentCreator", fields: [created_by], references: [id])
+  clinic          Clinic @relation(fields: [clinic_id], references: [id])
+  doctor          User   @relation("AppointmentDoctor", fields: [doctor_id], references: [id])
+  created_by_user User   @relation("AppointmentCreator", fields: [created_by], references: [id])
 
   // Adjacent appointments (end = next start) are allowed because [) is half-open.
   // Only active statuses participate in the double-booking exclusion constraint.
@@ -245,16 +261,16 @@ model Appointment {
 }
 
 model DoctorWorkingHours {
-  id                String @id @default(uuid())
-  clinic_id         String
-  doctor_id         String
-  weekday           Int    // 0=Monday .. 6=Sunday (decision 8)
-  start_minutes     Int    // minutes from midnight in clinic timezone
-  end_minutes       Int
-  slot_length_minutes Int  @default(30)
-  is_active         Boolean @default(true)
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  id                  String   @id @default(uuid())
+  clinic_id           String
+  doctor_id           String
+  weekday             Int // 0=Monday .. 6=Sunday (decision 8)
+  start_minutes       Int // minutes from midnight in clinic timezone
+  end_minutes         Int
+  slot_length_minutes Int      @default(30)
+  is_active           Boolean  @default(true)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
 
   clinic Clinic @relation(fields: [clinic_id], references: [id])
   doctor User   @relation(fields: [doctor_id], references: [id])
@@ -279,7 +295,7 @@ model DoctorTimeOff {
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated"
+  provider        = "prisma-client"
+  output          = "../src/generated"
   previewFeatures = []
 }
