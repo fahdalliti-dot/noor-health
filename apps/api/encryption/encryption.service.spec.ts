@@ -183,10 +183,15 @@ describe('EncryptionService', () => {
 
   describe('key loading validation', () => {
     it('should throw on missing PATIENT_ENCRYPTION_KEY', () => {
-      const service = new EncryptionService();
-      // Access private method via reflection
-      const loadKey = (service as any).loadKey.bind(service);
-      expect(loadKey).toThrow(/PATIENT_ENCRYPTION_KEY environment variable is not set/);
+      const originalKey = process.env.PATIENT_ENCRYPTION_KEY;
+      delete process.env.PATIENT_ENCRYPTION_KEY;
+      try {
+        const service = new EncryptionService();
+        const loadKey = (service as any).loadKey.bind(service);
+        expect(loadKey).toThrow(/PATIENT_ENCRYPTION_KEY environment variable is not set/);
+      } finally {
+        process.env.PATIENT_ENCRYPTION_KEY = originalKey;
+      }
     });
 
     it('should throw on wrong key length', () => {
@@ -202,9 +207,15 @@ describe('EncryptionService', () => {
     });
 
     it('should throw on missing BLIND_INDEX_PEPPER', () => {
-      const service = new EncryptionService();
-      const loadPepper = (service as any).loadBlindIndexPepper.bind(service);
-      expect(loadPepper).toThrow(/BLIND_INDEX_PEPPER environment variable is not set/);
+      const originalPepper = process.env.BLIND_INDEX_PEPPER;
+      delete process.env.BLIND_INDEX_PEPPER;
+      try {
+        const service = new EncryptionService();
+        const loadPepper = (service as any).loadBlindIndexPepper.bind(service);
+        expect(loadPepper).toThrow(/BLIND_INDEX_PEPPER environment variable is not set/);
+      } finally {
+        process.env.BLIND_INDEX_PEPPER = originalPepper;
+      }
     });
 
     it('should throw on wrong pepper length', () => {

@@ -23,7 +23,7 @@ export type AppointmentSource = z.infer<typeof AppointmentSourceSchema>;
 // =====================
 
 export const CreateAppointmentSchema = z.object({
-  patient_id: z.string().uuid().nullish(), // nullable until Slice 2 ships Patient
+  patient_id: z.string().uuid(), // required non-nullable FK to Patient (Slice 2 follow-up)
   doctor_id: z.string().uuid(),
   starts_at: z.string().datetime(),
   ends_at: z.string().datetime(),

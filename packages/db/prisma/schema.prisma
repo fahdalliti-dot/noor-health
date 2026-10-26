@@ -258,7 +258,7 @@ model AuditLog {
 model Appointment {
   id            String            @id @default(uuid())
   clinic_id     String
-  patient_id    String? // nullable now; will be non-nullable after follow-up migration
+  patient_id    String // non-nullable FK to Patient (Slice 2 follow-up migration)
   doctor_id     String
   starts_at     DateTime
   ends_at       DateTime

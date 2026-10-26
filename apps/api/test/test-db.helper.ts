@@ -23,9 +23,12 @@ export async function ensureTestSchema(): Promise<void> {
  */
 export async function cleanupDb(db: PrismaClient): Promise<void> {
   await db.$transaction([
-    db.auditLog.deleteMany(),
+    db.patientMedicalProfile.deleteMany(),
     db.appointment.deleteMany(),
+    db.patient.deleteMany(),
+    db.auditLog.deleteMany(),
     db.doctorTimeOff.deleteMany(),
+    db.passwordResetToken.deleteMany(),
     db.doctorWorkingHours.deleteMany(),
     db.session.deleteMany(),
     db.recoveryCode.deleteMany(),

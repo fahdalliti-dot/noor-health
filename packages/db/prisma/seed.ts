@@ -13,7 +13,10 @@ async function main() {
     db.auditLog.deleteMany(),
     db.appointment.deleteMany(),
     db.doctorTimeOff.deleteMany(),
+    db.patientMedicalProfile.deleteMany(),
+    db.patient.deleteMany(),
     db.doctorWorkingHours.deleteMany(),
+    db.passwordResetToken.deleteMany(),
     db.session.deleteMany(),
     db.recoveryCode.deleteMany(),
     db.invite.deleteMany(),
@@ -328,6 +331,100 @@ async function main() {
     },
   });
 
+  // ======================================
+  // Slice 2 - Patients (one per appointment below)
+  // ======================================
+  const patientA1 = await db.patient.create({
+    data: {
+      clinic_id: clinicA.id,
+      file_number: 1,
+      first_name: 'Youssef',
+      last_name: 'Amrani',
+      birth_date: new Date('1985-06-12'),
+      gender: 'male',
+      phone: '+212600000001',
+      cin: 'AB123456',
+    },
+  });
+
+  const patientA2 = await db.patient.create({
+    data: {
+      clinic_id: clinicA.id,
+      file_number: 2,
+      first_name: 'Lina',
+      last_name: 'Bennis',
+      birth_date: new Date('1992-09-23'),
+      gender: 'female',
+      phone: '+212600000002',
+      cin: 'CD789012',
+    },
+  });
+
+  const patientA3 = await db.patient.create({
+    data: {
+      clinic_id: clinicA.id,
+      file_number: 3,
+      first_name: 'Omar',
+      last_name: 'Fettah',
+      birth_date: new Date('1978-01-05'),
+      gender: 'male',
+      phone: '+212600000003',
+      cin: 'EF345678',
+    },
+  });
+
+  const patientA4 = await db.patient.create({
+    data: {
+      clinic_id: clinicA.id,
+      file_number: 4,
+      first_name: 'Sara',
+      last_name: 'Moussaoui',
+      birth_date: new Date('2001-11-30'),
+      gender: 'female',
+      phone: '+212600000004',
+      cin: 'GH901234',
+    },
+  });
+
+  const patientA5 = await db.patient.create({
+    data: {
+      clinic_id: clinicA.id,
+      file_number: 5,
+      first_name: 'Tariq',
+      last_name: 'Zerouali',
+      birth_date: new Date('1965-04-17'),
+      gender: 'male',
+      phone: '+212600000005',
+      cin: 'IJ567890',
+    },
+  });
+
+  const patientA6 = await db.patient.create({
+    data: {
+      clinic_id: clinicA.id,
+      file_number: 6,
+      first_name: 'Nadia',
+      last_name: 'Haddou',
+      birth_date: new Date('1988-08-02'),
+      gender: 'female',
+      phone: '+212600000006',
+      cin: 'KL123456',
+    },
+  });
+
+  const patientB1 = await db.patient.create({
+    data: {
+      clinic_id: clinicB.id,
+      file_number: 1,
+      first_name: 'Karim',
+      last_name: 'Bennis',
+      birth_date: new Date('1990-03-14'),
+      gender: 'male',
+      phone: '+212600000007',
+      cin: 'MN789012',
+    },
+  });
+
   // Sample appointments for Clinic A (Dr. Ahmed)
   // Base date: today at 09:00 in Morocco timezone
   const today = new Date();
@@ -340,7 +437,7 @@ async function main() {
   // A confirmed appointment at 09:00-09:30 (first slot of the morning)
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null,
+    patient_id: patientA1.id,
     doctor_id: clinicADoctor.id,
     starts_at: new Date(baseDate.getTime()),
     ends_at: new Date(baseDate.getTime() + 30 * 60 * 1000),
@@ -354,7 +451,7 @@ async function main() {
   const arrivedStart = new Date(baseDate.getTime() + 30 * 60 * 1000);
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null,
+    patient_id: patientA2.id,
     doctor_id: clinicADoctor.id,
     starts_at: arrivedStart,
     ends_at: new Date(arrivedStart.getTime() + 30 * 60 * 1000),
@@ -368,7 +465,7 @@ async function main() {
   const inProgStart = new Date(baseDate.getTime() + 60 * 60 * 1000);
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null,
+    patient_id: patientA3.id,
     doctor_id: clinicADoctor.id,
     starts_at: inProgStart,
     ends_at: new Date(inProgStart.getTime() + 30 * 60 * 1000),
@@ -382,7 +479,7 @@ async function main() {
   const schedStart = new Date(baseDate.getTime() + 90 * 60 * 1000);
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null,
+    patient_id: patientA4.id,
     doctor_id: clinicADoctor.id,
     starts_at: schedStart,
     ends_at: new Date(schedStart.getTime() + 30 * 60 * 1000),
@@ -396,7 +493,7 @@ async function main() {
   const completedStart = new Date(baseDate.getTime() - 30 * 60 * 1000);
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null,
+    patient_id: patientA5.id,
     doctor_id: clinicADoctor.id,
     starts_at: completedStart,
     ends_at: new Date(completedStart.getTime() + 30 * 60 * 1000),
@@ -410,7 +507,7 @@ async function main() {
   const cancelledStart = new Date(baseDate.getTime() + 120 * 60 * 1000);
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null,
+    patient_id: patientA6.id,
     doctor_id: clinicADoctor.id,
     starts_at: cancelledStart,
     ends_at: new Date(cancelledStart.getTime() + 30 * 60 * 1000),
@@ -426,7 +523,7 @@ async function main() {
   const yesterday = new Date(baseDate.getTime() - 24 * 60 * 60 * 1000);
   appointmentsA.push({
     clinic_id: clinicA.id,
-    patient_id: null,
+    patient_id: patientA6.id, // same patient as cancelled, different appointment
     doctor_id: clinicADoctor.id,
     starts_at: yesterday,
     ends_at: new Date(yesterday.getTime() + 30 * 60 * 1000),
@@ -444,7 +541,7 @@ async function main() {
   await db.appointment.create({
     data: {
       clinic_id: clinicB.id,
-      patient_id: null,
+      patient_id: patientB1.id,
       doctor_id: clinicBDoctor.id,
       starts_at: day2Start,
       ends_at: new Date(day2Start.getTime() + 60 * 60 * 1000), // 60-min slot

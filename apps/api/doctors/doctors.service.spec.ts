@@ -26,6 +26,7 @@ afterEach(async () => {
 describe('DoctorsService — Availability', () => {
   let clinicId: string;
   let doctorId: string;
+  let patientId: string;
 
   beforeEach(async () => {
     const clinic = await db.clinic.create({
@@ -43,6 +44,18 @@ describe('DoctorsService — Availability', () => {
       },
     });
     doctorId = doctor.id;
+
+    const patient = await db.patient.create({
+      data: {
+        clinic_id: clinicId,
+        file_number: 1,
+        first_name: 'Test',
+        last_name: 'Patient',
+        birth_date: new Date('1990-01-01'),
+        gender: 'male',
+      },
+    });
+    patientId = patient.id;
   });
 
   it('returns empty slots when no working hours are configured', async () => {
@@ -98,6 +111,7 @@ describe('DoctorsService — Availability', () => {
     await db.appointment.create({
       data: {
         clinic_id: clinicId,
+        patient_id: patientId,
         doctor_id: doctorId,
         starts_at: new Date(dayStart.getTime() + 9 * 60 * 60 * 1000),
         ends_at: new Date(dayStart.getTime() + 9.5 * 60 * 60 * 1000),
