@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Button from '@/components/ui/button';
 import Input from '@/components/ui/input';
+import { api } from '@/lib/api';
 
 interface AuditEntry {
   id: string;
@@ -81,6 +82,15 @@ export default function ClinicSettingsPage() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setSaved(true);
+    api.patch('/clinics', {
+      name: clinicName,
+      city,
+      address,
+      phone,
+      require_2fa_all: require2fa,
+    }).catch((err) => {
+      console.warn('API update clinic settings deferred', err);
+    });
     setTimeout(() => setSaved(false), 3000);
   };
 

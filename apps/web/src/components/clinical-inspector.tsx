@@ -290,7 +290,7 @@ export function ClinicalInspector({
               </button>
             )}
 
-            {onOpenPrescription && (
+            {onOpenPrescription && isDoctor && (
               <button
                 type="button"
                 onClick={onOpenPrescription}
@@ -310,7 +310,7 @@ export function ClinicalInspector({
               </button>
             )}
 
-            {onOpenCertificate && (
+            {onOpenCertificate && isDoctor && (
               <button
                 type="button"
                 onClick={onOpenCertificate}

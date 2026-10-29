@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Button from '@/components/ui/button';
 import Input from '@/components/ui/input';
+import { api } from '@/lib/api';
 
 interface StaffMember {
   id: string;
@@ -97,6 +98,9 @@ export default function TeamPage() {
     };
     setStaff([newMember, ...staff]);
     setInviteSent(true);
+    api.post('/invites', { email: inviteEmail, role: inviteRole }).catch((err) => {
+      console.warn('API invite deferred or queued', err);
+    });
     setInviteEmail('');
     setInviteName('');
     setInviteInpe('');

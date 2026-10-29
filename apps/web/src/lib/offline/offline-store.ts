@@ -5,6 +5,8 @@
  * même lors d'une rupture de connectivité Internet au cabinet médical.
  */
 
+import { api } from '@/lib/api';
+
 export interface OfflineMutation {
   id: string;
   type: 'CREATE_PATIENT' | 'UPDATE_APPOINTMENT_STATUS' | 'ADD_CONSULTATION' | 'CREATE_APPOINTMENT';
@@ -226,20 +228,44 @@ export async function syncOfflineQueue(): Promise<{ synced: number; failed: numb
 
   let synced = 0;
   let failed = 0;
+  const remaining: OfflineMutation[] = [];
 
   for (const mut of mutations) {
     try {
-      // Simule ou applique la synchronisation de l'action vers le backend
-      // En production, chaque type appelle la route API correspondante
-      await new Promise((resolve) => setTimeout(resolve, 80));
+      if (mut.type === 'CREATE_PATIENT') {
+        const p = mut.payload;
+        await api.post('/patients', {
+          first_name: p.firstName || p.first_name,
+          last_name: p.lastName || p.last_name,
+          phone: p.phone || undefined,
+          cin: p.cin ? p.cin.toUpperCase() : undefined,
+          birth_date: p.birthDate ? new Date(p.birthDate).toISOString().split('T')[0] : undefined,
+          gender: p.gender === 'F' ? 'female' : 'male',
+        });
+      } else if (mut.type === 'UPDATE_APPOINTMENT_STATUS') {
+        await api.patch(`/appointments/${mut.payload.id}/status`, {
+          status: mut.payload.status,
+          cancel_reason: mut.payload.reason || undefined,
+        });
+      } else if (mut.type === 'CREATE_APPOINTMENT') {
+        await api.post('/appointments', mut.payload);
+      }
       synced++;
     } catch (e) {
+      console.warn('[OfflineStore] Mutation sync deferred', mut.id, e);
       failed++;
+      remaining.push(mut);
     }
   }
 
-  if (synced > 0 && failed === 0) {
-    clearOfflineMutations();
+  if (isBrowser()) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.MUTATIONS, JSON.stringify(remaining));
+      localStorage.setItem(STORAGE_KEYS.LAST_SYNC, new Date().toISOString());
+      window.dispatchEvent(new CustomEvent('noor-offline-queue-updated', { detail: { count: remaining.length } }));
+    } catch (err) {
+      console.warn('[OfflineStore] Failed to update offline queue after sync:', err);
+    }
   }
 
   return { synced, failed };

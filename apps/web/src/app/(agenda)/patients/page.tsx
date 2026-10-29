@@ -13,10 +13,12 @@ import { ObstetricTrackerModal } from '@/components/specialties/obstetric-tracke
 import { PediatricTrackerModal } from '@/components/pediatric-tracker-modal';
 import { captureMedicalDocument } from '@/lib/native/camera-scanner';
 import { api } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 import {
   getOfflinePatients,
   saveOfflinePatients,
   addOfflinePatient,
+  normalizePatient,
   queueOfflineMutation,
 } from '@/lib/offline/offline-store';
 
@@ -359,6 +361,10 @@ const INITIAL_PATIENTS: Patient360[] = [
 ];
 
 export default function PatientsRegistryPage() {
+  const { user } = useAuth();
+  const isDoctor = !user || user.role === 'doctor';
+  const isSecretary = user?.role === 'secretary';
+
   const [patients, setPatients] = useState<Patient360[]>(() => {
     const cached = getOfflinePatients();
     if (cached && cached.length > 0) return cached;
@@ -374,6 +380,75 @@ export default function PatientsRegistryPage() {
   useEffect(() => {
     saveOfflinePatients(patients);
   }, [patients]);
+
+  // Load live patients from backend API with offline merge
+  useEffect(() => {
+    let isMounted = true;
+    api.get<{ patients: any[] }>('/patients')
+      .then((res) => {
+        if (!isMounted) return;
+        const raw = res?.data?.patients || (Array.isArray(res?.data) ? res.data : []);
+        if (Array.isArray(raw) && raw.length > 0) {
+          const mapped: Patient360[] = raw.map((p) => {
+            const norm = normalizePatient(p);
+            const matchInit = INITIAL_PATIENTS.find(
+              (init) =>
+                `${init.firstName} ${init.lastName}`.toLowerCase().trim() ===
+                `${norm.firstName} ${norm.lastName}`.toLowerCase().trim()
+            );
+            return {
+              id: norm.id,
+              cin: norm.cin && norm.cin !== 'CIN-NON-RENSEIGNÉE' ? norm.cin : matchInit?.cin || 'CIN-NON-RENSEIGNÉE',
+              firstName: norm.firstName || norm.first_name,
+              lastName: norm.lastName || norm.last_name,
+              birthDate: norm.birthDate || norm.birth_date || matchInit?.birthDate || '1990-01-01',
+              age: norm.age || matchInit?.age || 35,
+              gender: norm.gender === 'female' ? 'F' : matchInit?.gender || 'M',
+              phone: norm.phone || matchInit?.phone || '',
+              email: norm.email || matchInit?.email,
+              address: norm.address || matchInit?.address || 'Casablanca, Maroc',
+              city: norm.city || matchInit?.city || 'Casablanca',
+              mutuelle: norm.mutuelle || matchInit?.mutuelle || 'AMO_CNSS',
+              numAffiliation: norm.numAffiliation || matchInit?.numAffiliation || '00000000',
+              bloodType: norm.bloodType || matchInit?.bloodType || 'A+',
+              vitals: norm.vitals || matchInit?.vitals || {
+                bloodPressure: '120/80',
+                heartRate: 72,
+                weightKg: 70,
+                heightCm: 170,
+                temperature: 37.0,
+                lastUpdated: 'À l\'instant',
+              },
+              chronicConditions: norm.chronicConditions && norm.chronicConditions.length > 0 ? norm.chronicConditions : matchInit?.chronicConditions || [],
+              allergies: norm.allergies && norm.allergies.length > 0 ? norm.allergies : matchInit?.allergies || [],
+              currentTreatments: norm.currentTreatments && norm.currentTreatments.length > 0 ? norm.currentTreatments : matchInit?.currentTreatments || [],
+              consultations: norm.consultations && norm.consultations.length > 0 ? norm.consultations : matchInit?.consultations || [],
+              prescriptions: norm.prescriptions && norm.prescriptions.length > 0 ? norm.prescriptions : matchInit?.prescriptions || [],
+              labResults: norm.labResults && norm.labResults.length > 0 ? norm.labResults : matchInit?.labResults || [],
+            };
+          });
+          setPatients((prev) => {
+            const ids = new Set(mapped.map((m) => m.id));
+            const names = new Set(mapped.map((m) => `${m.firstName} ${m.lastName}`.toLowerCase().trim()));
+            const cins = new Set(mapped.map((m) => (m.cin || '').toUpperCase().trim()).filter(Boolean));
+            const rest = prev.filter(
+              (p) =>
+                !ids.has(p.id) &&
+                !names.has(`${p.firstName} ${p.lastName}`.toLowerCase().trim()) &&
+                (!p.cin || !cins.has(p.cin.toUpperCase().trim()))
+            );
+            return [...mapped, ...rest];
+          });
+        }
+      })
+      .catch((err) => {
+        console.warn('API /patients fetch deferred to offline cache', err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<'all' | 'cardio' | 'diabete' | 'obstetrique' | 'pediatrie'>('all');
   const [activeTab, setActiveTab] = useState<'consultations' | 'prescriptions' | 'labs' | 'identity'>('consultations');
@@ -425,7 +500,7 @@ export default function PatientsRegistryPage() {
     return found || filteredPatients[0];
   }, [filteredPatients, selectedPatientId]);
 
-  const currentMockAppointment = useMemo(() => {
+  const activeAppointmentContext = useMemo(() => {
     if (!patient) return null;
     return {
       id: `appt-${patient.id}`,
@@ -949,91 +1024,115 @@ export default function PatientsRegistryPage() {
 
                 {/* Tab 1: Consultations Timeline */}
                 {activeTab === 'consultations' && (
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-500">Parcours chronologique des actes et observations</span>
-                      <Button
-                        size="sm"
-                        onClick={() => setRxModalOpen(true)}
-                        className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
-                      >
-                        + Rédiger Ordonnance
-                      </Button>
+                  isSecretary ? (
+                    <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                      <div className="text-2xl">🔒</div>
+                      <div className="font-bold text-slate-800 text-sm">Données Médicales Protégées (CNDP Loi N° 09-08)</div>
+                      <p className="text-xs text-slate-500 max-w-md mx-auto">
+                        Conformément au secret médical et aux directives de la CNDP marocaine, les observations cliniques, diagnostics et ordonnances sont réservés aux médecins traitants habilités.
+                      </p>
                     </div>
-
+                  ) : (
                     <div className="space-y-3">
-                      {patient.consultations.map((c) => (
-                        <div key={c.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2 text-xs">
-                          <div className="flex items-center justify-between">
-                            <div className="font-bold text-slate-900 flex items-center gap-2">
-                              <span>📅 {c.date}</span>
-                              <span className="text-slate-400">·</span>
-                              <span className="text-terracotta-700">{c.motif}</span>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-slate-500">Parcours chronologique des actes et observations</span>
+                        {isDoctor && (
+                          <Button
+                            size="sm"
+                            onClick={() => setRxModalOpen(true)}
+                            className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
+                          >
+                            + Rédiger Ordonnance
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="space-y-3">
+                        {patient.consultations.map((c) => (
+                          <div key={c.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2 text-xs">
+                            <div className="flex items-center justify-between">
+                              <div className="font-bold text-slate-900 flex items-center gap-2">
+                                <span>📅 {c.date}</span>
+                                <span className="text-slate-400">·</span>
+                                <span className="text-terracotta-700">{c.motif}</span>
+                              </div>
+                              <span className="text-slate-400 font-mono text-[11px]">{c.doctorName}</span>
                             </div>
-                            <span className="text-slate-400 font-mono text-[11px]">{c.doctorName}</span>
+                            <div className="bg-white p-3 rounded-lg border border-slate-200 space-y-1">
+                              <div className="font-semibold text-slate-800">Diagnostic retenu :</div>
+                              <p className="text-slate-600">{c.diagnostic}</p>
+                              {c.notes && (
+                                <p className="text-[11px] text-slate-500 italic mt-1 border-t border-slate-100 pt-1">
+                                  Note : {c.notes}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-[11px] text-slate-600">
+                              <strong>Prescription : </strong> {c.treatmentPrescribed}
+                            </div>
                           </div>
-                          <div className="bg-white p-3 rounded-lg border border-slate-200 space-y-1">
-                            <div className="font-semibold text-slate-800">Diagnostic retenu :</div>
-                            <p className="text-slate-600">{c.diagnostic}</p>
-                            {c.notes && (
-                              <p className="text-[11px] text-slate-500 italic mt-1 border-t border-slate-100 pt-1">
-                                Note : {c.notes}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-[11px] text-slate-600">
-                            <strong>Prescription : </strong> {c.treatmentPrescribed}
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )
                 )}
 
                 {/* Tab 2: Prescriptions List */}
                 {activeTab === 'prescriptions' && (
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-500">Ordonnances officielles avec QR Code d&apos;authenticité</span>
-                      <Button
-                        size="sm"
-                        onClick={() => setRxModalOpen(true)}
-                        className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
-                      >
-                        + Nouvelle Ordonnance
-                      </Button>
+                  isSecretary ? (
+                    <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                      <div className="text-2xl">🔒</div>
+                      <div className="font-bold text-slate-800 text-sm">Dossier Pharmaceutique Protégé</div>
+                      <p className="text-xs text-slate-500 max-w-md mx-auto">
+                        L&apos;émission et la consultation détaillée des ordonnances médicales requièrent les privilèges de médecin praticien.
+                      </p>
                     </div>
-
-                    {patient.prescriptions.length === 0 ? (
-                      <div className="p-8 text-center text-xs text-slate-400 bg-slate-50 rounded-xl">
-                        Aucune ordonnance délivrée pour le moment.
-                      </div>
-                    ) : (
-                      patient.prescriptions.map((rx) => (
-                        <div key={rx.id} className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between gap-4 text-xs">
-                          <div>
-                            <div className="font-bold text-slate-900">
-                              Ordonnance du {rx.date}
-                            </div>
-                            <ul className="list-disc list-inside text-slate-600 mt-1 space-y-0.5">
-                              {rx.medications.map((m) => (
-                                <li key={m}>{m}</li>
-                              ))}
-                            </ul>
-                          </div>
-
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-slate-500">Ordonnances officielles avec QR Code d&apos;authenticité</span>
+                        {isDoctor && (
                           <Button
                             size="sm"
-                            variant="outline"
                             onClick={() => setRxModalOpen(true)}
-                            className="text-xs"
+                            className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
                           >
-                            🖨 Imprimer PDF
+                            + Nouvelle Ordonnance
                           </Button>
+                        )}
+                      </div>
+
+                      {patient.prescriptions.length === 0 ? (
+                        <div className="p-8 text-center text-xs text-slate-400 bg-slate-50 rounded-xl">
+                          Aucune ordonnance délivrée pour le moment.
                         </div>
-                      ))
-                    )}
-                  </div>
+                      ) : (
+                        patient.prescriptions.map((rx) => (
+                          <div key={rx.id} className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between gap-4 text-xs">
+                            <div>
+                              <div className="font-bold text-slate-900">
+                                Ordonnance du {rx.date}
+                              </div>
+                              <ul className="list-disc list-inside text-slate-600 mt-1 space-y-0.5">
+                                {rx.medications.map((m) => (
+                                  <li key={m}>{m}</li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setRxModalOpen(true)}
+                              className="text-xs"
+                            >
+                              🖨 Imprimer PDF
+                            </Button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )
                 )}
 
                 {/* Tab 3: Lab Results & Imaging */}
@@ -1149,17 +1248,17 @@ export default function PatientsRegistryPage() {
       <DentalOdontogramModal
         open={dentalModalOpen}
         onOpenChange={setDentalModalOpen}
-        appointment={currentMockAppointment}
+        appointment={activeAppointmentContext}
       />
       <ObstetricTrackerModal
         open={obstetricModalOpen}
         onOpenChange={setObstetricModalOpen}
-        appointment={currentMockAppointment}
+        appointment={activeAppointmentContext}
       />
       <PediatricTrackerModal
         open={pediatricModalOpen}
         onOpenChange={setPediatricModalOpen}
-        appointment={currentMockAppointment}
+        appointment={activeAppointmentContext}
       />
 
       {/* Toast Notification */}
