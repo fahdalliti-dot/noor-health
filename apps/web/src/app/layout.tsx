@@ -2,10 +2,16 @@ import Link from 'next/link';
 import Button from '@/components/ui/button';
 import { AuthProvider } from '@/lib/auth';
 import { I18nProvider, LanguageSwitcher } from '@/components/i18n-provider';
+import { NuraMark } from '@/components/nura-mark';
+import { routing } from '@/i18n/routing';
 import './globals.css';
 
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
 export const metadata = {
-  title: 'SaaS pour médecins',
+  title: 'Nura — soin numérique',
   description: 'Gestion de cabinet médical multi-clinique au Maroc',
 };
 
@@ -13,8 +19,8 @@ export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" dir="ltr">
-      <body className="font-sans antialiased bg-gray-50 text-gray-900">
+    <html lang={routing.defaultLocale} dir="ltr" suppressHydrationWarning>
+      <body className="font-sans antialiased">
         <I18nProvider>
           <AuthProvider>
             <nav className="border-b border-gray-200 bg-white shadow-xs">
@@ -22,13 +28,16 @@ export default function RootLayout({
                 <div className="flex items-center gap-6">
                   <Link
                     href="/"
-                    className="text-blue-600 hover:text-blue-800 font-semibold text-lg flex items-center gap-2"
+                    className="flex items-center gap-2.5 text-charcoal hover:text-terracotta-700 transition-colors"
+                    aria-label="Nura — accueil"
                   >
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600" aria-hidden="true" />
-                    SaaS Docteurs Maroc
+                    <NuraMark />
+                    <span className="font-display text-xl leading-none tracking-tight">
+                      Nura
+                    </span>
                   </Link>
 
-                  <div className="hidden md:flex items-center gap-5">
+                  <div className="hidden md:flex items-center gap-6">
                     <Link
                       href="/agenda"
                       className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"

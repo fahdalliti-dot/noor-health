@@ -18,7 +18,12 @@ import { ConfigService } from '@nestjs/config';
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET') || process.env.JWT_SECRET || 'dev-secret',
-        signOptions: { expiresIn: config.get<string>('JWT_ACCESS_TOKEN_TTL') || '900s' },
+        signOptions: {
+          expiresIn: (() => {
+            const raw = config.get<string>('JWT_ACCESS_TOKEN_TTL') || '900s';
+            return isNaN(Number(raw)) ? raw : `${raw}s`;
+          })(),
+        },
       }),
       inject: [ConfigService],
     }),

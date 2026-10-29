@@ -34,6 +34,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
     localStorage.setItem('app_locale', newLocale);
+    // Mirror to the NEXT_LOCALE cookie so the server can render the correct
+    // language and direction on first paint for the next request.
+    document.cookie = `NEXT_LOCALE=${newLocale}; max-age=31536000; SameSite=Lax`;
   };
 
   const dir = locale === 'ar' ? 'rtl' : 'ltr';

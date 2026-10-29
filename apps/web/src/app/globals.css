@@ -2,39 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TASTE-SKILL: FRAMED-SHEET TOKEN ARCHITECTURE */
+/* Nura — brand foundation. Palette lives in tailwind.config.js as the single
+   source of truth. This file handles only what Tailwind can't: the base
+   surface, the display typeface, and a couple of component-level utilities. */
+
 :root {
-  --ground: #f4f6f8;
+  /* Brand surface: warm sand, not cold slate or pure white */
   --surface: #ffffff;
-  --raised: #f8fafc;
-  --border: #e2e8f0;
-  --rule: #edf2f7;
-  --text: #0f172a;
-  --muted: #64748b;
-  --accent: #0077b6; /* Clinical Medical Blue */
-  --accent-hover: #02659c;
-  --positive: #059669;
-  --warning: #b45309;
-  --negative: #dc2626;
-  
-  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --ground: #F7F4EF;
+  --border: #E4DDD0;
+  --text: #1A1A1A;
+  --muted: #8C8C7A;
 }
 
+html,
 body {
-  font-family: var(--font-sans);
   background-color: var(--ground);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.tabular {
-  font-variant-numeric: tabular-nums;
+/* Editorial serif for headings — the brand display face. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
+/* Thin horizontal rules — the "framed sheet" grammar. */
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* Card surface — warm, soft shadow, no heavy border. */
 .sheet-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
-  box-shadow: none;
+  box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04);
+}
+
+/* Tabular numerics for dates, amounts, counts. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Focus ring — brand accent, never default blue. */
+:focus-visible {
+  outline: 2px solid #B05A3A;
+  outline-offset: 2px;
 }

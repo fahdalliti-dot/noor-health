@@ -23,6 +23,15 @@ export class AuthRepository {
   }
 
   async findById(id: string): Promise<User | null> {
+    try {
+      const users = await this.prisma.$queryRawUnsafe<User[]>(
+        `SELECT * FROM find_user_by_id_for_auth($1)`,
+        id,
+      );
+      if (users && users.length > 0) return users[0];
+    } catch (err: any) {
+      console.error('[findById error]:', err?.message || err);
+    }
     return this.prisma.user.findUnique({ where: { id } });
   }
 
@@ -167,7 +176,7 @@ export class AuthRepository {
       data.user_id,
       data.clinic_id,
       data.family_id,
-      data.refresh_token_hash ?? '',
+      data.refresh_token_hash || `challenge_${require('crypto').randomUUID()}`,
       data.device_label ?? null,
       data.ip ?? null,
       data.expires_at,
