@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nura — logo preview</title>
+<style>
+  :root { --bg: #F5F1E8; --ink: #1A1A1A; --accent: #B05A3A; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    background: var(--bg); color: var(--ink);
+    font-family: Inter, system-ui, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 64px 24px;
+  }
+  h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; letter-spacing: 2px; }
+  .card {
+    background: #fff; border-radius: 16px; padding: 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .row { display: flex; gap: 40px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .label { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #8C8C7A; }
+  .note { max-width: 560px; text-align: center; color: #555; font-size: 14px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<h1 style="margin-bottom: 8px;">Nura</h1>
+<p class="label" style="margin-bottom: 32px;">brand mark &mdash; preview</p>
+
+<div class="card">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="520" height="173">
+    <defs>
+      <style>
+        .mark { fill: #B05A3A; }
+        .wordmark { fill: #1A1A1A; }
+      </style>
+    </defs>
+
+    <!-- MARK -->
+    <g transform="translate(80,100) scale(1.15)">
+      <polygon points="0,-70 70,0 0,70 -70,0"
+               fill="none" stroke="#B05A3A" stroke-width="1.5"
+               stroke-linejoin="round" opacity="0.35"/>
+      <rect x="-38" y="-52" width="9" height="104" rx="4.5" fill="#B05A3A"/>
+      <rect x="29" y="-52" width="9" height="104" rx="4.5" fill="#B05A3A"/>
+      <polygon points="-38,-52 -29,-52 -20,-43 -29,-34" fill="#B05A3A"/>
+      <polygon points="20,34 29,34 38,43 29,52" fill="#B05A3A"/>
+      <g stroke="#B05A3A" stroke-width="1" opacity="0.5" fill="none" stroke-linecap="round">
+        <line x1="-5" y1="-5" x2="-5" y2="-22"/><line x1="-5" y1="5"  x2="-5" y2="22"/>
+        <line x1="-22" y1="-5" x2="-5" y2="-5"/><line x1="5" y1="-5"   x2="5" y2="-22"/>
+        <line x1="5" y1="5"    x2="5" y2="22"/><line x1="-22" y1="5"  x2="-5" y2="5"/>
+        <line x1="5" y1="-5"   x2="22" y2="-5"/><line x1="5" y1="5"    x2="22" y2="5"/>
+      </g>
+    </g>
+
+    <!-- WORDMARK -->
+    <text x="200" y="122" class="wordmark"
+          font-family="'Cormorant Garamond', Georgia, serif"
+          font-size="72" font-weight="600" letter-spacing="2">Nura</text>
+
+    <text x="200" y="152" fill="#8C8C7A"
+          font-family="Inter, sans-serif" font-size="14" letter-spacing="6"
+          text-transform="uppercase">soin numérique</text>
+
+    <!-- ARABIC -->
+    <g transform="translate(200, 180)">
+      <text x="0" y="0" fill="#1A1A1A"
+            font-family="'Amiri', 'Traditional Arabic', serif"
+            font-size="48" font-weight="700" text-anchor="middle">&#x0646;&#x0648;&#x0631;</text>
+    </g>
+  </svg>
+</div>
+
+<p class="note" style="margin-top: 24px;">
+  This is a <strong>starting point</strong>, not a finished mark. The wordmark
+  uses web fonts here so you can see it &mdash; a designer needs to draw a
+  custom letterform for print/icons, and produce the Arabic calligraphic
+  treatment properly.
+</p>
+
+</body>
+</html>
