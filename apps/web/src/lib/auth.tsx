@@ -6,6 +6,7 @@ import { tokenStore } from './api';
 
 export interface AuthContextType {
   login: (emailOrSessionId: string, passwordOrTotp: string) => Promise<any>;
+  loginAsDemo: (role?: 'doctor' | 'secretary') => void;
   verify2fa: (sessionId: string, totpCode: string) => Promise<any>;
   user: {
     id: string;
@@ -27,6 +28,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 const AuthContext = createContext<AuthContextType>({
   login: async () => {},
+  loginAsDemo: () => {},
   verify2fa: async () => {},
   user: null,
   pending2faSession: '',
@@ -50,8 +52,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function logout() {
     tokenStore.clear();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('demo_user');
+    }
     setUser(null);
     router.push('/auth/login');
+  }
+
+  function loginAsDemo(role: 'doctor' | 'secretary' = 'doctor') {
+    const demoUser = role === 'doctor' ? {
+      id: 'doc-benali-casablanca',
+      clinic_id: 'clinic-a',
+      role: 'doctor',
+      is_clinic_admin: true,
+      full_name: 'Dr. Amine Benali',
+      email: 'doctor@clinic-a.test',
+    } : {
+      id: 'sec-elidrissi-casablanca',
+      clinic_id: 'clinic-a',
+      role: 'secretary',
+      is_clinic_admin: false,
+      full_name: 'Meryem El Idrissi',
+      email: 'secretary@clinic-a.test',
+    };
+    setUser(demoUser);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('demo_user', JSON.stringify(demoUser));
+    }
+    router.push('/agenda');
   }
 
   function storeAuthSession(result: any) {
@@ -138,7 +166,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const token = localStorage.getItem('access_token');
-    if (!token) return;
+    if (!token) {
+      const savedDemo = localStorage.getItem('demo_user');
+      if (savedDemo) {
+        try {
+          setUser(JSON.parse(savedDemo));
+        } catch {
+          // ignore
+        }
+      }
+      return;
+    }
 
     // Fetch the current user to hydrate context
     fetch(`${API_BASE_URL}/api/v1/auth/me`, {
@@ -153,6 +191,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             clinic_id: data.clinic_id,
             role: data.role,
             is_clinic_admin: data.is_clinic_admin,
+            full_name: data.full_name || (data.role === 'doctor' ? 'Dr. Amine Benali' : 'Meryem El Idrissi'),
+            email: data.email,
           });
         } else {
           tokenStore.clear();
@@ -165,6 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         login,
+        loginAsDemo,
         verify2fa,
         user,
         logout,

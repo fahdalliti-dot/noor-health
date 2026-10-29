@@ -25,8 +25,154 @@ import Button from '@/components/ui/button';
 
 const TZ = 'Africa/Casablanca';
 
+const DEFAULT_DEMO_USER = {
+  id: 'doc-benali-casablanca',
+  clinic_id: 'clinic-a',
+  role: 'doctor',
+  is_clinic_admin: true,
+  full_name: 'Dr. Amine Benali',
+  email: 'doctor@clinic-a.test',
+};
+
+function createDemoAppointments(date: Date, userObj: any): Appointment[] {
+  const d = DateTime.fromJSDate(date).setZone(TZ);
+  const docId = userObj?.id || DEFAULT_DEMO_USER.id;
+  const docName = userObj?.full_name || DEFAULT_DEMO_USER.full_name;
+  const clinicId = userObj?.clinic_id || DEFAULT_DEMO_USER.clinic_id;
+
+  return [
+    {
+      id: 'appt-demo-1',
+      clinic_id: clinicId,
+      patient_id: 'p-1',
+      doctor_id: docId,
+      starts_at: d.set({ hour: 9, minute: 0, second: 0, millisecond: 0 }).toISO()!,
+      ends_at: d.set({ hour: 9, minute: 30, second: 0, millisecond: 0 }).toISO()!,
+      status: 'completed',
+      reason: 'Consultation de contrôle cardiologie annuelle',
+      source: 'staff',
+      cancelled_at: null,
+      cancel_reason: null,
+      created_by: docId,
+      created_at: d.toISO()!,
+      updated_at: d.toISO()!,
+      doctor: { id: docId, full_name: docName },
+      patient: { id: 'p-1', first_name: 'Yassine', last_name: 'Mansouri', phone: '+212661234567', cin: 'BE492019' },
+    },
+    {
+      id: 'appt-demo-2',
+      clinic_id: clinicId,
+      patient_id: 'p-2',
+      doctor_id: docId,
+      starts_at: d.set({ hour: 9, minute: 30, second: 0, millisecond: 0 }).toISO()!,
+      ends_at: d.set({ hour: 10, minute: 0, second: 0, millisecond: 0 }).toISO()!,
+      status: 'in_progress',
+      reason: 'Consultation & Bilan clinique spécialisé',
+      source: 'staff',
+      cancelled_at: null,
+      cancel_reason: null,
+      created_by: docId,
+      created_at: d.toISO()!,
+      updated_at: d.toISO()!,
+      doctor: { id: docId, full_name: docName },
+      patient: { id: 'p-2', first_name: 'Fatima Zahra', last_name: 'Alami', phone: '+212662998877', cin: 'BK829104' },
+    },
+    {
+      id: 'appt-demo-3',
+      clinic_id: clinicId,
+      patient_id: 'p-3',
+      doctor_id: docId,
+      starts_at: d.set({ hour: 10, minute: 0, second: 0, millisecond: 0 }).toISO()!,
+      ends_at: d.set({ hour: 10, minute: 30, second: 0, millisecond: 0 }).toISO()!,
+      status: 'arrived',
+      reason: 'Suivi de grossesse & contrôle pédiatrique',
+      source: 'staff',
+      cancelled_at: null,
+      cancel_reason: null,
+      created_by: docId,
+      created_at: d.toISO()!,
+      updated_at: d.toISO()!,
+      doctor: { id: docId, full_name: docName },
+      patient: { id: 'p-3', first_name: 'Khadija', last_name: 'Tazi', phone: '+212663445566', cin: 'A928301' },
+    },
+    {
+      id: 'appt-demo-4',
+      clinic_id: clinicId,
+      patient_id: 'p-4',
+      doctor_id: docId,
+      starts_at: d.set({ hour: 10, minute: 30, second: 0, millisecond: 0 }).toISO()!,
+      ends_at: d.set({ hour: 11, minute: 0, second: 0, millisecond: 0 }).toISO()!,
+      status: 'arrived',
+      reason: 'Examen bucco-dentaire & détartrage',
+      source: 'staff',
+      cancelled_at: null,
+      cancel_reason: null,
+      created_by: docId,
+      created_at: d.toISO()!,
+      updated_at: d.toISO()!,
+      doctor: { id: docId, full_name: docName },
+      patient: { id: 'p-4', first_name: 'Omar', last_name: 'Bennani', phone: '+212664556677', cin: 'C102938' },
+    },
+    {
+      id: 'appt-demo-5',
+      clinic_id: clinicId,
+      patient_id: 'p-5',
+      doctor_id: docId,
+      starts_at: d.set({ hour: 11, minute: 30, second: 0, millisecond: 0 }).toISO()!,
+      ends_at: d.set({ hour: 12, minute: 0, second: 0, millisecond: 0 }).toISO()!,
+      status: 'scheduled',
+      reason: 'Vaccination PNI & Suivi pédiatrique',
+      source: 'whatsapp',
+      cancelled_at: null,
+      cancel_reason: null,
+      created_by: docId,
+      created_at: d.toISO()!,
+      updated_at: d.toISO()!,
+      doctor: { id: docId, full_name: docName },
+      patient: { id: 'p-5', first_name: 'Mehdi', last_name: 'Chraibi', phone: '+212665112233', cin: 'D554433' },
+    },
+    {
+      id: 'appt-demo-6',
+      clinic_id: clinicId,
+      patient_id: 'p-6',
+      doctor_id: docId,
+      starts_at: d.set({ hour: 14, minute: 30, second: 0, millisecond: 0 }).toISO()!,
+      ends_at: d.set({ hour: 15, minute: 0, second: 0, millisecond: 0 }).toISO()!,
+      status: 'confirmed',
+      reason: 'Échographie obstétrique T2 morphologique',
+      source: 'whatsapp',
+      cancelled_at: null,
+      cancel_reason: null,
+      created_by: docId,
+      created_at: d.toISO()!,
+      updated_at: d.toISO()!,
+      doctor: { id: docId, full_name: docName },
+      patient: { id: 'p-6', first_name: 'Souad', last_name: 'Berrada', phone: '+212666778899', cin: 'F789012' },
+    },
+    {
+      id: 'appt-demo-7',
+      clinic_id: clinicId,
+      patient_id: 'p-7',
+      doctor_id: docId,
+      starts_at: d.set({ hour: 16, minute: 0, second: 0, millisecond: 0 }).toISO()!,
+      ends_at: d.set({ hour: 16, minute: 30, second: 0, millisecond: 0 }).toISO()!,
+      status: 'scheduled',
+      reason: 'Bilan hypertension & renouvellement ordonnance',
+      source: 'staff',
+      cancelled_at: null,
+      cancel_reason: null,
+      created_by: docId,
+      created_at: d.toISO()!,
+      updated_at: d.toISO()!,
+      doctor: { id: docId, full_name: docName },
+      patient: { id: 'p-7', first_name: 'Tarik', last_name: 'El Fassi', phone: '+212667889900', cin: 'G345678' },
+    },
+  ];
+}
+
 export default function AgendaPage() {
   const { user } = useAuth();
+  const activeUser = user || DEFAULT_DEMO_USER;
   const {
     fetchAppointments,
     changeStatus,
@@ -34,8 +180,10 @@ export default function AgendaPage() {
 
   const [view, setView] = useState<'day' | 'week'>('day');
   const [cursor, setCursor] = useState(new Date());
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [appointments, setAppointments] = useState<Appointment[]>(() =>
+    createDemoAppointments(new Date(), DEFAULT_DEMO_USER),
+  );
+  const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<any>(null);
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
@@ -57,86 +205,36 @@ export default function AgendaPage() {
   const [cmiPaymentOpen, setCmiPaymentOpen] = useState(false);
   const [inventoryOpen, setInventoryOpen] = useState(false);
 
-  const isDoctor = user?.role === 'doctor';
-  const isSecretary = user?.role === 'secretary';
-  const doctorId = isDoctor ? user.id : undefined;
+  const isDoctor = activeUser.role === 'doctor';
+  const isSecretary = activeUser.role === 'secretary';
+  const doctorId = isDoctor ? activeUser.id : undefined;
 
   async function load() {
     setLoading(true);
     try {
       const start = DateTime.fromJSDate(cursor).setZone(TZ).startOf(view === 'day' ? 'day' : 'week').toISO();
       const end = DateTime.fromJSDate(cursor).setZone(TZ).endOf(view === 'day' ? 'day' : 'week').toISO();
-      const list = user
-        ? await fetchAppointments({
+      let list: Appointment[] = [];
+      if (user) {
+        try {
+          list = await fetchAppointments({
             from: start!,
             to: end!,
             doctor_id: doctorId,
-          })
-        : [];
+          });
+        } catch {
+          list = [];
+        }
+      }
       if (list && list.length > 0) {
         setAppointments(list);
       } else {
-        const d = DateTime.fromJSDate(cursor).setZone(TZ);
-        setAppointments([
-          {
-            id: 'appt-demo-1',
-            clinic_id: user?.clinic_id || 'clinic-a',
-            patient_id: 'p-1',
-            doctor_id: user?.id || 'doc-1',
-            starts_at: d.set({ hour: 9, minute: 0 }).toISO()!,
-            ends_at: d.set({ hour: 9, minute: 30 }).toISO()!,
-            status: 'completed',
-            reason: 'Consultation de contrôle cardiologie annuelle',
-            source: 'staff',
-            cancelled_at: null,
-            cancel_reason: null,
-            created_by: user?.id || 'doc-1',
-            created_at: d.toISO()!,
-            updated_at: d.toISO()!,
-            doctor: { id: user?.id || 'doc-1', full_name: user?.full_name || 'Dr. Amine Benali' },
-            patient: { id: 'p-1', first_name: 'Yassine', last_name: 'Mansouri', phone: '+212661234567', cin: 'BE492019' },
-          },
-          {
-            id: 'appt-demo-2',
-            clinic_id: user?.clinic_id || 'clinic-a',
-            patient_id: 'p-2',
-            doctor_id: user?.id || 'doc-1',
-            starts_at: d.set({ hour: 9, minute: 30 }).toISO()!,
-            ends_at: d.set({ hour: 10, minute: 0 }).toISO()!,
-            status: 'in_progress',
-            reason: 'Consultation & Bilan clinique spécialisé',
-            source: 'staff',
-            cancelled_at: null,
-            cancel_reason: null,
-            created_by: user?.id || 'doc-1',
-            created_at: d.toISO()!,
-            updated_at: d.toISO()!,
-            doctor: { id: user?.id || 'doc-1', full_name: user?.full_name || 'Dr. Amine Benali' },
-            patient: { id: 'p-2', first_name: 'Fatima Zahra', last_name: 'Alami', phone: '+212662998877', cin: 'BK829104' },
-          },
-          {
-            id: 'appt-demo-3',
-            clinic_id: user?.clinic_id || 'clinic-a',
-            patient_id: 'p-3',
-            doctor_id: user?.id || 'doc-1',
-            starts_at: d.set({ hour: 10, minute: 0 }).toISO()!,
-            ends_at: d.set({ hour: 10, minute: 30 }).toISO()!,
-            status: 'arrived',
-            reason: 'Suivi de grossesse & contrôle pédiatrique',
-            source: 'staff',
-            cancelled_at: null,
-            cancel_reason: null,
-            created_by: user?.id || 'doc-1',
-            created_at: d.toISO()!,
-            updated_at: d.toISO()!,
-            doctor: { id: user?.id || 'doc-1', full_name: user?.full_name || 'Dr. Amine Benali' },
-            patient: { id: 'p-3', first_name: 'Khadija', last_name: 'Tazi', phone: '+212663445566', cin: 'A928301' },
-          },
-        ]);
+        setAppointments(createDemoAppointments(cursor, activeUser));
       }
       // Keep inspector sync if an appointment was selected
       if (selectedAppt) {
-        const refreshed = list.find((a) => a.id === selectedAppt.id);
+        const currentList = list && list.length > 0 ? list : createDemoAppointments(cursor, activeUser);
+        const refreshed = currentList.find((a) => a.id === selectedAppt.id);
         if (refreshed) setSelectedAppt(refreshed);
       }
     } finally {
@@ -272,8 +370,11 @@ export default function AgendaPage() {
             <Button variant="outline" size="sm" onClick={() => shift(-1)}>
               ‹
             </Button>
-            <h2 className="text-sm font-bold text-slate-900 px-2 min-w-[200px] text-center capitalize">
-              {title()}
+            <h2 className="text-sm font-bold text-slate-900 px-2 min-w-[200px] text-center capitalize flex items-center justify-center gap-1.5">
+              <span>{title()}</span>
+              {loading && (
+                <span className="inline-block w-2 h-2 rounded-full bg-terracotta-500 animate-ping" title="Synchronisation..." />
+              )}
             </h2>
             <Button variant="outline" size="sm" onClick={() => shift(1)}>
               ›
@@ -365,7 +466,7 @@ export default function AgendaPage() {
 
         {/* Timeline View */}
         <div className="flex-1 min-h-0 overflow-y-auto">
-          {loading ? (
+          {appointments.length === 0 && loading ? (
             <div className="bg-white rounded-xl border border-slate-200 p-12 text-center text-xs text-slate-500">
               Chargement des consultations...
             </div>

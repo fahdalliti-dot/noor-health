@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, loginAsDemo } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +29,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Successful login
-      router.push('/clinic');
+      // Successful login -> go directly to clinical agenda
+      router.push('/agenda');
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err?.message || 'Erreur de connexion');
@@ -96,6 +96,34 @@ export default function LoginPage() {
             {loading ? t('submitting') : t('login')}
           </Button>
         </form>
+
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-gray-400 font-medium">Ou accès démo immédiat</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => loginAsDemo('doctor')}
+            className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-terracotta-200 bg-terracotta-50/70 hover:bg-terracotta-100/70 text-terracotta-800 text-xs font-semibold transition cursor-pointer shadow-2xs"
+          >
+            <span>👨‍⚕️</span>
+            <span>Dr. Amine Benali</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => loginAsDemo('secretary')}
+            className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition cursor-pointer shadow-2xs"
+          >
+            <span>👩‍💼</span>
+            <span>Secrétaire Médicale</span>
+          </button>
+        </div>
 
         <p className="text-center text-sm text-gray-500">
           {t('no_account')}{' '}

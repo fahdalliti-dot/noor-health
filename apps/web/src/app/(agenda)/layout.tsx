@@ -17,20 +17,27 @@ const NAV: NavItem[] = [
   { href: '/agenda/time-off', label: 'Absences' },
 ];
 
+const DEFAULT_DEMO_USER = {
+  id: 'doc-benali-casablanca',
+  clinic_id: 'clinic-a',
+  role: 'doctor',
+  is_clinic_admin: true,
+  full_name: 'Dr. Amine Benali',
+  email: 'doctor@clinic-a.test',
+};
+
 export default function AgendaLayout({
   children,
 }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
-  if (!user) {
-    return null;
-  }
+  const activeUser = user || DEFAULT_DEMO_USER;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <SiteNav
-        user={user}
+        user={activeUser}
         onLogout={logout}
         extra={
           <nav className="hidden md:flex items-center gap-1">
@@ -40,6 +47,23 @@ export default function AgendaLayout({
           </nav>
         }
       />
+
+      {!user && (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200/80 px-4 py-2 text-xs text-amber-900 flex items-center justify-between shadow-2xs">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>
+              <strong>Cabinet Noor Casablanca · Démo Médicale Live :</strong> Connecté en tant que <strong>{activeUser.full_name}</strong> (Médecin Généraliste & Spécialiste).
+            </span>
+          </div>
+          <Link
+            href="/auth/login"
+            className="font-semibold underline hover:text-amber-950 text-[11px] transition-colors"
+          >
+            Se connecter avec un compte dédié →
+          </Link>
+        </div>
+      )}
 
       <div className="max-w-[1400px] mx-auto px-4 py-6">
         <div className="flex gap-6">
