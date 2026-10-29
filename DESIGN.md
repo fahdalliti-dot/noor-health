@@ -126,3 +126,41 @@ The typographic language pairs **high-contrast editorial elegance** with **rigor
 2. **Never use hospital green crosses (+), stethoscopes, or caduceus snakes.**
 3. **Never use sterile cold blue (#0000FF) as a background.**
 4. **Never show glassmorphism, heavy drop shadows, or cheap 3D plastic gloss.**
+
+---
+
+## 6. Motion Design System Specification (`motiondivision/motion`)
+
+Nura/Noor relies on [**Motion** (`motion/react`)](https://github.com/motiondivision/motion) for high-precision, natural spring physics. Motion in clinical software must never feel sluggish, playful, or decorative—it must feel **tactile, instantaneous, and purposeful**.
+
+### 6.1 Standard Spring Physics Presets
+
+```typescript
+export const motionPresets = {
+  // Micro-interactions (Buttons, quick toggles, icon clicks)
+  snappy: { type: 'spring', stiffness: 500, damping: 30 },
+  
+  // Modal dialogs and alert banners (WhatsApp modal, Cash desk)
+  modal: { type: 'spring', stiffness: 320, damping: 26 },
+
+  // Sliding drawers (Clinical Inspector right-edge drawer)
+  drawer: { type: 'spring', stiffness: 300, damping: 28, mass: 0.8 },
+
+  // Shared layout transitions (Day/Week view switcher, reordering)
+  tabGlide: { type: 'spring', stiffness: 450, damping: 30 },
+};
+```
+
+### 6.2 Key Interaction Choreographies
+
+1. **Tactile Micro-Press on CTAs (`Button`) :**
+   - Scale down to `0.98` on click (`whileTap`), elevating `y: -0.5px` on hover. Gives doctor physical tactile feedback on high-stakes clinical confirmations.
+2. **Context-Preserving Clinical Drawer (`ClinicalInspector`) :**
+   - Glides in smoothly from `x: 340px` with spring `damping: 28, stiffness: 300` when an appointment is selected, and gracefully glides out without jarring page reflows via `<AnimatePresence>`.
+3. **Sliding View Switcher (`layoutId="activeAgendaViewTab"`) :**
+   - Active white pill glides under the text label between "Jour" and "Semaine" using shared layout animation.
+4. **Dynamic Waiting Room Queue Reordering :**
+   - Automatic smooth position adjustment (`layout`) when a patient transitions from *Programmé* to *Arrivé* or enters the consultation room.
+5. **Accessibility & Reduced Motion :**
+   - All spring animations gracefully degrade to instant opacity fades whenever `prefers-reduced-motion` is detected in the operating system.
+

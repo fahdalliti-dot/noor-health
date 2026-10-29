@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { DateTime } from 'luxon';
+import { motion } from 'motion/react';
 import Button from '@/components/ui/button';
 import { AppointmentStatusBadge } from './appointment-status-badge';
 import type { Appointment } from '@/hooks/use-agenda';
@@ -100,7 +101,13 @@ export function ClinicalInspector({
     : 'PT';
 
   return (
-    <aside className="w-84 shrink-0 bg-white border-l border-slate-200 h-full flex flex-col shadow-xs transition-all">
+    <motion.aside
+      initial={{ x: 340, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: 340, opacity: 0 }}
+      transition={{ type: 'spring', damping: 30, stiffness: 300, mass: 0.8 }}
+      className="w-84 shrink-0 bg-white border-l border-slate-200 h-full flex flex-col shadow-xs"
+    >
       {/* Header */}
       <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
         <div className="flex items-center gap-2.5">
@@ -387,7 +394,7 @@ export function ClinicalInspector({
           </div>
         </div>
       </div>
-    </aside>
+    </motion.aside>
   );
 }
 

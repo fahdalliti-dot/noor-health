@@ -1,7 +1,17 @@
 "use client";
 
 import * as React from 'react';
+import { motion, HTMLMotionProps } from 'motion/react';
 import { cn } from '@/lib/utils';
+
+export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
+  children: React.ReactNode;
+  variant?: 'default' | 'outline' | 'ghost' | 'danger';
+  size?: 'default' | 'sm' | 'lg';
+  disabled?: boolean;
+  isLoading?: boolean;
+  className?: string;
+}
 
 export function Button({
   children,
@@ -10,23 +20,17 @@ export function Button({
   disabled,
   isLoading,
   className,
+  whileTap,
+  whileHover,
   ...props
-}: {
-  children: React.ReactNode;
-  variant?: 'default' | 'outline' | 'ghost' | 'danger';
-  size?: 'default' | 'sm' | 'lg';
-  disabled?: boolean;
-  isLoading?: boolean;
-  className?: string;
-  [key: string]: any;
-}) {
+}: ButtonProps) {
   const baseClasses =
     'inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer';
 
   const variantClasses = {
-    default: 'bg-terracotta-600 text-white hover:bg-terracotta-700 shadow-sm',
-    outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
-    ghost: 'text-gray-700 hover:bg-gray-100',
+    default: 'bg-terracotta-600 text-white hover:bg-terracotta-700 shadow-sm active:shadow-none',
+    outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 active:bg-gray-100',
+    ghost: 'text-gray-700 hover:bg-gray-100 active:bg-gray-200',
     danger: 'bg-red-600 text-white hover:bg-red-700 shadow-sm',
   }[variant];
 
@@ -36,8 +40,13 @@ export function Button({
     lg: 'h-11 px-6 py-2.5 text-base',
   }[size];
 
+  const isInteractive = !disabled && !isLoading;
+
   return (
-    <button
+    <motion.button
+      whileTap={isInteractive ? whileTap ?? { scale: 0.98 } : undefined}
+      whileHover={isInteractive ? whileHover ?? { y: -0.5 } : undefined}
+      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
       className={cn(
         baseClasses,
         variantClasses,
@@ -72,7 +81,7 @@ export function Button({
         </svg>
       )}
       {children}
-    </button>
+    </motion.button>
   );
 }
 

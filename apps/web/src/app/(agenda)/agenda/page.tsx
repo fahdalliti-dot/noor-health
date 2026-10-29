@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { DateTime } from 'luxon';
+import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/lib/auth';
 import { useAgenda, type Appointment } from '@/hooks/use-agenda';
 import { AgendaDayView } from '@/components/agenda-day-view';
@@ -148,33 +149,42 @@ export default function AgendaPage() {
 
             {waitingRoomPatients.length > 0 && (
               <div className="flex flex-wrap items-center gap-2">
-                {waitingRoomPatients.map((p) => {
-                  const pName = p.patient ? `${p.patient.first_name} ${p.patient.last_name}` : 'Patient';
-                  const pStart = DateTime.fromISO(p.starts_at).setZone(TZ);
-                  const waitMinutes = Math.max(0, Math.floor(DateTime.now().setZone(TZ).diff(pStart, 'minutes').minutes));
-                  const isLongWait = waitMinutes >= 30;
-                  const isMediumWait = waitMinutes >= 15 && waitMinutes < 30;
+                <AnimatePresence>
+                  {waitingRoomPatients.map((p) => {
+                    const pName = p.patient ? `${p.patient.first_name} ${p.patient.last_name}` : 'Patient';
+                    const pStart = DateTime.fromISO(p.starts_at).setZone(TZ);
+                    const waitMinutes = Math.max(0, Math.floor(DateTime.now().setZone(TZ).diff(pStart, 'minutes').minutes));
+                    const isLongWait = waitMinutes >= 30;
+                    const isMediumWait = waitMinutes >= 15 && waitMinutes < 30;
 
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setSelectedAppt(p)}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs cursor-pointer transition ${
-                        isLongWait
-                          ? 'bg-rose-50 border-rose-300 text-rose-900 font-bold animate-pulse'
-                          : isMediumWait
-                          ? 'bg-amber-100/90 border-amber-300 text-amber-900 font-medium'
-                          : 'bg-white border-slate-200 text-slate-800'
-                      }`}
-                    >
-                      <span>🪑 {pName}</span>
-                      <span className="font-mono text-[10px] opacity-80">
-                        ({waitMinutes}m)
-                      </span>
-                    </button>
-                  );
-                })}
+                    return (
+                      <motion.button
+                        layout
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        key={p.id}
+                        type="button"
+                        onClick={() => setSelectedAppt(p)}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs cursor-pointer transition-colors ${
+                          isLongWait
+                            ? 'bg-rose-50 border-rose-300 text-rose-900 font-bold animate-pulse'
+                            : isMediumWait
+                            ? 'bg-amber-100/90 border-amber-300 text-amber-900 font-medium'
+                            : 'bg-white border-slate-200 text-slate-800'
+                        }`}
+                      >
+                        <span>🪑 {pName}</span>
+                        <span className="font-mono text-[10px] opacity-80">
+                          ({waitMinutes}m)
+                        </span>
+                      </motion.button>
+                    );
+                  })}
+                </AnimatePresence>
               </div>
             )}
           </div>
@@ -241,23 +251,37 @@ export default function AgendaPage() {
               <span>💰</span>
               <span>Caisse du Jour</span>
             </button>
-            <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100 text-xs font-medium">
+            <div className="relative inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100 text-xs font-medium">
               <button
                 type="button"
                 onClick={() => setView('day')}
-                className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                  view === 'day' ? 'bg-white text-terracotta-700 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+                className={`relative px-3 py-1 rounded-md transition-colors cursor-pointer z-10 ${
+                  view === 'day' ? 'text-terracotta-700 font-semibold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
+                {view === 'day' && (
+                  <motion.div
+                    layoutId="activeAgendaViewTab"
+                    className="absolute inset-0 bg-white rounded-md shadow-2xs -z-10"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
                 Jour
               </button>
               <button
                 type="button"
                 onClick={() => setView('week')}
-                className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                  view === 'week' ? 'bg-white text-terracotta-700 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+                className={`relative px-3 py-1 rounded-md transition-colors cursor-pointer z-10 ${
+                  view === 'week' ? 'text-terracotta-700 font-semibold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
+                {view === 'week' && (
+                  <motion.div
+                    layoutId="activeAgendaViewTab"
+                    className="absolute inset-0 bg-white rounded-md shadow-2xs -z-10"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
                 Semaine
               </button>
             </div>
@@ -309,25 +333,28 @@ export default function AgendaPage() {
       </div>
 
       {/* Right Contextual Inspector (Zero-Modal Workflow) */}
-      {selectedAppt && (
-        <ClinicalInspector
-          appointment={selectedAppt}
-          onClose={() => setSelectedAppt(null)}
-          timezone={TZ}
-          isDoctor={isDoctor}
-          isSecretary={isSecretary}
-          doctorId={doctorId}
-          onStatusChange={handleStatusChange}
-          onOpenWhatsApp={() => setWhatsAppOpen(true)}
-          onOpenCashDesk={() => setCashDeskOpen(true)}
-          onOpenPrescription={() => setPrescriptionOpen(true)}
-          onOpenInsuranceClaim={() => setInsuranceClaimOpen(true)}
-          onOpenCertificate={() => setCertificateOpen(true)}
-          onOpenPediatric={() => setPediatricOpen(true)}
-          onOpenTeleconsult={() => setTeleconsultOpen(true)}
-          onOpenCmiPayment={() => setCmiPaymentOpen(true)}
-        />
-      )}
+      <AnimatePresence>
+        {selectedAppt && (
+          <ClinicalInspector
+            key={selectedAppt.id}
+            appointment={selectedAppt}
+            onClose={() => setSelectedAppt(null)}
+            timezone={TZ}
+            isDoctor={isDoctor}
+            isSecretary={isSecretary}
+            doctorId={doctorId}
+            onStatusChange={handleStatusChange}
+            onOpenWhatsApp={() => setWhatsAppOpen(true)}
+            onOpenCashDesk={() => setCashDeskOpen(true)}
+            onOpenPrescription={() => setPrescriptionOpen(true)}
+            onOpenInsuranceClaim={() => setInsuranceClaimOpen(true)}
+            onOpenCertificate={() => setCertificateOpen(true)}
+            onOpenPediatric={() => setPediatricOpen(true)}
+            onOpenTeleconsult={() => setTeleconsultOpen(true)}
+            onOpenCmiPayment={() => setCmiPaymentOpen(true)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Global Command Palette */}
       <CommandPalette
