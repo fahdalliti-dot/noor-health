@@ -33,24 +33,5 @@ export const prisma = new PrismaClient({ adapter });
 // Re-export types and enums
 export { PrismaClient, Prisma } from './generated/client';
 export * from './generated/client';
-
-// Re-export types
-export type {
-  User,
-  Clinic,
-  Session,
-  Invite,
-  Subscription,
-  RecoveryCode,
-  AuditLog,
-} from './generated/client';
-
-// Re-export enums
-export {
-  Role,
-  Plan,
-  SubscriptionStatus,
-  Action,
-  Locale,
-  Status,
-} from './generated/enums';
+export * from './generated/models';
+export * from './generated/enums';

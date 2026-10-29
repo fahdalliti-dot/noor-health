@@ -16,6 +16,7 @@ import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { CertificatesModule } from './certificates/certificates.module';
 import { PaymentsModule } from './payments/payments.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { DatabaseExceptionFilter } from './filters/database-exception.filter';
 import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
 
@@ -47,6 +48,7 @@ import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
     CertificatesModule,
     PaymentsModule,
     InventoryModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [

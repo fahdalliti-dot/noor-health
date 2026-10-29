@@ -132,6 +132,19 @@ enum InventoryAction {
   adjustment
 }
 
+enum NotificationChannel {
+  whatsapp
+  sms
+}
+
+enum NotificationStatus {
+  queued
+  sent
+  delivered
+  read
+  failed
+}
+
 // ENTITIES
 
 model Clinic {
@@ -167,6 +180,7 @@ model Clinic {
   medical_certificates  MedicalCertificate[]
   payments              PaymentTransaction[]
   inventory_items       InventoryItem[]
+  notifications         NotificationLog[]
 
   @@index([id])
 }
@@ -322,6 +336,7 @@ model Appointment {
   patient         Patient? @relation(fields: [patient_id], references: [id])
   doctor          User     @relation("AppointmentDoctor", fields: [doctor_id], references: [id])
   created_by_user User     @relation("AppointmentCreator", fields: [created_by], references: [id])
+  notifications   NotificationLog[]
 
   // Adjacent appointments (end = next start) are allowed because [) is half-open.
   // Only active statuses participate in the double-booking exclusion constraint.
@@ -395,6 +410,7 @@ model Patient {
   prescriptions   Prescription[]
   certificates    MedicalCertificate[]
   payments        PaymentTransaction[]
+  notifications   NotificationLog[]
 
   @@unique([clinic_id, file_number])
   @@index([clinic_id, first_name, last_name])
@@ -538,6 +554,32 @@ model InventoryLog {
   actor       User            @relation("InventoryActor", fields: [actor_id], references: [id])
 
   @@index([item_id])
+}
+
+model NotificationLog {
+  id                  String              @id @default(uuid())
+  clinic_id           String
+  appointment_id      String?
+  patient_id          String?
+  channel             NotificationChannel @default(whatsapp)
+  recipient_phone     String
+  template_name       String
+  language            String              @default("ar_MA")
+  status              NotificationStatus  @default(queued)
+  provider_message_id String?
+  content_preview     String
+  error_message       String?
+  sent_at             DateTime?
+  delivered_at        DateTime?
+  created_at          DateTime            @default(now())
+
+  clinic              Clinic              @relation(fields: [clinic_id], references: [id])
+  appointment         Appointment?        @relation(fields: [appointment_id], references: [id])
+  patient             Patient?            @relation(fields: [patient_id], references: [id])
+
+  @@index([clinic_id, created_at])
+  @@index([appointment_id])
+  @@index([provider_message_id])
 }
 
 generator client {
