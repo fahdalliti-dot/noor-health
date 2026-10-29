@@ -21,14 +21,21 @@ const LocaleContext = createContext<LocaleContextType>({
 
 export const useLocale = () => useContext(LocaleContext);
 
+function readSavedLocale(): Locale {
+  if (typeof document === 'undefined') return 'fr';
+  const cookie = document.cookie
+    .split('; ')
+    .find((c) => c.startsWith('NEXT_LOCALE='))
+    ?.slice('NEXT_LOCALE='.length) as Locale | undefined;
+  const local = localStorage.getItem('app_locale') as Locale | null;
+  return cookie === 'ar' || local === 'ar' ? 'ar' : 'fr';
+}
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>('fr');
 
   useEffect(() => {
-    const saved = localStorage.getItem('app_locale') as Locale | null;
-    if (saved === 'fr' || saved === 'ar') {
-      setLocaleState(saved);
-    }
+    setLocaleState(readSavedLocale());
   }, []);
 
   const setLocale = (newLocale: Locale) => {
@@ -81,7 +88,7 @@ export function LanguageSwitcher() {
         type="button"
         aria-pressed={locale === 'ar'}
         onClick={() => setLocale('ar')}
-        className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+        className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-display ${
           locale === 'ar'
             ? 'bg-white text-blue-700 shadow-sm font-semibold'
             : 'text-gray-500 hover:text-gray-900'

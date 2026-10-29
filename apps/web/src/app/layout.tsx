@@ -4,6 +4,7 @@ import { AuthProvider } from '@/lib/auth';
 import { I18nProvider, LanguageSwitcher } from '@/components/i18n-provider';
 import { NuraMark } from '@/components/nura-mark';
 import { routing } from '@/i18n/routing';
+import { displayFont, sansFont } from '@/lib/fonts';
 import './globals.css';
 
 export function generateStaticParams() {
@@ -20,7 +21,7 @@ export default function RootLayout({
 }: { children: React.ReactNode }) {
   return (
     <html lang={routing.defaultLocale} dir="ltr" suppressHydrationWarning>
-      <body className="font-sans antialiased">
+      <body className={`${sansFont.variable} ${displayFont.variable} font-sans antialiased`}>
         <I18nProvider>
           <AuthProvider>
             <nav className="border-b border-gray-200 bg-white shadow-xs">

@@ -104,6 +104,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const json = await res.json();
       const result = json?.data || json;
 
+      if (!res.ok) {
+        const errorMsg = json?.data?.error || json?.error || json?.message || 'Identifiants incorrects';
+        throw new Error(errorMsg);
+      }
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
       if (result.status === 'two_factor_required') {
         setPending2faSession(result.session_id);
         setChallengeToken(result.challenge_token);

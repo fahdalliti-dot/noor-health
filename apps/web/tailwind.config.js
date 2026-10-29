@@ -61,9 +61,11 @@ module.exports = {
     },
     fontFamily: {
       // Brand pairing: editorial serif display + geometric sans UI.
-      // Sans is injected via next/font in layout; this declares the fallback
-      // stack so the brand serif is available as `font-display`.
+      // Both faces are injected via next/font in layout and exposed as CSS
+      // variables, so this just references the variable. Fallback stacks
+      // remain for any place the variable hasn't been applied.
       sans: [
+        'var(--font-sans)',
         'Inter',
         '-apple-system',
         'BlinkMacSystemFont',
@@ -72,6 +74,7 @@ module.exports = {
         'sans-serif',
       ],
       display: [
+        'var(--font-display)',
         'Cormorant Garamond',
         'Georgia',
         'Times New Roman',
