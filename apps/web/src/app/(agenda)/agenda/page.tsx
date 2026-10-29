@@ -335,13 +335,13 @@ export default function AgendaPage() {
     <div className="flex h-[calc(100vh-140px)] gap-4">
       {/* Center Workbench (Agenda + Toolbar + Waiting Room Queue) */}
       <div className="flex-1 min-w-0 flex flex-col gap-3">
-        {/* Waiting Room Real-Time Strip */}
-        <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 shadow-xs">
+        {/* Waiting Room & Clinical Cockpit Real-Time Strip */}
+        <div className="bg-gradient-to-r from-sand-100/90 via-white to-amber-50/70 border border-sand-300/80 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 shadow-xs">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 bg-white/80 px-3 py-1.5 rounded-xl border border-sand-200/90 shadow-2xs">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shrink-0" aria-hidden="true" />
-              <span className="font-semibold text-amber-900">Salle d&apos;attente : </span>
-              <span className="font-bold text-amber-800">
+              <span className="font-bold text-slate-800">Salle d&apos;attente : </span>
+              <span className="font-extrabold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-full text-[11px]">
                 {waitingRoomPatients.length} patient{waitingRoomPatients.length > 1 ? 's' : ''}
               </span>
             </div>
@@ -368,16 +368,17 @@ export default function AgendaPage() {
                         key={p.id}
                         type="button"
                         onClick={() => setSelectedAppt(p)}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs cursor-pointer transition-colors ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs cursor-pointer transition-all shadow-2xs ${
                           isLongWait
                             ? 'bg-rose-50 border-rose-300 text-rose-900 font-bold animate-pulse'
                             : isMediumWait
-                            ? 'bg-amber-100/90 border-amber-300 text-amber-900 font-medium'
-                            : 'bg-white border-slate-200 text-slate-800'
+                            ? 'bg-amber-100/90 border-amber-300 text-amber-900 font-semibold'
+                            : 'bg-white border-sand-300 text-slate-800 hover:border-terracotta-400'
                         }`}
                       >
-                        <span>🪑 {pName}</span>
-                        <span className="font-mono text-[10px] opacity-80">
+                        <span className="text-amber-700">🪑</span>
+                        <span className="font-semibold">{pName}</span>
+                        <span className="font-mono text-[10px] font-bold opacity-75">
                           ({waitMinutes}m)
                         </span>
                       </motion.button>
@@ -391,19 +392,19 @@ export default function AgendaPage() {
             <button
               type="button"
               onClick={() => setPaletteOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-sand-50 border border-sand-300 rounded-xl text-slate-700 font-medium cursor-pointer shadow-2xs transition"
             >
               <span>🔍</span>
-              <span className="text-[11px]">Rechercher...</span>
-              <kbd className="font-mono text-[10px] text-slate-400 bg-slate-100 px-1 rounded">⌘K</kbd>
+              <span className="text-xs">Rechercher...</span>
+              <kbd className="font-mono text-[10px] text-slate-500 bg-sand-100 px-1.5 py-0.5 rounded border border-sand-200">⌘K</kbd>
             </button>
           </div>
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shrink-0 shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-sand-300/80 shrink-0 shadow-xs">
           <div className="flex items-center gap-1.5">
-            <Button variant="outline" size="sm" onClick={() => shift(-1)}>
+            <Button variant="outline" size="sm" onClick={() => shift(-1)} className="rounded-xl border-sand-300">
               ‹
             </Button>
             <h2 className="text-sm font-bold text-slate-900 px-2 min-w-[200px] text-center capitalize flex items-center justify-center gap-1.5">
@@ -412,14 +413,14 @@ export default function AgendaPage() {
                 <span className="inline-block w-2 h-2 rounded-full bg-terracotta-500 animate-ping" title="Synchronisation..." />
               )}
             </h2>
-            <Button variant="outline" size="sm" onClick={() => shift(1)}>
+            <Button variant="outline" size="sm" onClick={() => shift(1)} className="rounded-xl border-sand-300">
               ›
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCursor(new Date())}
-              className="ms-1 text-xs"
+              className="ms-1 text-xs rounded-xl border-sand-300"
             >
               Aujourd&apos;hui
             </Button>
@@ -428,11 +429,11 @@ export default function AgendaPage() {
           {/* Right: Quick Clinical Desk Tools & View Controls */}
           <div className="flex flex-wrap items-center gap-2.5">
             {/* Quick Desk Action Pills */}
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-lg border border-slate-200">
+            <div className="flex items-center gap-1.5 p-1 bg-sand-100/80 rounded-xl border border-sand-200">
               <button
                 type="button"
                 onClick={() => setInventoryOpen(true)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 rounded-md text-xs font-semibold cursor-pointer border border-slate-200 shadow-2xs hover:text-slate-900 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-sand-50 text-slate-700 rounded-lg text-xs font-bold cursor-pointer border border-sand-200 shadow-2xs hover:text-slate-900 transition"
                 title="Consommables et stocks du cabinet"
               >
                 <span>📦</span>
@@ -442,7 +443,7 @@ export default function AgendaPage() {
               <button
                 type="button"
                 onClick={() => setBookingLinkOpen(true)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-700 rounded-md text-xs font-semibold border border-terracotta-200 shadow-2xs transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-terracotta-50 hover:bg-terracotta-100/80 text-terracotta-800 rounded-lg text-xs font-bold border border-terracotta-200 shadow-2xs transition cursor-pointer"
                 title="Lien public et QR Code de prise de rendez-vous en ligne"
               >
                 <span>🌐</span>
@@ -452,7 +453,7 @@ export default function AgendaPage() {
               <button
                 type="button"
                 onClick={() => setCashDeskOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-xs font-semibold cursor-pointer shadow-xs transition"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold cursor-pointer shadow-xs transition"
                 title="Journal des règlements et clôture de caisse du jour"
               >
                 <span>💰</span>
@@ -460,18 +461,18 @@ export default function AgendaPage() {
               </button>
             </div>
 
-            <div className="relative inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100 text-xs font-medium">
+            <div className="relative inline-flex rounded-xl border border-sand-300/80 p-0.5 bg-sand-100 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setView('day')}
-                className={`relative px-3 py-1 rounded-md transition-colors cursor-pointer z-10 ${
-                  view === 'day' ? 'text-terracotta-700 font-semibold' : 'text-slate-600 hover:text-slate-900'
+                className={`relative px-3.5 py-1 rounded-lg transition-colors cursor-pointer z-10 ${
+                  view === 'day' ? 'text-terracotta-700 font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {view === 'day' && (
                   <motion.div
                     layoutId="activeAgendaViewTab"
-                    className="absolute inset-0 bg-white rounded-md shadow-2xs -z-10"
+                    className="absolute inset-0 bg-white rounded-lg shadow-2xs -z-10"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
                 )}
@@ -480,14 +481,14 @@ export default function AgendaPage() {
               <button
                 type="button"
                 onClick={() => setView('week')}
-                className={`relative px-3 py-1 rounded-md transition-colors cursor-pointer z-10 ${
-                  view === 'week' ? 'text-terracotta-700 font-semibold' : 'text-slate-600 hover:text-slate-900'
+                className={`relative px-3.5 py-1 rounded-lg transition-colors cursor-pointer z-10 ${
+                  view === 'week' ? 'text-terracotta-700 font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {view === 'week' && (
                   <motion.div
                     layoutId="activeAgendaViewTab"
-                    className="absolute inset-0 bg-white rounded-md shadow-2xs -z-10"
+                    className="absolute inset-0 bg-white rounded-lg shadow-2xs -z-10"
                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
                 )}
@@ -500,7 +501,7 @@ export default function AgendaPage() {
                 setSelectedSlot(null);
                 setModalOpen(true);
               }}
-              className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
+              className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-bold rounded-xl shadow-xs px-4"
             >
               + Nouveau RDV
             </Button>
