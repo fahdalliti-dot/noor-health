@@ -97,6 +97,41 @@ enum BloodType {
   unknown
 }
 
+enum CertificateType {
+  aptitude
+  arret_travail
+  coups_et_blessures
+  prolonge_arret
+}
+
+enum PaymentMethod {
+  cash
+  cmi_card
+  virement
+  cheque
+}
+
+enum PaymentStatus {
+  completed
+  pending
+  failed
+  refunded
+}
+
+enum InventoryCategory {
+  consumable
+  medication
+  equipment
+  office
+}
+
+enum InventoryAction {
+  restock
+  usage
+  waste
+  adjustment
+}
+
 // ENTITIES
 
 model Clinic {
@@ -126,6 +161,12 @@ model Clinic {
 
   // Slice 2 - reverse relations
   patients      Patient[]
+
+  // Clinical & Practice Management expansions
+  prescriptions         Prescription[]
+  medical_certificates  MedicalCertificate[]
+  payments              PaymentTransaction[]
+  inventory_items       InventoryItem[]
 
   @@index([id])
 }
@@ -160,6 +201,12 @@ model User {
   appointments_as_creator Appointment[]        @relation("AppointmentCreator")
   working_hours           DoctorWorkingHours[]
   time_off                DoctorTimeOff[]
+
+  // Clinical & Practice Management expansions
+  prescriptions_as_doctor Prescription[]        @relation("PrescriptionDoctor")
+  certificates_as_doctor  MedicalCertificate[]  @relation("CertificateDoctor")
+  payments_recorded       PaymentTransaction[]  @relation("PaymentRecordedBy")
+  inventory_logs          InventoryLog[]        @relation("InventoryActor")
 }
 
 model RecoveryCode {
@@ -344,6 +391,11 @@ model Patient {
   medical_profile PatientMedicalProfile?
   appointments    Appointment[]
 
+  // Clinical & Practice Management expansions
+  prescriptions   Prescription[]
+  certificates    MedicalCertificate[]
+  payments        PaymentTransaction[]
+
   @@unique([clinic_id, file_number])
   @@index([clinic_id, first_name, last_name])
   @@index([clinic_id, deleted_at])
@@ -362,6 +414,130 @@ model PatientMedicalProfile {
   deleted_at           DateTime? // soft delete
 
   patient Patient @relation(fields: [patient_id], references: [id])
+}
+
+// ======================================
+// CLINICAL & PRACTICE MANAGEMENT EXPANSION
+// ======================================
+
+model Prescription {
+  id                String             @id @default(uuid())
+  clinic_id         String
+  patient_id        String
+  doctor_id         String
+  appointment_id    String?
+  prescription_date DateTime           @default(now())
+  diagnosis         String?
+  notes             String?
+  qr_code_token     String             @default(uuid())
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+
+  clinic            Clinic             @relation(fields: [clinic_id], references: [id])
+  patient           Patient            @relation(fields: [patient_id], references: [id])
+  doctor            User               @relation("PrescriptionDoctor", fields: [doctor_id], references: [id])
+  items             PrescriptionItem[]
+
+  @@index([clinic_id, patient_id])
+  @@index([clinic_id, doctor_id])
+}
+
+model PrescriptionItem {
+  id              String        @id @default(uuid())
+  prescription_id String
+  medication_name String
+  dosage          String
+  form            String        // Comprimé, Sirop, Sachet, Gélule, Solution injectable
+  frequency       String        // 1x/jour, 3x/jour, matin et soir, si besoin
+  duration        String        // 7 jours, 1 mois, 3 mois
+  instructions    String?       // Pendant le repas, à jeun, etc.
+  created_at      DateTime      @default(now())
+
+  prescription    Prescription  @relation(fields: [prescription_id], references: [id], onDelete: Cascade)
+
+  @@index([prescription_id])
+}
+
+model MedicalCertificate {
+  id              String          @id @default(uuid())
+  clinic_id       String
+  patient_id      String
+  doctor_id       String
+  type            CertificateType @default(aptitude)
+  title           String
+  content         String
+  start_date      DateTime        @default(now())
+  end_date        DateTime?
+  itt_days        Int?            // Incapacité Totale de Travail (days)
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  clinic          Clinic          @relation(fields: [clinic_id], references: [id])
+  patient         Patient         @relation(fields: [patient_id], references: [id])
+  doctor          User            @relation("CertificateDoctor", fields: [doctor_id], references: [id])
+
+  @@index([clinic_id, patient_id])
+  @@index([clinic_id, doctor_id])
+}
+
+model PaymentTransaction {
+  id                 String         @id @default(uuid())
+  clinic_id          String
+  patient_id         String?
+  appointment_id     String?
+  amount             Decimal        @db.Decimal(10, 2)
+  currency           String         @default("MAD")
+  method             PaymentMethod  @default(cash)
+  status             PaymentStatus  @default(completed)
+  receipt_number     String         @unique
+  cmi_transaction_id String?
+  notes              String?
+  created_by         String
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+
+  clinic             Clinic         @relation(fields: [clinic_id], references: [id])
+  patient            Patient?       @relation(fields: [patient_id], references: [id])
+  recorded_by        User           @relation("PaymentRecordedBy", fields: [created_by], references: [id])
+
+  @@index([clinic_id, created_at])
+  @@index([clinic_id, method])
+}
+
+model InventoryItem {
+  id            String             @id @default(uuid())
+  clinic_id     String
+  name          String
+  category      InventoryCategory  @default(consumable)
+  sku           String?
+  quantity      Int                @default(0)
+  min_threshold Int                @default(5)
+  unit          String             @default("unité") // boîte, flacon, seringue
+  unit_cost     Decimal?           @db.Decimal(10, 2)
+  supplier      String?
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @updatedAt
+
+  clinic        Clinic             @relation(fields: [clinic_id], references: [id])
+  logs          InventoryLog[]
+
+  @@index([clinic_id, category])
+  @@index([clinic_id, name])
+}
+
+model InventoryLog {
+  id          String          @id @default(uuid())
+  item_id     String
+  action      InventoryAction
+  quantity    Int             // positive for restock, negative for usage
+  reason      String?
+  actor_id    String
+  created_at  DateTime        @default(now())
+
+  item        InventoryItem   @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  actor       User            @relation("InventoryActor", fields: [actor_id], references: [id])
+
+  @@index([item_id])
 }
 
 generator client {

@@ -12,6 +12,10 @@ import { AuditModule } from './audit/audit.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { PatientsModule } from './patients/patients.module';
+import { PrescriptionsModule } from './prescriptions/prescriptions.module';
+import { CertificatesModule } from './certificates/certificates.module';
+import { PaymentsModule } from './payments/payments.module';
+import { InventoryModule } from './inventory/inventory.module';
 import { DatabaseExceptionFilter } from './filters/database-exception.filter';
 import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
 
@@ -22,6 +26,7 @@ import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
       envFilePath: ['.env', '.env.local'],
     }),
     JwtModule.registerAsync({
+      global: true,
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: configService.get<string>('JWT_ACCESS_TOKEN_TTL') },
@@ -38,6 +43,10 @@ import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
     AppointmentsModule,
     DoctorsModule,
     PatientsModule,
+    PrescriptionsModule,
+    CertificatesModule,
+    PaymentsModule,
+    InventoryModule,
   ],
   controllers: [],
   providers: [
