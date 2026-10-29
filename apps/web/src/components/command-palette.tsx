@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { api } from '@/lib/api';
+import { findOfflinePatients, normalizePatient } from '@/lib/offline/offline-store';
 
 interface PatientItem {
   id: string;
@@ -43,10 +44,35 @@ export function CommandPalette({ open, onOpenChange, onSelectPatient, onAction }
     }
     setLoading(true);
     try {
-      const res = await api.get<{ patients: PatientItem[] }>(
-        `/patients/search?q=${encodeURIComponent(q.trim())}`,
-      );
-      setPatients(res.data.patients || []);
+      // 1. Search local offline registry
+      const localMatches = findOfflinePatients(q);
+
+      // 2. Search backend API
+      let apiMatches: any[] = [];
+      try {
+        const res = await api.get<{ patients: any[] }>(
+          `/patients/search?q=${encodeURIComponent(q.trim())}`,
+        );
+        apiMatches = res.data?.patients || [];
+      } catch {
+        // Fallback to local search
+      }
+
+      // 3. Deduplicate and normalize
+      const map = new Map<string, PatientItem>();
+      for (const p of [...localMatches, ...apiMatches]) {
+        const norm = normalizePatient(p);
+        const key = (norm.cin && norm.cin.trim()) || norm.id;
+        map.set(key, {
+          id: norm.id,
+          first_name: norm.first_name,
+          last_name: norm.last_name,
+          cin: norm.cin,
+          phone: norm.phone,
+        });
+      }
+
+      setPatients(Array.from(map.values()));
     } catch (err) {
       console.error('Command palette search error:', err);
     } finally {
@@ -141,17 +167,22 @@ export function CommandPalette({ open, onOpenChange, onSelectPatient, onAction }
                           onSelectPatient?.(p);
                           onOpenChange(false);
                         }}
-                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-terracotta-50/70 text-slate-900 transition-colors cursor-pointer text-left rtl:text-right"
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-sand-100/80 text-slate-900 transition-colors cursor-pointer text-left rtl:text-right group"
                       >
-                        <div>
-                          <span className="font-semibold text-slate-900">
-                            {p.first_name} {p.last_name}
-                          </span>
-                          {p.cin && (
-                            <span className="font-mono text-slate-400 ms-1.5 text-[11px]">
-                              ({p.cin})
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-terracotta-100 text-terracotta-800 font-bold text-xs flex items-center justify-center">
+                            {`${p.first_name[0] || ''}${p.last_name[0] || ''}`.toUpperCase()}
+                          </div>
+                          <div>
+                            <span className="font-bold text-slate-900 group-hover:text-terracotta-700">
+                              {p.first_name} {p.last_name}
                             </span>
-                          )}
+                            {p.cin && (
+                              <span className="font-mono text-[10px] font-semibold bg-sand-200/90 text-slate-800 px-1.5 py-0.5 rounded ms-2">
+                                {p.cin}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <span className="font-mono text-slate-500 text-[11px]">
                           {p.phone || 'Pas de numéro'}

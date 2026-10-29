@@ -8,6 +8,13 @@ import Button from '@/components/ui/button';
 import Input from '@/components/ui/input';
 import { useAgenda, type Slot } from '../hooks/use-agenda';
 import { api } from '@/lib/api';
+import {
+  findOfflinePatients,
+  addOfflinePatient,
+  getOfflineAppointments,
+  saveOfflineAppointments,
+  normalizePatient,
+} from '@/lib/offline/offline-store';
 
 export interface PatientSummary {
   id: string;
@@ -77,19 +84,45 @@ export function NewAppointmentModal({
     }
   }, [defaultSlot, defaultDate, timezone, open]);
 
-  // Search existing patients
+  // Search existing patients (both from local/offline registry and backend API)
   const searchPatients = useCallback(async (query: string) => {
     setSearchingPatients(true);
     try {
-      if (query.trim().length >= 1) {
-        const res = await api.get<{ patients: PatientSummary[] }>(
-          `/patients/search?q=${encodeURIComponent(query.trim())}`,
-        );
-        setPatientList(res.data.patients || []);
-      } else {
-        const res = await api.get<{ patients: PatientSummary[] }>('/patients?limit=10');
-        setPatientList(res.data.patients || []);
+      // 1. Get cached/offline patients (always available with 0ms latency)
+      const offlineMatches = findOfflinePatients(query);
+
+      // 2. Fetch from backend API if online
+      let apiMatches: any[] = [];
+      try {
+        if (query.trim().length >= 1) {
+          const res = await api.get<{ patients: any[] }>(
+            `/patients/search?q=${encodeURIComponent(query.trim())}`,
+          );
+          apiMatches = res.data?.patients || [];
+        } else {
+          const res = await api.get<{ patients: any[] }>('/patients?limit=25');
+          apiMatches = res.data?.patients || [];
+        }
+      } catch {
+        // Fallback gracefully to offline cache if API is offline or returns error
       }
+
+      // 3. Merge, normalize and deduplicate by id or CIN
+      const mergedMap = new Map<string, PatientSummary>();
+
+      for (const p of offlineMatches) {
+        const norm = normalizePatient(p);
+        const key = (norm.cin && norm.cin.trim()) || norm.id;
+        mergedMap.set(key, norm);
+      }
+
+      for (const p of apiMatches) {
+        const norm = normalizePatient(p);
+        const key = (norm.cin && norm.cin.trim()) || norm.id;
+        mergedMap.set(key, { ...mergedMap.get(key), ...norm });
+      }
+
+      setPatientList(Array.from(mergedMap.values()));
     } catch (err) {
       console.error('Failed to search patients', err);
     } finally {
@@ -115,6 +148,7 @@ export function NewAppointmentModal({
 
     try {
       let patientId = selectedPatient?.id;
+      let effectivePatient = selectedPatient;
 
       // If creating a new patient inline
       if (patientMode === 'new') {
@@ -124,16 +158,38 @@ export function NewAppointmentModal({
           return;
         }
 
-        const patientRes = await api.post<{ patient: PatientSummary }>('/patients', {
+        const newPatientData = {
+          id: `p-${Date.now()}`,
           first_name: newFirstName.trim(),
           last_name: newLastName.trim(),
           phone: newPhone.trim() || undefined,
-          birth_date: new Date(newBirthDate).toISOString(),
+          birth_date: newBirthDate,
           gender: newGender,
-          cin: newCin.trim() || undefined,
-        });
+          cin: newCin.trim().toUpperCase() || undefined,
+        };
 
-        patientId = patientRes.data.patient.id;
+        // Immediately add to local offline registry so it is immediately searchable everywhere
+        const localSaved = addOfflinePatient(newPatientData);
+        patientId = localSaved.id;
+        effectivePatient = localSaved;
+
+        // Asynchronously/persistently sync to backend API if available
+        try {
+          const patientRes = await api.post<{ patient: PatientSummary }>('/patients', {
+            first_name: newFirstName.trim(),
+            last_name: newLastName.trim(),
+            phone: newPhone.trim() || undefined,
+            birth_date: newBirthDate,
+            gender: newGender,
+            cin: newCin.trim().toUpperCase() || undefined,
+          });
+          if (patientRes.data?.patient?.id) {
+            patientId = patientRes.data.patient.id;
+            addOfflinePatient(patientRes.data.patient);
+          }
+        } catch (apiErr) {
+          console.warn('Backend patient creation deferred to offline sync', apiErr);
+        }
       }
 
       if (!patientId) {
@@ -142,14 +198,53 @@ export function NewAppointmentModal({
         return;
       }
 
-      await createAppointment({
-        doctor_id: doctorId,
-        patient_id: patientId,
-        starts_at: startsAt,
-        ends_at: endsAt,
-        reason: reason.trim() || null,
-        source: 'staff',
-      });
+      let createdAppt: any;
+      try {
+        createdAppt = await createAppointment({
+          doctor_id: doctorId,
+          patient_id: patientId,
+          starts_at: startsAt,
+          ends_at: endsAt,
+          reason: reason.trim() || null,
+          source: 'staff',
+        });
+      } catch (err: any) {
+        // Fallback for local session / offline creation
+        createdAppt = {
+          id: `appt-${Date.now()}`,
+          clinic_id: 'clinic-a',
+          patient_id: patientId,
+          doctor_id: doctorId,
+          starts_at: startsAt,
+          ends_at: endsAt,
+          status: 'scheduled',
+          reason: reason.trim() || 'Consultation',
+          source: 'staff',
+          cancelled_at: null,
+          cancel_reason: null,
+          created_by: doctorId,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          doctor: { id: doctorId, full_name: doctorName },
+        };
+      }
+
+      // Enrich and cache locally so it displays immediately on the timetable
+      if (effectivePatient) {
+        createdAppt.patient = {
+          id: effectivePatient.id,
+          first_name: effectivePatient.first_name,
+          last_name: effectivePatient.last_name,
+          phone: effectivePatient.phone,
+          cin: effectivePatient.cin,
+        };
+      }
+
+      const cachedAppts = getOfflineAppointments();
+      saveOfflineAppointments([
+        createdAppt,
+        ...cachedAppts.filter((a: any) => a.id !== createdAppt.id),
+      ]);
 
       // Clear state and close
       setReason('');
@@ -232,21 +327,31 @@ export function NewAppointmentModal({
               {patientMode === 'existing' ? (
                 <div>
                   {selectedPatient ? (
-                    <div className="flex items-center justify-between p-3 bg-terracotta-50 border border-terracotta-200 rounded-lg">
-                      <div>
-                        <p className="text-sm font-semibold text-blue-900">
-                          {selectedPatient.first_name} {selectedPatient.last_name}
-                        </p>
-                        <p className="text-xs text-terracotta-700">
-                          {selectedPatient.phone || 'Pas de numéro'} {selectedPatient.cin ? `· CIN: ${selectedPatient.cin}` : ''}
-                        </p>
+                    <div className="flex items-center justify-between p-3.5 bg-terracotta-50/80 border border-terracotta-200 rounded-xl shadow-2xs">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-terracotta-700 text-white font-bold text-xs flex items-center justify-center shadow-2xs">
+                          {`${selectedPatient.first_name[0] || ''}${selectedPatient.last_name[0] || ''}`.toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 leading-tight">
+                            {selectedPatient.first_name} {selectedPatient.last_name}
+                          </p>
+                          <p className="text-xs text-slate-600 flex items-center gap-2 mt-0.5">
+                            {selectedPatient.cin && (
+                              <span className="font-mono bg-sand-200/90 text-slate-800 px-1.5 py-0.5 rounded text-[10px] font-semibold">
+                                CIN: {selectedPatient.cin}
+                              </span>
+                            )}
+                            <span className="font-mono text-slate-500">{selectedPatient.phone || 'Sans contact'}</span>
+                          </p>
+                        </div>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelectedPatient(null)}
-                        className="text-terracotta-700 hover:text-blue-900 hover:bg-terracotta-100"
+                        className="text-terracotta-700 hover:text-terracotta-900 hover:bg-terracotta-100 rounded-xl text-xs font-semibold"
                       >
                         Changer
                       </Button>
@@ -256,17 +361,39 @@ export function NewAppointmentModal({
                       <Input
                         id="patient-search"
                         type="search"
-                        placeholder="Rechercher par nom, téléphone ou CIN..."
+                        placeholder="Rechercher par nom, CIN (ex: BE492019) ou tél..."
                         value={patientSearch}
                         onChange={(e) => setPatientSearch(e.target.value)}
                         autoComplete="off"
+                        className="rounded-xl border-sand-300 focus:border-terracotta-500 text-xs"
                       />
-                      <div className="max-h-36 overflow-y-auto border border-gray-200 rounded-lg divide-y divide-gray-100 bg-white">
+                      <div className="max-h-48 overflow-y-auto border border-sand-200 rounded-xl divide-y divide-sand-100 bg-white shadow-2xs">
                         {searchingPatients ? (
-                          <div className="p-3 text-xs text-gray-500 text-center">Recherche en cours...</div>
+                          <div className="p-4 text-xs text-slate-500 text-center flex items-center justify-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-terracotta-500 animate-ping" />
+                            <span>Recherche clinique en cours...</span>
+                          </div>
                         ) : patientList.length === 0 ? (
-                          <div className="p-3 text-xs text-gray-500 text-center">
-                            Aucun patient trouvé. Passez à &quot;Nouveau patient&quot; pour le créer.
+                          <div className="p-4 text-xs text-slate-500 text-center space-y-2">
+                            <p>Aucun patient trouvé avec ce critère.</p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setPatientMode('new');
+                                const parts = patientSearch.trim().split(' ');
+                                if (parts.length >= 2) {
+                                  setNewFirstName(parts[0]);
+                                  setNewLastName(parts.slice(1).join(' '));
+                                } else if (parts.length === 1 && !/^[A-Z]{1,2}\d+$/i.test(parts[0])) {
+                                  setNewLastName(parts[0]);
+                                } else if (/^[A-Z]{1,2}\d+$/i.test(parts[0])) {
+                                  setNewCin(parts[0].toUpperCase());
+                                }
+                              }}
+                              className="text-terracotta-700 font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                            >
+                              <span>+ Créer immédiatement &quot;{patientSearch || 'Nouveau Patient'}&quot;</span>
+                            </button>
                           </div>
                         ) : (
                           patientList.map((p) => (
@@ -274,15 +401,26 @@ export function NewAppointmentModal({
                               key={p.id}
                               type="button"
                               onClick={() => setSelectedPatient(p)}
-                              className="w-full text-left p-2.5 hover:bg-gray-50 flex items-center justify-between text-xs transition-colors cursor-pointer"
+                              className="w-full text-left p-3 hover:bg-sand-50/80 flex items-center justify-between text-xs transition-colors cursor-pointer group"
                             >
-                              <div>
-                                <span className="font-semibold text-gray-900">
-                                  {p.first_name} {p.last_name}
-                                </span>
-                                {p.cin && <span className="text-gray-400 ms-1.5">({p.cin})</span>}
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-8 h-8 rounded-lg bg-sand-200/90 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-terracotta-100 group-hover:text-terracotta-800 transition">
+                                  {`${p.first_name[0] || ''}${p.last_name[0] || ''}`.toUpperCase()}
+                                </div>
+                                <div className="truncate">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-slate-900 group-hover:text-terracotta-700 transition">
+                                      {p.first_name} {p.last_name}
+                                    </span>
+                                    {p.cin && (
+                                      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-sand-200/90 text-slate-800">
+                                        {p.cin}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
-                              <span className="text-gray-500">{p.phone || '—'}</span>
+                              <span className="text-slate-500 font-mono text-[11px] shrink-0">{p.phone || '—'}</span>
                             </button>
                           ))
                         )}

@@ -12,9 +12,11 @@ import { DentalOdontogramModal } from '@/components/specialties/dental-odontogra
 import { ObstetricTrackerModal } from '@/components/specialties/obstetric-tracker-modal';
 import { PediatricTrackerModal } from '@/components/pediatric-tracker-modal';
 import { captureMedicalDocument } from '@/lib/native/camera-scanner';
+import { api } from '@/lib/api';
 import {
   getOfflinePatients,
   saveOfflinePatients,
+  addOfflinePatient,
   queueOfflineMutation,
 } from '@/lib/offline/offline-store';
 
@@ -498,11 +500,25 @@ export default function PatientsRegistryPage() {
       labResults: [],
     };
 
+    // Save immediately in local offline registry with normalized fields
+    addOfflinePatient(newPatient);
+
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
       queueOfflineMutation('CREATE_PATIENT', newPatient);
       setToast(`✓ Dossier créé (Mode Hors-ligne 🇲🇦) : ${newPatient.firstName} ${newPatient.lastName} — Synchronisation automatique au retour réseau.`);
     } else {
       setToast(`✓ Dossier créé : ${newPatient.firstName} ${newPatient.lastName} (${newPatient.cin})`);
+      // Sync with backend API
+      api.post('/patients', {
+        first_name: newPatient.firstName,
+        last_name: newPatient.lastName,
+        phone: newPatient.phone || undefined,
+        birth_date: new Date(newPatient.birthDate).toISOString().split('T')[0],
+        gender: newPatient.gender === 'F' ? 'female' : 'male',
+        cin: newPatient.cin ? newPatient.cin.toUpperCase() : undefined,
+      }).catch((err) => {
+        console.warn('Backend API sync deferred', err);
+      });
     }
 
     setPatients((prev) => [newPatient, ...prev]);

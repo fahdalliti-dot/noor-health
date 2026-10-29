@@ -95,10 +95,12 @@ export function NewPatientModal({ open, onOpenChange, onSave }: Props) {
           {/* Nom & Prénom */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">
+              <label htmlFor="new-patient-first-name" className="block font-semibold text-slate-700 mb-1">
                 Prénom <span className="text-red-500">*</span>
               </label>
               <input
+                id="new-patient-first-name"
+                name="firstName"
                 type="text"
                 required
                 placeholder="ex: Yassine"
@@ -108,10 +110,12 @@ export function NewPatientModal({ open, onOpenChange, onSave }: Props) {
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">
+              <label htmlFor="new-patient-last-name" className="block font-semibold text-slate-700 mb-1">
                 Nom de famille <span className="text-red-500">*</span>
               </label>
               <input
+                id="new-patient-last-name"
+                name="lastName"
                 type="text"
                 required
                 placeholder="ex: Mansouri"
@@ -125,10 +129,12 @@ export function NewPatientModal({ open, onOpenChange, onSave }: Props) {
           {/* CIN & Téléphone WhatsApp */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">
+              <label htmlFor="new-patient-cin" className="block font-semibold text-slate-700 mb-1">
                 Numéro CIN Maroc <span className="text-red-500">*</span>
               </label>
               <input
+                id="new-patient-cin"
+                name="cin"
                 type="text"
                 required
                 placeholder="ex: BE492019"
@@ -138,10 +144,12 @@ export function NewPatientModal({ open, onOpenChange, onSave }: Props) {
               />
             </div>
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">
+              <label htmlFor="new-patient-phone" className="block font-semibold text-slate-700 mb-1">
                 Téléphone (WhatsApp) <span className="text-red-500">*</span>
               </label>
               <input
+                id="new-patient-phone"
+                name="phone"
                 type="tel"
                 required
                 placeholder="+212 6..."

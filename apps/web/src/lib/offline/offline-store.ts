@@ -25,6 +25,86 @@ function isBrowser(): boolean {
 }
 
 /**
+ * Normalise un objet patient pour qu'il expose de manière garantie
+ * les clés snake_case et camelCase (first_name, lastName, cin, phone, etc.)
+ */
+export function normalizePatient(p: any): any {
+  if (!p) return null;
+  const firstName = p.first_name || p.firstName || '';
+  const lastName = p.last_name || p.lastName || '';
+  const cin = (p.cin || '').toUpperCase();
+  const phone = p.phone || null;
+  const id = p.id || `p-${Date.now()}`;
+  const gender = p.gender === 'F' ? 'female' : p.gender === 'M' ? 'male' : p.gender || 'unknown';
+
+  return {
+    ...p,
+    id,
+    first_name: firstName,
+    last_name: lastName,
+    firstName,
+    lastName,
+    cin,
+    phone,
+    gender,
+  };
+}
+
+/**
+ * Recherche les patients en cache local par Nom, Prénom, CIN ou Téléphone
+ */
+export function findOfflinePatients(query: string = ''): any[] {
+  const list = getOfflinePatients();
+  const q = query.toLowerCase().trim();
+
+  const normalized = list.map(normalizePatient).filter(Boolean);
+
+  if (!q) return normalized;
+
+  return normalized.filter((p) => {
+    const fn = (p.first_name || '').toLowerCase();
+    const ln = (p.last_name || '').toLowerCase();
+    const full1 = `${fn} ${ln}`;
+    const full2 = `${ln} ${fn}`;
+    const cin = (p.cin || '').toLowerCase();
+    const phone = (p.phone || '').replace(/[\s\-\+]/g, '');
+    const cleanQ = q.replace(/[\s\-\+]/g, '');
+
+    return (
+      fn.includes(q) ||
+      ln.includes(q) ||
+      full1.includes(q) ||
+      full2.includes(q) ||
+      cin.includes(q) ||
+      (cleanQ.length >= 3 && phone.includes(cleanQ))
+    );
+  });
+}
+
+/**
+ * Ajoute ou met à jour un patient dans le cache local
+ */
+export function addOfflinePatient(patient: any): any {
+  if (!isBrowser() || !patient) return patient;
+  const normalized = normalizePatient(patient);
+  const current = getOfflinePatients();
+  const existingIdx = current.findIndex(
+    (p) => (p.id && p.id === normalized.id) || (p.cin && p.cin.toUpperCase() === normalized.cin.toUpperCase())
+  );
+
+  let updated: any[];
+  if (existingIdx >= 0) {
+    updated = [...current];
+    updated[existingIdx] = { ...current[existingIdx], ...normalized };
+  } else {
+    updated = [normalized, ...current];
+  }
+
+  saveOfflinePatients(updated);
+  return normalized;
+}
+
+/**
  * Récupère les patients stockés en cache local
  */
 export function getOfflinePatients(): any[] {
