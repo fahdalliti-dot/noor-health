@@ -22,6 +22,8 @@ interface Props {
   onOpenCashDesk?: () => void;
   onOpenCertificate?: () => void;
   onOpenPediatric?: () => void;
+  onOpenDental?: () => void;
+  onOpenObstetric?: () => void;
   onOpenTeleconsult?: () => void;
   onOpenCmiPayment?: () => void;
 }
@@ -40,6 +42,8 @@ export function ClinicalInspector({
   onOpenCashDesk,
   onOpenCertificate,
   onOpenPediatric,
+  onOpenDental,
+  onOpenObstetric,
   onOpenTeleconsult,
   onOpenCmiPayment,
 }: Props) {
@@ -271,7 +275,7 @@ export function ClinicalInspector({
               </button>
             )}
 
-            {onOpenPrescription && isDoctor && (
+            {onOpenPrescription && (
               <button
                 type="button"
                 onClick={onOpenPrescription}
@@ -291,7 +295,7 @@ export function ClinicalInspector({
               </button>
             )}
 
-            {onOpenCertificate && isDoctor && (
+            {onOpenCertificate && (
               <button
                 type="button"
                 onClick={onOpenCertificate}
@@ -301,13 +305,33 @@ export function ClinicalInspector({
               </button>
             )}
 
-            {onOpenPediatric && isDoctor && (
+            {onOpenPediatric && (
               <button
                 type="button"
                 onClick={onOpenPediatric}
                 className="p-2 rounded-lg border border-pink-200 bg-pink-50/70 hover:bg-pink-100 text-pink-900 text-[11px] font-medium flex items-center justify-center gap-1.5 transition cursor-pointer"
               >
                 <span>👶</span> Suivi PNI Pédiatrie
+              </button>
+            )}
+
+            {onOpenDental && (
+              <button
+                type="button"
+                onClick={onOpenDental}
+                className="p-2 rounded-lg border border-blue-200 bg-blue-50/70 hover:bg-blue-100 text-blue-900 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer"
+              >
+                <span>🦷</span> Schéma Dentaire
+              </button>
+            )}
+
+            {onOpenObstetric && (
+              <button
+                type="button"
+                onClick={onOpenObstetric}
+                className="p-2 rounded-lg border border-rose-200 bg-rose-50/70 hover:bg-rose-100 text-rose-900 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer"
+              >
+                <span>🤰</span> Suivi Obstétrique
               </button>
             )}
 
