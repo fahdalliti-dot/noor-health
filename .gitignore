@@ -53,3 +53,11 @@ __pycache__/
 .agents/
 .windsurf/
 skills-lock.json
+
+# Mobile & Capacitor native build outputs
+apps/web/android/.gradle/
+apps/web/android/app/build/
+apps/web/android/build/
+apps/web/ios/App/Pods/
+apps/web/ios/App/build/
+apps/web/ios/App/DerivedData/

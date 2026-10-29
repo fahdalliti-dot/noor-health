@@ -11,6 +11,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "cap:sync": "cap sync",
+    "cap:build:android": "cap copy android && cap sync android",
+    "cap:build:ios": "cap copy ios && cap sync ios",
     "cap:ios": "cap open ios",
     "cap:android": "cap open android"
   },
