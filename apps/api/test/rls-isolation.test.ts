@@ -103,12 +103,18 @@ describe('Database-level RLS isolation', () => {
 
   afterAll(async () => {
     if (!dbOwner) return;
-    // Cleanup - must delete appointments before patients (FK constraint)
-    await dbOwner.appointment.deleteMany({ where: { clinic_id: { in: [clinicAId, clinicBId] } } });
-    await dbOwner.patientMedicalProfile.deleteMany({ where: { patient: { clinic_id: { in: [clinicAId, clinicBId] } } } });
-    await dbOwner.patient.deleteMany({ where: { clinic_id: { in: [clinicAId, clinicBId] } } });
-    await dbOwner.user.deleteMany({ where: { id: { in: [clinicAUserId, clinicBUserId] } } });
-    await dbOwner.clinic.deleteMany({ where: { id: { in: [clinicAId, clinicBId] } } });
+    const clinicIds = [clinicAId, clinicBId].filter(Boolean);
+    const userIds = [clinicAUserId, clinicBUserId].filter(Boolean);
+
+    if (clinicIds.length > 0) {
+      await dbOwner.appointment.deleteMany({ where: { clinic_id: { in: clinicIds } } });
+      await dbOwner.patientMedicalProfile.deleteMany({ where: { patient: { clinic_id: { in: clinicIds } } } });
+      await dbOwner.patient.deleteMany({ where: { clinic_id: { in: clinicIds } } });
+      if (userIds.length > 0) {
+        await dbOwner.user.deleteMany({ where: { id: { in: userIds } } });
+      }
+      await dbOwner.clinic.deleteMany({ where: { id: { in: clinicIds } } });
+    }
     await dbOwner.$disconnect();
     await dbApp?.$disconnect();
   });

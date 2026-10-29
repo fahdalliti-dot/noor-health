@@ -213,7 +213,10 @@ describe('E2E - Patient RLS Isolation', () => {
 
   beforeEach(async () => {
     // Clean up any sessions from previous tests that might cause FK violations
-    await prismaOwner.session.deleteMany({ where: { clinic_id: { in: [clinicAId, clinicBId] } } });
+    const ids = [clinicAId, clinicBId].filter(Boolean);
+    if (ids.length > 0) {
+      await prismaOwner.session.deleteMany({ where: { clinic_id: { in: ids } } });
+    }
   });
 
   async function loginAndGetToken(email: string, password: string = 'TestPass123!'): Promise<string> {
