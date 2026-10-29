@@ -7,13 +7,14 @@ import { useAuth } from '@/lib/auth';
 interface NavItem {
   href: string;
   label: string;
+  icon: string;
   exact?: boolean;
 }
 
 const NAV: NavItem[] = [
-  { href: '/agenda', label: 'Agenda', exact: true },
-  { href: '/agenda/working-hours', label: 'Horaires' },
-  { href: '/agenda/time-off', label: 'Absences' },
+  { href: '/agenda', label: 'Agenda', icon: '📅', exact: true },
+  { href: '/agenda/working-hours', label: 'Horaires', icon: '🕒' },
+  { href: '/agenda/time-off', label: 'Absences', icon: '🏖️' },
 ];
 
 const DEFAULT_DEMO_USER = {
@@ -55,16 +56,30 @@ export default function AgendaLayout({
 
       <div className="max-w-[1400px] mx-auto px-4 py-6">
         {isAgendaSection ? (
-          <div className="flex gap-6">
-            <aside className="hidden lg:block w-56 shrink-0">
-              <nav className="space-y-1">
-                {NAV.map((item) => (
-                  <AgendaNavLink key={item.href} item={item} pathname={pathname} />
-                ))}
-              </nav>
-            </aside>
+          <div>
+            {/* Mobile & Tablet Horizontal Tab Switcher */}
+            <div className="lg:hidden flex items-center gap-2 mb-4 p-1.5 bg-white border border-gray-200 rounded-2xl shadow-xs overflow-x-auto">
+              {NAV.map((item) => (
+                <AgendaNavPill key={item.href} item={item} pathname={pathname} />
+              ))}
+            </div>
 
-            <main className="flex-1 min-w-0">{children}</main>
+            <div className="flex gap-6">
+              <aside className="hidden lg:block w-56 shrink-0">
+                <div className="bg-white rounded-2xl border border-gray-200 p-3 shadow-xs sticky top-20">
+                  <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-1.5">
+                    Module Agenda
+                  </div>
+                  <nav className="space-y-1">
+                    {NAV.map((item) => (
+                      <AgendaNavLink key={item.href} item={item} pathname={pathname} />
+                    ))}
+                  </nav>
+                </div>
+              </aside>
+
+              <main className="flex-1 min-w-0">{children}</main>
+            </div>
           </div>
         ) : (
           <main className="w-full">{children}</main>
@@ -88,13 +103,40 @@ function AgendaNavLink({
   return (
     <Link
       href={item.href}
-      className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
         active
-          ? 'bg-terracotta-50 text-terracotta-700'
+          ? 'bg-terracotta-50 text-terracotta-700 shadow-2xs border border-terracotta-200/60'
           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
       }`}
     >
-      {item.label}
+      <span className="text-base">{item.icon}</span>
+      <span>{item.label}</span>
+    </Link>
+  );
+}
+
+function AgendaNavPill({
+  item,
+  pathname,
+}: {
+  item: (typeof NAV)[number];
+  pathname: string | null;
+}) {
+  const active = item.exact
+    ? pathname === item.href
+    : pathname?.startsWith(item.href) ?? false;
+
+  return (
+    <Link
+      href={item.href}
+      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${
+        active
+          ? 'bg-terracotta-600 text-white shadow-xs'
+          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+      }`}
+    >
+      <span>{item.icon}</span>
+      <span>{item.label}</span>
     </Link>
   );
 }

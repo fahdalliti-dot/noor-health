@@ -77,6 +77,48 @@ test.describe('Clinical Cockpit & DMP Inspector', () => {
     await page.locator('button:has-text("✕")').first().click();
   });
 
+  test('should navigate between Agenda, Horaires (working hours), and Absences (time-off) tabs without errors', async ({ page }) => {
+    await page.goto('/agenda');
+
+    // 1. Verify Horaires tab is present and clickable
+    const horairesLink = page.locator('a[href="/agenda/working-hours"]:visible');
+    await expect(horairesLink).toBeVisible();
+    await horairesLink.click();
+
+    // Verify Horaires page loaded successfully (no 404!)
+    await expect(page).toHaveURL(/\/agenda\/working-hours/);
+    await expect(page.locator('h1')).toContainText(/Horaires de Consultation du Cabinet/i);
+    await expect(page.locator('text=Grille Hebdomadaire des Consultations')).toBeVisible();
+    await expect(page.getByText('Joumouaa', { exact: true })).toBeVisible();
+    await expect(page.locator('button:has-text("Enregistrer les Horaires")')).toBeVisible();
+
+    // Test switching preset
+    const ramadanPresetBtn = page.locator('button:has-text("Ramadan")');
+    await expect(ramadanPresetBtn).toBeVisible();
+    await ramadanPresetBtn.click();
+    await expect(page.locator('text=Horaires de Ramadan appliqués')).toBeVisible();
+
+    // 2. Click Absences tab
+    const absencesLink = page.locator('a[href="/agenda/time-off"]:visible');
+    await expect(absencesLink).toBeVisible();
+    await absencesLink.click();
+
+    // Verify Absences page loaded successfully (no 404!)
+    await expect(page).toHaveURL(/\/agenda\/time-off/);
+    await expect(page.locator('h1')).toContainText(/Absences & Congés Médicaux/i);
+    await expect(page.locator('text=Jours Fériés Nationaux & Religieux au Maroc')).toBeVisible();
+    await expect(page.locator('text=Aïd Al-Fitr')).toBeVisible();
+    await expect(page.locator('button:has-text("+ Déclarer une Absence")')).toBeVisible();
+
+    // 3. Return back to Agenda tab
+    const agendaLink = page.locator('aside a[href="/agenda"], nav a[href="/agenda"]:visible').first();
+    await expect(agendaLink).toBeVisible();
+    await agendaLink.click();
+
+    await expect(page).toHaveURL(/\/agenda$/);
+    await expect(page.locator('button:has-text("Stocks")')).toBeVisible();
+  });
+
   test('should display team and privilege management page', async ({ page }) => {
     await page.goto('/team');
 

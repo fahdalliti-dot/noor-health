@@ -142,6 +142,21 @@ export class DoctorsController {
   // Time Off
   // =====================
 
+  @Get(':id/time-off')
+  @Roles('admin', 'doctor', 'secretary')
+  @ResponseFormat()
+  async listTimeOff(
+    @Param('id') doctorId: string,
+    @GetUser() user: any,
+  ) {
+    const data = await this.doctorsService.listTimeOff(doctorId, user.clinic_id);
+
+    return {
+      status: HttpStatus.OK,
+      data: { time_off: data },
+    };
+  }
+
   @Post(':id/time-off')
   @Roles('admin', 'doctor')
   @ResponseFormat()

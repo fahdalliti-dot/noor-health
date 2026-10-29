@@ -241,6 +241,13 @@ export class DoctorsService {
     return to;
   }
 
+  async listTimeOff(doctorId: string, clinicId: string): Promise<any[]> {
+    return this.prisma.doctorTimeOff.findMany({
+      where: { clinic_id: clinicId, doctor_id: doctorId },
+      orderBy: { start_at: 'asc' },
+    });
+  }
+
   async deleteTimeOff(
     toId: string,
     clinicId: string,
