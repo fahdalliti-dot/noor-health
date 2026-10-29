@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Button from '@/components/ui/button';
 import { NewPatientModal, type NewPatientFormData } from '@/components/new-patient-modal';
@@ -12,6 +12,11 @@ import { DentalOdontogramModal } from '@/components/specialties/dental-odontogra
 import { ObstetricTrackerModal } from '@/components/specialties/obstetric-tracker-modal';
 import { PediatricTrackerModal } from '@/components/pediatric-tracker-modal';
 import { captureMedicalDocument } from '@/lib/native/camera-scanner';
+import {
+  getOfflinePatients,
+  saveOfflinePatients,
+  queueOfflineMutation,
+} from '@/lib/offline/offline-store';
 
 export interface Patient360 {
   id: string;
@@ -352,8 +357,21 @@ const INITIAL_PATIENTS: Patient360[] = [
 ];
 
 export default function PatientsRegistryPage() {
-  const [patients, setPatients] = useState<Patient360[]>(INITIAL_PATIENTS);
-  const [selectedPatientId, setSelectedPatientId] = useState<string>(INITIAL_PATIENTS[0].id);
+  const [patients, setPatients] = useState<Patient360[]>(() => {
+    const cached = getOfflinePatients();
+    if (cached && cached.length > 0) return cached;
+    return INITIAL_PATIENTS;
+  });
+  const [selectedPatientId, setSelectedPatientId] = useState<string>(() => {
+    const cached = getOfflinePatients();
+    if (cached && cached.length > 0) return cached[0].id;
+    return INITIAL_PATIENTS[0].id;
+  });
+
+  // Sync to local cache whenever patients change
+  useEffect(() => {
+    saveOfflinePatients(patients);
+  }, [patients]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<'all' | 'cardio' | 'diabete' | 'obstetrique' | 'pediatrie'>('all');
   const [activeTab, setActiveTab] = useState<'consultations' | 'prescriptions' | 'labs' | 'identity'>('consultations');
@@ -480,10 +498,16 @@ export default function PatientsRegistryPage() {
       labResults: [],
     };
 
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      queueOfflineMutation('CREATE_PATIENT', newPatient);
+      setToast(`✓ Dossier créé (Mode Hors-ligne 🇲🇦) : ${newPatient.firstName} ${newPatient.lastName} — Synchronisation automatique au retour réseau.`);
+    } else {
+      setToast(`✓ Dossier créé : ${newPatient.firstName} ${newPatient.lastName} (${newPatient.cin})`);
+    }
+
     setPatients((prev) => [newPatient, ...prev]);
     setSelectedPatientId(newPatient.id);
-    setToast(`✓ Dossier créé : ${newPatient.firstName} ${newPatient.lastName} (${newPatient.cin})`);
-    setTimeout(() => setToast(null), 3500);
+    setTimeout(() => setToast(null), 4000);
   }
 
   async function handleScanDocument() {

@@ -23,6 +23,11 @@ import { CmiPaymentModal } from '@/components/cmi-payment-modal';
 import { InventoryManagerModal } from '@/components/inventory-manager-modal';
 import { PublicBookingLinkModal } from '@/components/public-booking-link-modal';
 import Button from '@/components/ui/button';
+import {
+  getOfflineAppointments,
+  saveOfflineAppointments,
+  queueOfflineMutation,
+} from '@/lib/offline/offline-store';
 
 const TZ = 'Africa/Casablanca';
 
@@ -181,9 +186,11 @@ export default function AgendaPage() {
 
   const [view, setView] = useState<'day' | 'week'>('day');
   const [cursor, setCursor] = useState(new Date());
-  const [appointments, setAppointments] = useState<Appointment[]>(() =>
-    createDemoAppointments(new Date(), DEFAULT_DEMO_USER),
-  );
+  const [appointments, setAppointments] = useState<Appointment[]>(() => {
+    const cached = getOfflineAppointments();
+    if (cached && cached.length > 0) return cached;
+    return createDemoAppointments(new Date(), DEFAULT_DEMO_USER);
+  });
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<any>(null);
@@ -228,15 +235,13 @@ export default function AgendaPage() {
           list = [];
         }
       }
-      if (list && list.length > 0) {
-        setAppointments(list);
-      } else {
-        setAppointments(createDemoAppointments(cursor, activeUser));
-      }
+      const resolvedList = list && list.length > 0 ? list : createDemoAppointments(cursor, activeUser);
+      setAppointments(resolvedList);
+      saveOfflineAppointments(resolvedList);
+
       // Keep inspector sync if an appointment was selected
       if (selectedAppt) {
-        const currentList = list && list.length > 0 ? list : createDemoAppointments(cursor, activeUser);
-        const refreshed = currentList.find((a) => a.id === selectedAppt.id);
+        const refreshed = resolvedList.find((a) => a.id === selectedAppt.id);
         if (refreshed) setSelectedAppt(refreshed);
       }
     } finally {
@@ -287,6 +292,35 @@ export default function AgendaPage() {
 
   async function handleStatusChange(newStatus: string, reason?: string | null) {
     if (!selectedAppt) return;
+    const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+
+    if (isOffline) {
+      queueOfflineMutation('UPDATE_APPOINTMENT_STATUS', {
+        id: selectedAppt.id,
+        status: newStatus,
+        cancel_reason: reason,
+      });
+
+      const updated = appointments.map((a) =>
+        a.id === selectedAppt.id
+          ? {
+              ...a,
+              status: newStatus,
+              cancel_reason: reason || a.cancel_reason,
+              cancelled_at: newStatus === 'cancelled' ? new Date().toISOString() : a.cancelled_at,
+            }
+          : a
+      );
+      setAppointments(updated);
+      saveOfflineAppointments(updated);
+      const target = updated.find((a) => a.id === selectedAppt.id);
+      if (target) setSelectedAppt(target);
+
+      setToast(`Statut mis à jour (Hors-ligne 🇲🇦) : ${newStatus}`);
+      setTimeout(() => setToast(null), 3000);
+      return;
+    }
+
     try {
       await changeStatus(selectedAppt.id, { status: newStatus, cancel_reason: reason });
       await load();

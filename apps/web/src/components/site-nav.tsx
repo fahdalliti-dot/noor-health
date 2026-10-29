@@ -6,6 +6,8 @@ import Button from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/i18n-provider';
 import { NuraMark } from '@/components/nura-mark';
 import { useAuth, type AuthContextType } from '@/lib/auth';
+import { NotificationCenter } from '@/components/notifications/notification-center';
+import { OnlineStatusPill } from '@/components/offline/offline-banner';
 
 export interface SiteNavProps {
   user?: AuthContextType['user'];
@@ -90,6 +92,8 @@ export function SiteNav({ user, onLogout, extra }: SiteNavProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          <OnlineStatusPill />
+          <NotificationCenter />
           <LanguageSwitcher />
           {activeUser ? (
             <>

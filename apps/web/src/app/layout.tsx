@@ -5,6 +5,8 @@ import { NoorMark } from '@/components/nura-mark';
 import { SiteNav } from '@/components/site-nav';
 import { MobileBottomNav } from '@/components/mobile-bottom-nav';
 import { PwaInstallPrompt } from '@/components/pwa-install-prompt';
+import { PwaServiceWorkerRegister } from '@/components/pwa-sw-register';
+import { OfflineBanner } from '@/components/offline/offline-banner';
 import { routing } from '@/i18n/routing';
 import { displayFont, sansFont } from '@/lib/fonts';
 import type { Metadata, Viewport } from 'next';
@@ -46,7 +48,9 @@ export default function RootLayout({
       <body className={`${sansFont.variable} ${displayFont.variable} font-sans antialiased bg-gray-50 text-gray-900 pb-16 md:pb-0`}>
         <I18nProvider>
           <AuthProvider>
+            <PwaServiceWorkerRegister />
             <SiteNav />
+            <OfflineBanner />
             <PwaInstallPrompt />
             <div className="min-h-[calc(100vh-140px)]">
               {children}
