@@ -40,12 +40,15 @@ export function PublicBookingLinkModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in font-sans">
-      <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 space-y-5 shadow-2xl">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in font-sans">
+      <div
+        className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 space-y-5 shadow-2xl relative z-10"
+        style={{ backgroundColor: '#ffffff' }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl bg-terracotta-100 text-terracotta-700 flex items-center justify-center text-xl font-bold">
+            <span className="w-10 h-10 rounded-xl bg-terracotta-100 text-terracotta-700 flex items-center justify-center text-xl font-bold shadow-xs">
               🌐
             </span>
             <div>
@@ -53,14 +56,14 @@ export function PublicBookingLinkModal({
                 Lien de Prise de Rendez-Vous Public
               </h2>
               <p className="text-xs text-slate-500">
-                Page blanche patient personnalisée pour le cabinet
+                Portail patient sécurisé avec confirmation WhatsApp & SMS
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="text-slate-400 hover:text-slate-600 p-1 text-sm rounded cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 p-1.5 text-base rounded-lg hover:bg-slate-100 transition cursor-pointer"
           >
             ✕
           </button>

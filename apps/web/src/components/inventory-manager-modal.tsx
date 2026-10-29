@@ -95,19 +95,22 @@ export function InventoryManagerModal({
   });
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in font-sans">
-      <div className="bg-white rounded-2xl border border-slate-200 max-w-4xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in font-sans">
+      <div
+        className="bg-white rounded-2xl border border-slate-200 max-w-4xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto relative z-10"
+        style={{ backgroundColor: '#ffffff' }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <span className="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold">
+            <span className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl font-bold shadow-xs">
               📦
             </span>
             <div>
-              <h3 className="font-bold text-xs text-slate-900">
+              <h3 className="font-bold text-sm text-slate-900">
                 Gestion des Stocks & Consommables Médicaux
               </h3>
-              <p className="text-[11px] text-slate-500 font-mono">
+              <p className="text-xs text-slate-500 font-mono">
                 {clinicName} • Réapprovisionnement & alertes de seuil
               </p>
             </div>
@@ -115,7 +118,7 @@ export function InventoryManagerModal({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="text-slate-400 hover:text-slate-600 p-1 text-sm rounded cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 p-1.5 text-base rounded-lg hover:bg-slate-100 transition cursor-pointer"
           >
             ✕
           </button>
@@ -264,8 +267,8 @@ export function InventoryManagerModal({
         )}
 
         {/* Stock Ledger Table */}
-        <div className="border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-left text-xs">
+        <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs">
+          <table className="w-full text-left text-xs bg-white">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold">
               <tr>
                 <th className="p-3">Désignation du Consommable</th>

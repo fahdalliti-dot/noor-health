@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { SiteNav } from '@/components/site-nav';
 
 interface NavItem {
   href: string;
@@ -30,27 +29,13 @@ export default function AgendaLayout({
   children,
 }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const activeUser = user || DEFAULT_DEMO_USER;
   const isAgendaSection = pathname.startsWith('/agenda');
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SiteNav
-        user={activeUser}
-        onLogout={logout}
-        extra={
-          isAgendaSection ? (
-            <nav className="hidden md:flex items-center gap-1">
-              {NAV.map((item) => (
-                <AgendaNavLink key={item.href} item={item} pathname={pathname} />
-              ))}
-            </nav>
-          ) : undefined
-        }
-      />
-
       {!user && (
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200/80 px-4 py-2 text-xs text-amber-900 flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-2">

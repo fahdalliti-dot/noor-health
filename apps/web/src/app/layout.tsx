@@ -21,15 +21,15 @@ export default function RootLayout({
 }: { children: React.ReactNode }) {
   return (
     <html lang={routing.defaultLocale} dir="ltr" suppressHydrationWarning>
-      <body className={`${sansFont.variable} ${displayFont.variable} font-sans antialiased`}>
+      <body className={`${sansFont.variable} ${displayFont.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
         <I18nProvider>
           <AuthProvider>
             <SiteNav />
-            <main className="min-h-[calc(100vh-140px)] px-4 py-8 max-w-[1400px] mx-auto">
+            <div className="min-h-[calc(100vh-140px)]">
               {children}
-            </main>
+            </div>
 
-            <footer className="border-t border-gray-200 py-6 text-center text-xs text-gray-500">
+            <footer className="border-t border-gray-200 py-6 text-center text-xs text-gray-500 bg-white">
               <p>SaaS pour médecins au Maroc • Protection des données de santé conforme CNDP (Loi 09-08)</p>
             </footer>
           </AuthProvider>

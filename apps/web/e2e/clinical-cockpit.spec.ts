@@ -16,9 +16,65 @@ test.describe('Clinical Cockpit & DMP Inspector', () => {
     // Page body should contain Moroccan regulatory and clinical tags
     await expect(page.locator('body')).toContainText(/Agenda|Cabinet|Consultation/i);
 
-    // Verify presence of navigation elements
-    const nav = page.locator('nav').first();
-    await expect(nav).toBeVisible();
+    // Verify presence of navigation elements - exactly ONE top branding nav
+    const brandLinks = page.locator('a[aria-label="Noor — accueil"]');
+    await expect(brandLinks).toHaveCount(1);
+    await expect(brandLinks).toBeVisible();
+  });
+
+  test('should display Stocks, Public Booking Link, and Cash Desk modals with opaque solid backgrounds', async ({ page }) => {
+    await page.goto('/agenda');
+
+    // 1. Test Stocks (Inventory) Modal
+    const stockBtn = page.locator('button:has-text("Stocks")');
+    await expect(stockBtn).toBeVisible();
+    await stockBtn.click();
+
+    const stockModal = page.locator('text=Gestion des Stocks & Consommables Médicaux');
+    await expect(stockModal).toBeVisible();
+
+    // Verify modal panel container has opaque white background (not transparent)
+    const stockPanel = page.locator('div[style*="background-color: rgb(255, 255, 255)"]').first();
+    await expect(stockPanel).toBeVisible();
+    const stockBgColor = await stockPanel.evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    expect(stockBgColor).toBe('rgb(255, 255, 255)');
+
+    // Close modal
+    await page.keyboard.press('Escape');
+    const closeBtn = page.locator('button:has-text("✕")').first();
+    if (await closeBtn.isVisible()) {
+      await closeBtn.click();
+    }
+
+    // 2. Test Public Booking Link Modal
+    const bookingLinkBtn = page.locator('button:has-text("Lien RDV Public")');
+    await expect(bookingLinkBtn).toBeVisible();
+    await bookingLinkBtn.click();
+
+    const bookingModal = page.locator('text=Lien de Prise de Rendez-Vous Public');
+    await expect(bookingModal).toBeVisible();
+    await expect(page.locator('text=Portail patient sécurisé')).toBeVisible();
+
+    const bookingPanel = page.locator('div[style*="background-color: rgb(255, 255, 255)"]').first();
+    const bookingBgColor = await bookingPanel.evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    expect(bookingBgColor).toBe('rgb(255, 255, 255)');
+
+    await page.locator('button:has-text("✕")').first().click();
+
+    // 3. Test Cash Desk (Caisse du Jour) Modal
+    const cashBtn = page.locator('button:has-text("Caisse du Jour")');
+    await expect(cashBtn).toBeVisible();
+    await cashBtn.click();
+
+    const cashModal = page.locator('text=Caisse & Règlements Journaliers');
+    await expect(cashModal).toBeVisible();
+    await expect(page.locator('text=Total Encaissé')).toBeVisible();
+
+    const cashPanel = page.locator('div[style*="background-color: rgb(255, 255, 255)"]').first();
+    const cashBgColor = await cashPanel.evaluate((el) => window.getComputedStyle(el).backgroundColor);
+    expect(cashBgColor).toBe('rgb(255, 255, 255)');
+
+    await page.locator('button:has-text("✕")').first().click();
   });
 
   test('should display team and privilege management page', async ({ page }) => {

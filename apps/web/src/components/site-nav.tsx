@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Button from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/i18n-provider';
 import { NuraMark } from '@/components/nura-mark';
-import type { AuthContextType } from '@/lib/auth';
+import { useAuth, type AuthContextType } from '@/lib/auth';
 
 export interface SiteNavProps {
   user?: AuthContextType['user'];
@@ -22,21 +22,38 @@ const PRIMARY_LINKS = [
   { href: '/team', label: 'Équipe' },
 ];
 
+const DEFAULT_DEMO_USER = {
+  id: 'doc-benali-casablanca',
+  clinic_id: 'clinic-a',
+  role: 'doctor',
+  is_clinic_admin: true,
+  full_name: 'Dr. Amine Benali',
+  email: 'doctor@clinic-a.test',
+};
+
 /**
  * Single source of truth for the top navigation.
  *
- * Both the public root layout and the authenticated agenda layout render
- * this — so the brand mark, wordmark and link styling can never drift apart.
+ * Rendered once in the root layout for all authenticated pages.
  */
 export function SiteNav({ user, onLogout, extra }: SiteNavProps) {
   const pathname = usePathname();
+  const auth = useAuth();
+
+  // Hide the internal doctor navigation on the public booking portal
+  if (pathname?.startsWith('/book/')) {
+    return null;
+  }
+
+  const activeUser = user || auth?.user || DEFAULT_DEMO_USER;
+  const handleLogout = onLogout || auth?.logout;
 
   return (
-    <nav className="border-b border-gray-200 bg-white shadow-xs">
+    <nav className="border-b border-gray-200 bg-white shadow-xs sticky top-0 z-40">
       <div className="max-w-[1400px] mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-6">
           <Link
-            href="/"
+            href="/agenda"
             className="flex items-center gap-2.5 text-charcoal hover:text-terracotta-700 transition-colors"
             aria-label="Noor — accueil"
           >
@@ -53,7 +70,7 @@ export function SiteNav({ user, onLogout, extra }: SiteNavProps) {
 
           <div className="hidden md:flex items-center gap-6">
             {PRIMARY_LINKS.map((item) => {
-              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+              const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
               return (
                 <Link
                   key={item.href}
@@ -74,20 +91,23 @@ export function SiteNav({ user, onLogout, extra }: SiteNavProps) {
 
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
-          {user ? (
+          {activeUser ? (
             <>
-              <span className="text-sm text-gray-600 hidden sm:inline">
-                {user.full_name || user.email}
-                <span className="text-gray-400"> · </span>
-                <span className="text-gray-500 font-medium">
-                  {user.role === 'doctor' ? 'Médecin' : 'Secrétaire'}
+              <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-sand-100 border border-sand-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-xs font-semibold text-charcoal">
+                  {activeUser.full_name || activeUser.email}
                 </span>
-              </span>
-              {onLogout && (
+                <span className="text-[10px] text-terracotta-700 font-bold uppercase tracking-wider bg-terracotta-100/70 px-1.5 py-0.5 rounded">
+                  {activeUser.role === 'doctor' ? 'Médecin' : 'Secrétaire'}
+                </span>
+              </div>
+              {handleLogout && (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={onLogout}
+                  onClick={handleLogout}
+                  className="text-xs hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition"
                 >
                   Déconnexion
                 </Button>
