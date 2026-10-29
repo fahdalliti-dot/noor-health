@@ -182,10 +182,10 @@ export function CashDeskModal({
 
           {/* Checks / Chèques */}
           <div className="bg-terracotta-50/50 border border-terracotta-200 rounded-xl p-3">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-800 block">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-terracotta-800 block">
               Chèques
             </span>
-            <div className="text-base font-bold text-blue-900 font-mono mt-0.5 tabular-nums">
+            <div className="text-base font-bold text-terracotta-900 font-mono mt-0.5 tabular-nums">
               {totalCheck.toLocaleString('fr-FR')} <span className="text-xs font-normal">DH</span>
             </div>
             <span className="text-[10px] text-terracotta-700">À déposer en banque</span>

@@ -36,6 +36,14 @@ export function InventoryManagerModal({
 }: Props) {
   const [items, setItems] = useState<ConsumableItem[]>(INITIAL_INVENTORY);
   const [filter, setFilter] = useState<'all' | 'low'>('all');
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemQty, setNewItemQty] = useState(10);
+  const [newItemUnit, setNewItemUnit] = useState('boîtes');
+  const [newItemMin, setNewItemMin] = useState(5);
+  const [newItemCategory, setNewItemCategory] = useState<'cardiologie' | 'general' | 'injection' | 'hygiene'>('general');
+  const [newItemSupplier, setNewItemSupplier] = useState('');
 
   if (!open) return null;
 
@@ -49,6 +57,34 @@ export function InventoryManagerModal({
         return item;
       }),
     );
+  }
+
+  function handleAddItem(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newItemName.trim()) return;
+
+    const newItem: ConsumableItem = {
+      id: `item-${Date.now()}`,
+      name: newItemName.trim(),
+      category: newItemCategory,
+      quantity: Number(newItemQty) || 0,
+      unit: newItemUnit.trim() || 'unités',
+      minThreshold: Number(newItemMin) || 0,
+      supplier: newItemSupplier.trim() || 'Fournisseur Médical Maroc',
+      lastRestocked: new Date().toLocaleDateString('fr-FR'),
+    };
+
+    setItems((prev) => [newItem, ...prev]);
+    setNewItemName('');
+    setNewItemSupplier('');
+    setShowAddForm(false);
+    setFeedback(`✓ Nouvel article "${newItem.name}" ajouté avec succès au stock.`);
+    setTimeout(() => setFeedback(null), 3500);
+  }
+
+  function handleGeneratePO() {
+    setFeedback('✓ Bon de commande fournisseur généré et téléchargé (Format standardisé Maroc).');
+    setTimeout(() => setFeedback(null), 3500);
   }
 
   const lowStockCount = items.filter((i) => i.quantity <= i.minThreshold).length;
@@ -85,7 +121,21 @@ export function InventoryManagerModal({
           </button>
         </div>
 
-        {/* Filter bar & alerts */}
+        {/* Feedback Alert */}
+        {feedback && (
+          <div className="p-2.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-medium flex items-center justify-between">
+            <span>{feedback}</span>
+            <button
+              type="button"
+              onClick={() => setFeedback(null)}
+              className="text-emerald-700 hover:text-emerald-900 font-bold ml-2"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* Filter bar & actions */}
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100">
             <button
@@ -107,14 +157,111 @@ export function InventoryManagerModal({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => alert('Bon de commande fournisseur généré et pré-rempli pour les stocks bas.')}
-            className="px-3 py-1.5 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>📝</span> Générer Bon de Commande Fournisseur
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowAddForm((v) => !v)}
+              className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              <span>+</span> {showAddForm ? 'Fermer le formulaire' : 'Nouvel Article'}
+            </button>
+            <button
+              type="button"
+              onClick={handleGeneratePO}
+              className="px-3 py-1.5 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              <span>📝</span> Bon de Commande Fournisseur
+            </button>
+          </div>
         </div>
+
+        {/* Expandable Add Article Form */}
+        {showAddForm && (
+          <form onSubmit={handleAddItem} className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 text-xs animate-fade-in">
+            <div className="font-bold text-slate-900">Enregistrer un nouveau consommable médical</div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Désignation de l&apos;article *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="ex: Compresses stériles 10x10"
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                  className="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Catégorie</label>
+                <select
+                  value={newItemCategory}
+                  onChange={(e) => setNewItemCategory(e.target.value as any)}
+                  className="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
+                >
+                  <option value="general">Général & Diagnostic</option>
+                  <option value="cardiologie">Cardiologie & Vasculaire</option>
+                  <option value="injection">Injections & Perfusions</option>
+                  <option value="hygiene">Hygiène & Stérilisation</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Fournisseur</label>
+                <input
+                  type="text"
+                  placeholder="ex: Maroc Médical Distribution"
+                  value={newItemSupplier}
+                  onChange={(e) => setNewItemSupplier(e.target.value)}
+                  className="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Quantité initiale</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={newItemQty}
+                  onChange={(e) => setNewItemQty(Number(e.target.value))}
+                  className="w-full bg-white border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Unité (ex: flacons, boîtes)</label>
+                <input
+                  type="text"
+                  value={newItemUnit}
+                  onChange={(e) => setNewItemUnit(e.target.value)}
+                  className="w-full bg-white border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-600 font-medium mb-1">Seuil d&apos;alerte min.</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={newItemMin}
+                  onChange={(e) => setNewItemMin(Number(e.target.value))}
+                  className="w-full bg-white border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setShowAddForm(false)}
+                className="px-3 py-1.5 text-slate-600 hover:text-slate-800"
+              >
+                Annuler
+              </button>
+              <Button type="submit" size="sm" className="bg-terracotta-600 hover:bg-terracotta-700 text-white">
+                Ajouter au stock
+              </Button>
+            </div>
+          </form>
+        )}
 
         {/* Stock Ledger Table */}
         <div className="border border-slate-200 rounded-xl overflow-hidden">

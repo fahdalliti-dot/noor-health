@@ -21,6 +21,7 @@ import { ObstetricTrackerModal } from '@/components/specialties/obstetric-tracke
 import { TeleconsultRoomModal } from '@/components/teleconsult-room-modal';
 import { CmiPaymentModal } from '@/components/cmi-payment-modal';
 import { InventoryManagerModal } from '@/components/inventory-manager-modal';
+import { PublicBookingLinkModal } from '@/components/public-booking-link-modal';
 import Button from '@/components/ui/button';
 
 const TZ = 'Africa/Casablanca';
@@ -204,6 +205,7 @@ export default function AgendaPage() {
   const [teleconsultOpen, setTeleconsultOpen] = useState(false);
   const [cmiPaymentOpen, setCmiPaymentOpen] = useState(false);
   const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [bookingLinkOpen, setBookingLinkOpen] = useState(false);
 
   const isDoctor = activeUser.role === 'doctor';
   const isSecretary = activeUser.role === 'secretary';
@@ -389,34 +391,41 @@ export default function AgendaPage() {
             </Button>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setInventoryOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold cursor-pointer border border-slate-200 transition"
-              title="Consommables et stocks du cabinet"
-            >
-              <span>📦</span>
-              <span>Stocks</span>
-            </button>
-            <a
-              href="/book/dr-amine-benali"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-600 rounded-lg text-xs font-semibold border border-terracotta-200 transition"
-              title="Tester la page publique de prise de rendez-vous en ligne"
-            >
-              <span>🌐</span>
-              <span>Lien RDV Public</span>
-            </a>
-            <button
-              type="button"
-              onClick={() => setCashDeskOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition"
-            >
-              <span>💰</span>
-              <span>Caisse du Jour</span>
-            </button>
+          {/* Right: Quick Clinical Desk Tools & View Controls */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Quick Desk Action Pills */}
+            <div className="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-lg border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setInventoryOpen(true)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 rounded-md text-xs font-semibold cursor-pointer border border-slate-200 shadow-2xs hover:text-slate-900 transition"
+                title="Consommables et stocks du cabinet"
+              >
+                <span>📦</span>
+                <span>Stocks</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setBookingLinkOpen(true)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-700 rounded-md text-xs font-semibold border border-terracotta-200 shadow-2xs transition cursor-pointer"
+                title="Lien public et QR Code de prise de rendez-vous en ligne"
+              >
+                <span>🌐</span>
+                <span>Lien RDV Public</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCashDeskOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-xs font-semibold cursor-pointer shadow-xs transition"
+                title="Journal des règlements et clôture de caisse du jour"
+              >
+                <span>💰</span>
+                <span>Caisse du Jour</span>
+              </button>
+            </div>
+
             <div className="relative inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100 text-xs font-medium">
               <button
                 type="button"
@@ -564,6 +573,7 @@ export default function AgendaPage() {
         open={cashDeskOpen}
         onOpenChange={setCashDeskOpen}
         timezone={TZ}
+        clinicName={`Cabinet ${activeUser.full_name}`}
       />
 
       {/* Phase 3: Digital Prescription Pad Modal */}
@@ -630,6 +640,15 @@ export default function AgendaPage() {
       <InventoryManagerModal
         open={inventoryOpen}
         onOpenChange={setInventoryOpen}
+        clinicName={`Cabinet ${activeUser.full_name}`}
+      />
+
+      {/* Wave 4: Public Booking Link & Share Modal */}
+      <PublicBookingLinkModal
+        open={bookingLinkOpen}
+        onOpenChange={setBookingLinkOpen}
+        doctorName={activeUser.full_name}
+        doctorSlug="dr-amine-benali"
       />
 
       {/* Toast Alert */}

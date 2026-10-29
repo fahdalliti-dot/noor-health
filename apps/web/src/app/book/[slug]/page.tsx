@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Button from '@/components/ui/button';
+import { NuraMark } from '@/components/nura-mark';
 
 interface TimeSlot {
   time: string;
@@ -55,8 +57,40 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 font-sans">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <div className="min-h-screen bg-slate-50 font-sans">
+      {/* Top Noor Brand Bar & Return Link */}
+      <header className="border-b border-slate-200 bg-white shadow-2xs">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 text-charcoal hover:text-terracotta-700 transition-colors"
+          >
+            <NuraMark size={26} />
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-display text-xl font-semibold leading-none tracking-tight text-charcoal">
+                Noor
+              </span>
+              <span className="font-serif text-xs font-bold text-terracotta-600 opacity-90">
+                نُور
+              </span>
+            </div>
+          </Link>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-500 hidden sm:inline">
+              Portail Patient Sécurisé
+            </span>
+            <Link
+              href="/agenda"
+              className="text-xs font-semibold text-terracotta-700 hover:text-terracotta-800 bg-terracotta-50 hover:bg-terracotta-100 border border-terracotta-200 px-3 py-1.5 rounded-lg transition shadow-2xs"
+            >
+              ← Retour à l&apos;Agenda Médical
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <div className="py-8 px-4 sm:px-6">
+        <div className="max-w-2xl mx-auto space-y-6">
         {/* Doctor Header Card */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -346,5 +380,6 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
         </div>
       </div>
     </div>
+  </div>
   );
 }
