@@ -33,6 +33,7 @@ export default function AgendaLayout({
   const { user, logout } = useAuth();
 
   const activeUser = user || DEFAULT_DEMO_USER;
+  const isAgendaSection = pathname.startsWith('/agenda');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,11 +41,13 @@ export default function AgendaLayout({
         user={activeUser}
         onLogout={logout}
         extra={
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV.map((item) => (
-              <AgendaNavLink key={item.href} item={item} pathname={pathname} />
-            ))}
-          </nav>
+          isAgendaSection ? (
+            <nav className="hidden md:flex items-center gap-1">
+              {NAV.map((item) => (
+                <AgendaNavLink key={item.href} item={item} pathname={pathname} />
+              ))}
+            </nav>
+          ) : undefined
         }
       />
 
@@ -66,17 +69,21 @@ export default function AgendaLayout({
       )}
 
       <div className="max-w-[1400px] mx-auto px-4 py-6">
-        <div className="flex gap-6">
-          <aside className="hidden lg:block w-56 shrink-0">
-            <nav className="space-y-1">
-              {NAV.map((item) => (
-                <AgendaNavLink key={item.href} item={item} pathname={pathname} />
-              ))}
-            </nav>
-          </aside>
+        {isAgendaSection ? (
+          <div className="flex gap-6">
+            <aside className="hidden lg:block w-56 shrink-0">
+              <nav className="space-y-1">
+                {NAV.map((item) => (
+                  <AgendaNavLink key={item.href} item={item} pathname={pathname} />
+                ))}
+              </nav>
+            </aside>
 
-          <main className="flex-1 min-w-0">{children}</main>
-        </div>
+            <main className="flex-1 min-w-0">{children}</main>
+          </div>
+        ) : (
+          <main className="w-full">{children}</main>
+        )}
       </div>
     </div>
   );

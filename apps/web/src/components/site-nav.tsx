@@ -16,6 +16,7 @@ export interface SiteNavProps {
 
 const PRIMARY_LINKS = [
   { href: '/agenda', label: 'Agenda' },
+  { href: '/patients', label: 'Patients' },
   { href: '/dashboard', label: 'Tableau de bord' },
   { href: '/clinic', label: 'Cabinet' },
   { href: '/team', label: 'Équipe' },
