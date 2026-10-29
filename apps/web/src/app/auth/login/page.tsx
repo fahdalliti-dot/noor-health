@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import Input from '@/components/ui/input';
 import Button from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
+import { authenticateWithBiometrics } from '@/lib/native/biometrics';
+import { triggerHaptic } from '@/lib/native/haptics';
 
 export default function LoginPage() {
   const t = useTranslations();
@@ -15,6 +17,24 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { login, loginAsDemo } = useAuth();
+
+  const handleBiometricLogin = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await authenticateWithBiometrics('Déverrouillez votre cabinet médical Noor');
+      if (res.success) {
+        triggerHaptic('success');
+        loginAsDemo('doctor');
+      } else {
+        setError(res.error || 'Authentification biométrique annulée');
+      }
+    } catch {
+      setError('Biométrie indisponible sur ce terminal');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,6 +115,16 @@ export default function LoginPage() {
           <Button type="submit" isLoading={loading} disabled={loading} className="w-full">
             {loading ? t('submitting') : t('login')}
           </Button>
+
+          {/* Native Mobile Biometric Quick-Unlock (Face ID / Empreinte) */}
+          <button
+            type="button"
+            onClick={handleBiometricLogin}
+            className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl border border-terracotta-200 bg-sand-100 hover:bg-sand-200 text-charcoal text-xs font-semibold shadow-2xs transition cursor-pointer"
+          >
+            <span className="text-base">🪪</span>
+            <span>Déverrouiller avec Face ID / Empreinte digitale</span>
+          </button>
         </form>
 
         <div className="relative my-4">

@@ -62,4 +62,28 @@ test.describe('PWA & Phone Mobile Application Suite', () => {
     await expect(page).toHaveURL(/\/agenda/);
     await expect(page.locator('button:has-text("Stocks")')).toBeVisible();
   });
+
+  test('should support biometric quick-unlock (Face ID / Fingerprint) on the doctor login screen', async ({ page }) => {
+    await page.goto('/auth/login');
+
+    const bioBtn = page.locator('button:has-text("Déverrouiller avec Face ID")');
+    await expect(bioBtn).toBeVisible();
+
+    // Click biometric unlock
+    await bioBtn.click();
+
+    // Doctor is instantly logged in and navigated to agenda
+    await expect(page).toHaveURL(/\/(agenda|clinic)/, { timeout: 10000 });
+    await expect(page.locator('body')).toContainText(/Dr\. Amine Benali|Agenda/i);
+  });
+
+  test('should display camera document & CIN scanner trigger in Patient 360 DMP view', async ({ page }) => {
+    await page.goto('/auth/login');
+    await page.click('button:has-text("Dr. Amine Benali")');
+    await page.waitForURL(/\/(agenda|clinic)/);
+
+    await page.goto('/patients');
+    const scanBtn = page.locator('button:has-text("Scanner CIN / Document")');
+    await expect(scanBtn).toBeVisible();
+  });
 });

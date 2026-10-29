@@ -11,6 +11,7 @@ import { NewAppointmentModal } from '@/components/new-appointment-modal';
 import { DentalOdontogramModal } from '@/components/specialties/dental-odontogram-modal';
 import { ObstetricTrackerModal } from '@/components/specialties/obstetric-tracker-modal';
 import { PediatricTrackerModal } from '@/components/pediatric-tracker-modal';
+import { captureMedicalDocument } from '@/lib/native/camera-scanner';
 
 export interface Patient360 {
   id: string;
@@ -485,6 +486,19 @@ export default function PatientsRegistryPage() {
     setTimeout(() => setToast(null), 3500);
   }
 
+  async function handleScanDocument() {
+    try {
+      const doc = await captureMedicalDocument('camera');
+      if (doc) {
+        setToast(`✓ Document numérisé (${doc.format.toUpperCase()}) rattaché au DMP.`);
+        setTimeout(() => setToast(null), 4000);
+      }
+    } catch {
+      setToast('Numérisation annulée.');
+      setTimeout(() => setToast(null), 3000);
+    }
+  }
+
   // Calculate BMI (IMC)
   const bmi = patient?.vitals?.heightCm && patient?.vitals?.weightKg
     ? (patient.vitals.weightKg / Math.pow(patient.vitals.heightCm / 100, 2)).toFixed(1)
@@ -519,6 +533,15 @@ export default function PatientsRegistryPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleScanDocument}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sand-100 hover:bg-sand-200 text-charcoal border border-sand-300 rounded-lg text-xs font-semibold shadow-2xs transition cursor-pointer"
+            title="Numériser la CIN marocaine ou un bilan médical via la caméra"
+          >
+            <span>📷</span>
+            <span>Scanner CIN / Document</span>
+          </button>
           <Button
             size="sm"
             onClick={() => setNewPatientOpen(true)}
