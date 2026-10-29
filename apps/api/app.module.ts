@@ -18,6 +18,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AppController } from './app.controller';
 import { DatabaseExceptionFilter } from './filters/database-exception.filter';
 import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
 
@@ -52,7 +53,7 @@ import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
     NotificationsModule,
     AnalyticsModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_FILTER,
