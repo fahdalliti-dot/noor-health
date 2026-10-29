@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/button';
 import { DateTime } from 'luxon';
 import type { Appointment } from '@/hooks/use-agenda';
+import { PrintPreviewModal } from '@/components/print/print-preview-modal';
 
 export interface MoroccanDrug {
   name: string;
@@ -112,6 +113,7 @@ export function PrescriptionModal({
     },
   ]);
 
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDrug, setSelectedDrug] = useState<MoroccanDrug | null>(null);
   const [customPosology, setCustomPosology] = useState('');
@@ -396,10 +398,10 @@ export function PrescriptionModal({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => window.print()}
-              className="px-3.5 py-1.5 text-xs text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium transition cursor-pointer flex items-center gap-1.5"
+              onClick={() => setShowPrintPreview(true)}
+              className="px-3.5 py-1.5 text-xs text-stone-700 bg-stone-100 border border-stone-300 rounded-lg hover:bg-stone-200 font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
-              <span>🖨</span> Imprimer l&apos;Ordonnance
+              <span>🖨</span> Imprimer PDF Officiel (A4)
             </button>
             <Button
               size="sm"
@@ -413,6 +415,29 @@ export function PrescriptionModal({
             </Button>
           </div>
         </div>
+
+        {/* High-Precision Official Print Preview */}
+        <PrintPreviewModal
+          open={showPrintPreview}
+          onOpenChange={setShowPrintPreview}
+          type="prescription"
+          documentNumber={`RX-2026-${appointment.id.slice(0, 8).toUpperCase()}`}
+          date={todayStr}
+          doctorName={doctorName}
+          doctorInpe={doctorInpe.replace(/[^0-9]/g, '') || '104829384'}
+          doctorSpeciality={doctorSpeciality}
+          clinicAddress="45 Boulevard Zerktouni, 3ème étage"
+          clinicCity="Casablanca"
+          patientName={patientFullName}
+          patientCin={appointment.patient?.cin || 'BE849201'}
+          medicines={items.map((it) => ({
+            id: it.id,
+            name: it.drugName,
+            posology: it.posology,
+            duration: it.duration,
+            hasContraindication: it.hasContraindication,
+          }))}
+        />
       </div>
     </div>
   );

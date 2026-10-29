@@ -16,6 +16,7 @@ export interface SiteNavProps {
 
 const PRIMARY_LINKS = [
   { href: '/agenda', label: 'Agenda' },
+  { href: '/dashboard', label: 'Tableau de bord' },
   { href: '/clinic', label: 'Cabinet' },
   { href: '/team', label: 'Équipe' },
 ];
@@ -50,15 +51,22 @@ export function SiteNav({ user, onLogout, extra }: SiteNavProps) {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            {PRIMARY_LINKS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {PRIMARY_LINKS.map((item) => {
+              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'text-terracotta-700 font-semibold border-b-2 border-terracotta-600 pb-0.5'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             {extra}
           </div>
         </div>

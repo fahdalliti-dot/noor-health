@@ -57,3 +57,44 @@ hr {
   outline: 2px solid #B05A3A;
   outline-offset: 2px;
 }
+
+/* =========================================================================
+   High-Precision Medical Document Print Styles (A4 Morocco Standard)
+   ========================================================================= */
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #1A1A1A !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide navigation, toolbars, buttons, modal backdrops */
+  nav,
+  header,
+  aside,
+  button,
+  .no-print,
+  [role="dialog"] > div:not(.medical-print-wrapper) {
+    display: none !important;
+  }
+
+  /* Make the print document occupy the full A4 canvas */
+  .medical-print-document {
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    page-break-inside: avoid;
+  }
+}

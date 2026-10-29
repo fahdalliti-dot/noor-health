@@ -17,7 +17,7 @@ test.describe('Clinical Cockpit & DMP Inspector', () => {
     await expect(page.locator('body')).toContainText(/Agenda|Cabinet|Consultation/i);
 
     // Verify presence of navigation elements
-    const nav = page.locator('nav');
+    const nav = page.locator('nav').first();
     await expect(nav).toBeVisible();
   });
 

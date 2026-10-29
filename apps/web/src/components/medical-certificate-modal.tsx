@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/button';
 import { DateTime } from 'luxon';
 import type { Appointment } from '@/hooks/use-agenda';
+import { PrintPreviewModal } from '@/components/print/print-preview-modal';
 
 export type CertificateType = 'repos' | 'aptitude' | 'coups';
 
@@ -34,6 +35,7 @@ export function MedicalCertificateModal({
   const [ittDays, setIttDays] = useState(15);
   const [sportDiscipline, setSportDiscipline] = useState('Football et activités sportives générales');
   const [observationNotes, setObservationNotes] = useState('État fébrile avec asthénie intense nécessitant du repos au lit.');
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
 
   if (!open || !appointment) return null;
 
@@ -271,10 +273,10 @@ export function MedicalCertificateModal({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => window.print()}
-              className="px-3.5 py-1.5 text-xs text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium transition cursor-pointer flex items-center gap-1.5"
+              onClick={() => setShowPrintPreview(true)}
+              className="px-3.5 py-1.5 text-xs text-stone-700 bg-stone-100 border border-stone-300 rounded-lg hover:bg-stone-200 font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
-              <span>🖨</span> Imprimer le Certificat
+              <span>🖨</span> Imprimer PDF Officiel (A4)
             </button>
             <Button
               size="sm"
@@ -288,6 +290,28 @@ export function MedicalCertificateModal({
             </Button>
           </div>
         </div>
+
+        {/* High-Precision Official Print Preview */}
+        <PrintPreviewModal
+          open={showPrintPreview}
+          onOpenChange={setShowPrintPreview}
+          type="certificate"
+          certificateType={certType}
+          documentNumber={`CERT-2026-${appointment.id.slice(0, 8).toUpperCase()}`}
+          date={todayStr}
+          doctorName={doctorName}
+          doctorInpe={doctorInpe.replace(/[^0-9]/g, '') || '104829384'}
+          doctorSpeciality={doctorSpeciality}
+          clinicAddress="45 Boulevard Zerktouni, 3ème étage"
+          clinicCity="Casablanca"
+          patientName={patientFullName}
+          patientCin={patientCin}
+          restDays={restDays}
+          restDaysWords={restDaysWords}
+          ittDays={ittDays}
+          sportDiscipline={sportDiscipline}
+          observationNotes={observationNotes}
+        />
       </div>
     </div>
   );

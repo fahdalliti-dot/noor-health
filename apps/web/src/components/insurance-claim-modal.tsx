@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/button';
 import { DateTime } from 'luxon';
 import type { Appointment } from '@/hooks/use-agenda';
+import { PrintPreviewModal } from '@/components/print/print-preview-modal';
 
 interface Props {
   open: boolean;
@@ -31,6 +32,7 @@ export function InsuranceClaimModal({
   const [cotation, setCotation] = useState('CS (Consultation Spécialiste)');
   const [tariff, setTariff] = useState(350);
   const [paid, setPaid] = useState(true);
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
 
   if (!open || !appointment) return null;
 
@@ -202,10 +204,10 @@ export function InsuranceClaimModal({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => window.print()}
-              className="px-3.5 py-1.5 text-xs text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium transition cursor-pointer flex items-center gap-1.5"
+              onClick={() => setShowPrintPreview(true)}
+              className="px-3.5 py-1.5 text-xs text-stone-700 bg-stone-100 border border-stone-300 rounded-lg hover:bg-stone-200 font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
-              <span>🖨</span> Imprimer la Feuille de Soins
+              <span>🖨</span> Imprimer Feuille AMO Officielle (A4)
             </button>
             <Button
               size="sm"
@@ -219,6 +221,27 @@ export function InsuranceClaimModal({
             </Button>
           </div>
         </div>
+
+        {/* High-Precision Official Print Preview */}
+        <PrintPreviewModal
+          open={showPrintPreview}
+          onOpenChange={setShowPrintPreview}
+          type="amo_claim"
+          documentNumber={`AMO-2026-${appointment.id.slice(0, 8).toUpperCase()}`}
+          date={todayStr}
+          doctorName={doctorName}
+          doctorInpe={doctorInpe.replace(/[^0-9]/g, '') || '104829384'}
+          doctorSpeciality={doctorSpeciality}
+          clinicAddress="45 Boulevard Zerktouni, 3ème étage"
+          clinicCity="Casablanca"
+          patientName={patientFullName}
+          patientCin={appointment.patient?.cin || 'BE849201'}
+          patientAmoNumber={immatriculation}
+          organism={organism}
+          cotationNgap={cotation}
+          tariffMad={tariff}
+          paymentMethod={paid ? 'Espèces' : 'En attente'}
+        />
       </div>
     </div>
   );
