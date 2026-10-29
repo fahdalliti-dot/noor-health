@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <title>Nura — brand mark and wordmark</title>
+  <desc>
+    Nura brand mark: an abstract interlocking N monogram where negative space
+    suggests light radiating. Inspired by Moroccan zellige geometry without
+    quoting it literally. Wordmark in Cormorant Garamond.
+  </desc>
+
+  <defs>
+    <!-- Terracotta accent -->
+    <style>
+      .mark { fill: #B05A3A; }
+      .wordmark { fill: #1A1A1A; }
+      .wordmark-light { fill: #F5F1E8; }
+      .arabic { fill: #1A1A1A; font-family: 'Amiri', 'Traditional Arabic', serif; }
+    </style>
+  </defs>
+
+  <!-- ============================================================
+       MARK — interlocking N monogram, light radiating in negative space
+       Constructed from two overlapping chevron/line elements forming an N,
+       with the counter (inner triangle) left open to suggest light.
+       ============================================================ -->
+
+  <!-- Outer frame: a soft diamond, referencing zellige tile geometry -->
+  <g transform="translate(60,100) scale(1.15)">
+    <!-- Diamond outline (subtle, for grounding) -->
+    <polygon points="0,-70 70,0 0,70 -70,0"
+             fill="none" stroke="#B05A3A" stroke-width="1.5"
+             stroke-linejoin="round" opacity="0.35"/>
+
+    <!-- Left vertical stroke of the N -->
+    <rect x="-38" y="-52" width="9" height="104" rx="4.5"
+          fill="#B05A3A"/>
+
+    <!-- Right vertical stroke of the N -->
+    <rect x="29" y="-52" width="9" height="104" rx="4.5"
+          fill="#B05A3A"/>
+
+    <!-- Diagonal connecting the two verticals, broken to suggest light passing through -->
+    <!-- Upper-left segment -->
+    <polygon points="-38,-52 -29,-52 -20,-43 -29,-34" fill="#B05A3A"/>
+    <!-- Middle gap (negative space = light) -->
+    <!-- Lower-right segment -->
+    <polygon points="20,34 29,34 38,43 29,52" fill="#B05A3A"/>
+
+    <!-- Radiating light lines in the negative space (subtle) -->
+    <g stroke="#B05A3A" stroke-width="1" opacity="0.5" fill="none"
+       stroke-linecap="round">
+      <line x1="-5" y1="-5" x2="-5" y2="-22"/>
+      <line x1="-5" y1="5"  x2="-5" y2="22"/>
+      <line x1="-22" y1="-5" x2="-5" y2="-5"/>
+      <line x1="5" y1="-5"   x2="5" y2="-22"/>
+      <line x1="5" y1="5"    x2="5" y2="22"/>
+      <line x1="-22" y1="5"  x2="-5" y2="5"/>
+      <line x1="5" y1="-5"   x2="22" y2="-5"/>
+      <line x1="5" y1="5"    x2="22" y2="5"/>
+    </g>
+  </g>
+
+  <!-- ============================================================
+       WORDMARK — Nura in Cormorant Garamond
+       ============================================================ -->
+  <text x="180" y="118"
+        class="wordmark"
+        font-family="'Cormorant Garamond', 'Georgia', serif"
+        font-size="72" font-weight="600"
+        letter-spacing="2">Nura</text>
+
+  <!-- Subtitle -->
+  <text x="180" y="148"
+        fill="#8C8C7A"
+        font-family="'Inter', 'Helvetica Neue', sans-serif"
+        font-size="14" letter-spacing="6" text-transform="uppercase">
+    soin num&#233;rique
+  </text>
+
+  <!-- ============================================================
+       ARABIC VARIANT — نور
+       ============================================================ -->
+  <g transform="translate(180, 180)">
+    <text x="0" y="0"
+          class="arabic"
+          font-family="'Amiri', 'Traditional Arabic', serif"
+          font-size="48" font-weight="700"
+          text-anchor="middle">&#x0646;&#x0648;&#x0631;</text>
+  </g>
+</svg>

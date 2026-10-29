@@ -7,7 +7,8 @@
   "placeholder": {
     "email": "medecin@cabinet.ma",
     "password": "Votre mot de passe",
-    "totp": "Code à 6 chiffres"
+    "totp": "Code à 6 chiffres",
+    "search": "Rechercher patient, CIN, téléphone..."
   },
   "submitting": "Connexion en cours...",
   "login": "Se connecter",
@@ -23,5 +24,29 @@
   "logout": "Déconnexion",
   "logout_confirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
   "logout_yes": "Déconnecter",
-  "logout_no": "Annuler"
+  "logout_no": "Annuler",
+  "clinic": {
+    "agenda": "Agenda & Consultations",
+    "waiting_room": "Salle d'attente en direct",
+    "waiting_count": "{count} patient(s) en attente",
+    "cash_desk": "Caisse & Clôture Journalière",
+    "inventory": "Gestion des Stocks & Consommables",
+    "patients": "Dossiers Médicaux des Patients",
+    "audit_trail": "Registre d'Audit CNDP (Loi 09-08)",
+    "public_booking": "Prise de RDV en Ligne",
+    "teleconsultation": "Téléconsultation Médicale Sécurisée",
+    "prescription": "Ordonnance Numérique DMP Maroc",
+    "insurance_claim": "Feuille de Soins AMO (CNSS / CNOPS)",
+    "medical_certificate": "Certificat Médical Officiel",
+    "pni_tracker": "Programme National d'Immunisation (PNI)",
+    "cmi_payment": "Paiement Bancaire CMI Maroc"
+  },
+  "status": {
+    "scheduled": "Planifié",
+    "confirmed": "Confirmé",
+    "arrived": "Arrivé en salle d'attente",
+    "in_progress": "En consultation",
+    "completed": "Consultation terminée",
+    "cancelled": "Annulé"
+  }
 }

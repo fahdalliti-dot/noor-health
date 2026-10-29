@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* TASTE-SKILL: FRAMED-SHEET TOKEN ARCHITECTURE */
+:root {
+  --ground: #f4f6f8;
+  --surface: #ffffff;
+  --raised: #f8fafc;
+  --border: #e2e8f0;
+  --rule: #edf2f7;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #0077b6; /* Clinical Medical Blue */
+  --accent-hover: #02659c;
+  --positive: #059669;
+  --warning: #b45309;
+  --negative: #dc2626;
+  
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--ground);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.sheet-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: none;
+}

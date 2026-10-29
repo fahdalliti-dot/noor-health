@@ -46,3 +46,10 @@ dist/
 .next/
 coverage/
 .design-backup-*/
+__pycache__/
+*.pyc
+.taste-skill/
+.claude/
+.agents/
+.windsurf/
+skills-lock.json

@@ -13,6 +13,8 @@ export default defineConfig({
         singleFork: true,
       },
     },
+    // Setup file runs BEFORE any test files, ensuring env vars are set before module imports
+    setupFiles: ['./test/e2e-setup.ts'],
   },
   resolve: {
     alias: {

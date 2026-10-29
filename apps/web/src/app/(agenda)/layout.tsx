@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import Button from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
+import { LanguageSwitcher } from '@/components/i18n-provider';
 
 const NAV = [
   { href: '/agenda', label: 'Agenda', exact: true },
@@ -31,7 +32,8 @@ export default function AgendaLayout({
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-[1400px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6">
-            <Link href="/agenda" className="text-blue-600 font-semibold text-lg">
+            <Link href="/agenda" className="text-blue-600 font-semibold text-lg flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-600" aria-hidden="true" />
               SaaS Docteurs Maroc
             </Link>
             <nav className="hidden md:flex items-center gap-1">
@@ -56,10 +58,11 @@ export default function AgendaLayout({
             </nav>
           </div>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <span className="text-sm text-gray-600 hidden sm:inline">
               {user.full_name || user.email}
               <span className="text-gray-400"> · </span>
-              <span className="text-gray-500">
+              <span className="text-gray-500 font-medium">
                 {user.role === 'doctor' ? 'Médecin' : 'Secrétaire'}
               </span>
             </span>
@@ -67,10 +70,10 @@ export default function AgendaLayout({
               variant="outline"
               size="sm"
               onClick={() => {
-                if (confirm(t('logout_confirm'))) logout();
+                if (confirm(t('logout_confirm') || 'Voulez-vous vous déconnecter ?')) logout();
               }}
             >
-              {t('logout')}
+              {t('logout') || 'Déconnexion'}
             </Button>
           </div>
         </div>

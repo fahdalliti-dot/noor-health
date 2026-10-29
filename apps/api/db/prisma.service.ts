@@ -42,11 +42,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       throw new Error(`API role owns tenant tables: ${names} — RLS not FORCED`);
     }
 
-    // Canary query: must return 0 rows without context
-    await this.$executeRawUnsafe(`SELECT set_config('app.clinic_id', '', true)`);
-    const canary = await this.$queryRawUnsafe<{ '?column?': number }[]>(`SELECT 1 FROM "Appointment" LIMIT 1`);
-    if (canary.length > 0) {
-      throw new Error('Canary query returned rows without app.clinic_id — RLS not working');
-    }
+    // Canary query: must return 0 rows without a valid clinic context
+    // Use a non-existent UUID to verify RLS blocks all rows
+    // Must run in a transaction so SET and query use the same pooled connection
+    await this.$transaction(async (tx) => {
+      await tx.$executeRawUnsafe(`SELECT set_config('app.clinic_id', '00000000-0000-0000-0000-000000000000', true)`);
+      const canary = await tx.$queryRawUnsafe<{ '?column?': number }[]>(`SELECT 1 FROM "Appointment" LIMIT 1`);
+      if (canary.length > 0) {
+        throw new Error('Canary query returned rows without valid app.clinic_id — RLS not working');
+      }
+    });
   }
 }

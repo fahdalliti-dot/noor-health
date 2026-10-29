@@ -11,24 +11,50 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_CLASSES: Record<string, string> = {
-  scheduled: 'bg-gray-100 text-gray-700',
-  confirmed: 'bg-blue-100 text-blue-700',
-  arrived: 'bg-amber-100 text-amber-700',
-  in_progress: 'bg-green-100 text-green-700',
-  completed: 'bg-emerald-100 text-emerald-700',
-  cancelled: 'bg-red-100 text-red-700',
-  no_show: 'bg-rose-100 text-rose-700',
+  scheduled: 'bg-gray-100 text-gray-700 border-gray-200',
+  confirmed: 'bg-blue-50 text-blue-700 border-blue-200',
+  arrived: 'bg-amber-50 text-amber-800 border-amber-200',
+  in_progress: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  completed: 'bg-slate-100 text-slate-700 border-slate-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
+  no_show: 'bg-rose-50 text-rose-700 border-rose-200',
 };
 
-export function AppointmentStatusBadge({ status }: { status: string }) {
+const STATUS_DOTS: Record<string, string> = {
+  scheduled: 'bg-gray-400',
+  confirmed: 'bg-blue-500',
+  arrived: 'bg-amber-500',
+  in_progress: 'bg-emerald-500 animate-pulse',
+  completed: 'bg-slate-500',
+  cancelled: 'bg-red-500',
+  no_show: 'bg-rose-500',
+};
+
+export function AppointmentStatusBadge({
+  status,
+  className,
+}: {
+  status: string;
+  className?: string;
+}) {
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold',
-        STATUS_CLASSES[status] || 'bg-gray-100 text-gray-700',
+        'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border',
+        STATUS_CLASSES[status] || 'bg-gray-100 text-gray-700 border-gray-200',
+        className,
       )}
     >
-      {STATUS_LABELS[status] || status}
+      <span
+        className={cn(
+          'w-1.5 h-1.5 rounded-full shrink-0',
+          STATUS_DOTS[status] || 'bg-gray-400',
+        )}
+        aria-hidden="true"
+      />
+      <span>{STATUS_LABELS[status] || status}</span>
     </span>
   );
 }
+
+export default AppointmentStatusBadge;

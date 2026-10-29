@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { DbModule } from './db/db.module';
 import { AuthModule } from './auth/auth.module';
 import { ClinicsModule } from './clinics/clinics.module';
@@ -13,7 +13,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { PatientsModule } from './patients/patients.module';
 import { DatabaseExceptionFilter } from './filters/database-exception.filter';
-import { ClinicContextGuard } from './guards/clinic-context.guard';
+import { ClinicContextInterceptor } from './guards/clinic-context.interceptor';
 
 @Module({
   imports: [
@@ -46,8 +46,8 @@ import { ClinicContextGuard } from './guards/clinic-context.guard';
       useClass: DatabaseExceptionFilter,
     },
     {
-      provide: APP_GUARD,
-      useClass: ClinicContextGuard,
+      provide: APP_INTERCEPTOR,
+      useClass: ClinicContextInterceptor,
     },
   ],
 })

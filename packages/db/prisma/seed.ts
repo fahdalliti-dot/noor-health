@@ -1,14 +1,37 @@
 import { createPrismaClient } from '../src/index';
 import { hashPassword } from '../../shared/utils/password';
+import * as crypto from 'crypto';
 
-// Prisma 7 requires a driver adapter. Uses DATABASE_URL (saas_owner role)
-// so the seed can create/wipe tenant tables without RLS interference.
-const db = createPrismaClient(process.env.DATABASE_URL as string);
+// Read database URL from env
+const dbUrl = process.env.DATABASE_URL || 'postgresql://saas_owner:saas_pass@localhost:5432/saas_dev?schema=public';
+const db = createPrismaClient(dbUrl);
+
+// Encryption helpers for Moroccan CIN AES-256-GCM and HMAC-SHA256 blind index
+const KEY_HEX = process.env.PATIENT_ENCRYPTION_KEY || '920bd7f5c0e2dd2302f20e135f0b705977414a603ebe5fbef26071f393ce229f';
+const PEPPER_HEX = process.env.BLIND_INDEX_PEPPER || 'a7b3c4d5e6f7890123456789abcdef0123456789abcdef0123456789abcdef01';
+
+const encKey = Buffer.from(KEY_HEX, 'hex');
+const pepper = Buffer.from(PEPPER_HEX, 'hex');
+
+function encryptCin(cin: string): string {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', encKey, iv, { authTagLength: 16 });
+  const ciphertext = Buffer.concat([cipher.update(cin, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `${iv.toString('hex')}:${tag.toString('hex')}:${ciphertext.toString('hex')}`;
+}
+
+function hashBlindIndex(cin: string): string {
+  const hmac = crypto.createHmac('sha256', pepper);
+  hmac.update(cin.trim().toUpperCase());
+  return hmac.digest('hex');
+}
 
 async function main() {
-  console.log('Starting seed...');
+  console.log('--- Seeding Database with Moroccan Clinical Practice Data ---');
 
-  // Wipe existing data so the seed is idempotent.
+  // Clean existing tables in dependency order
+  console.log('Cleaning existing records...');
   await db.$transaction([
     db.auditLog.deleteMany(),
     db.appointment.deleteMany(),
@@ -25,578 +48,423 @@ async function main() {
     db.clinic.deleteMany(),
   ]);
 
-  // Create two demo clinics for isolation testing
-  const clinicA = await db.clinic.create({
-    data: {
-      name: 'Demo Clinic Al-Andalus',
-      city: 'Casablanca',
-      address: '123 Avenue Hassan II',
-      phone: '+212 522 123456',
-      locale: 'fr',
-      timezone: 'Africa/Casablanca',
-      require_2fa_all: false,
-      first_day_of_week: 0,
-    },
-  });
-
-  const clinicB = await db.clinic.create({
-    data: {
-      name: 'Demo Clinic Al-Firdaws',
-      city: 'Marrakech',
-      address: '45 Rue Riad Zitoun',
-      phone: '+212 524 987654',
-      locale: 'fr',
-      timezone: 'Africa/Casablanca',
-      require_2fa_all: false,
-      first_day_of_week: 0,
-    },
-  });
-
-  // Solo doctor clinic (is_clinic_admin = true)
-  const soloClinic = await db.clinic.create({
-    data: {
-      name: 'Solo Dr. Benali Clinic',
-      city: 'Rabat',
-      address: '78 Boulevard Mohamed V',
-      phone: '+212 537 555555',
-      locale: 'fr',
-      timezone: 'Africa/Casablanca',
-      require_2fa_all: false,
-      first_day_of_week: 0,
-    },
-  });
-
-  // Hash a common password for seeding
+  // Common password hash for test accounts
   const passwordHash = await hashPassword('SeedPass123!');
 
-  // Clinic A staff
-  const clinicAAAdmin = await db.user.create({
+  // =========================================================================
+  // CLINIC 1: Cabinet de Cardiologie Dr. Amine Benali (Casablanca)
+  // =========================================================================
+  console.log('Creating Clinic 1: Casablanca (Dr. Amine Benali)...');
+  const clinicCasablanca = await db.clinic.create({
     data: {
-      email: 'admin@clinic-a.test',
-      password_hash: passwordHash,
-      full_name: 'Admin Clinic A',
-      role: 'admin',
-      clinic_id: clinicA.id,
-      is_clinic_admin: true,
-      is_active: true,
+      name: 'Cabinet de Cardiologie Dr. Amine Benali',
+      city: 'Casablanca',
+      address: '45 Boulevard Zerktouni, 3ème étage, Casablanca',
+      phone: '+212 522 334455',
+      locale: 'fr',
+      timezone: 'Africa/Casablanca',
+      require_2fa_all: false,
+      first_day_of_week: 0,
+      subscription: {
+        create: {
+          plan: 'clinic',
+          status: 'active',
+          trial_ends_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+        },
+      },
     },
   });
 
-  const clinicADoctor = await db.user.create({
+  const doctorBenali = await db.user.create({
     data: {
+      clinic_id: clinicCasablanca.id,
       email: 'doctor@clinic-a.test',
       password_hash: passwordHash,
-      full_name: 'Dr. Ahmed Alami',
+      full_name: 'Dr. Amine Benali',
       role: 'doctor',
-      speciality: 'Cardiology',
-      license_number: '12345',
-      clinic_id: clinicA.id,
-      is_clinic_admin: false,
-      is_active: true,
-    },
-  });
-
-  const clinicASecretary = await db.user.create({
-    data: {
-      email: 'secretary@clinic-a.test',
-      password_hash: passwordHash,
-      full_name: 'Fatima Zahra',
-      role: 'secretary',
-      clinic_id: clinicA.id,
-      is_clinic_admin: false,
-      is_active: true,
-    },
-  });
-
-  // Clinic B staff
-  const clinicBAAdmin = await db.user.create({
-    data: {
-      email: 'admin@clinic-b.test',
-      password_hash: passwordHash,
-      full_name: 'Admin Clinic B',
-      role: 'admin',
-      clinic_id: clinicB.id,
+      speciality: 'Cardiologie & Maladies Vasculaires',
+      license_number: '104829384',
       is_clinic_admin: true,
       is_active: true,
     },
   });
 
-  const clinicBDoctor = await db.user.create({
+  const secretaryMeryem = await db.user.create({
     data: {
+      clinic_id: clinicCasablanca.id,
+      email: 'secretary@clinic-a.test',
+      password_hash: passwordHash,
+      full_name: 'Meryem El Idrissi',
+      role: 'secretary',
+      is_clinic_admin: false,
+      is_active: true,
+    },
+  });
+
+  // Working hours for Dr. Benali (Mon-Fri 08:30–12:30, 14:00–18:30)
+  // Minutes: 08:30=510, 12:30=750, 14:00=840, 18:30=1110
+  const workingHoursCasablanca = [];
+  for (let day = 0; day < 5; day++) {
+    workingHoursCasablanca.push({
+      clinic_id: clinicCasablanca.id,
+      doctor_id: doctorBenali.id,
+      weekday: day,
+      start_minutes: 510,
+      end_minutes: 750,
+      slot_length_minutes: 30,
+      is_active: true,
+    });
+    workingHoursCasablanca.push({
+      clinic_id: clinicCasablanca.id,
+      doctor_id: doctorBenali.id,
+      weekday: day,
+      start_minutes: 840,
+      end_minutes: 1110,
+      slot_length_minutes: 30,
+      is_active: true,
+    });
+  }
+  await db.doctorWorkingHours.createMany({ data: workingHoursCasablanca });
+
+  // =========================================================================
+  // CLINIC 2: Cabinet Pédiatrique Al-Andalus (Rabat)
+  // =========================================================================
+  console.log('Creating Clinic 2: Rabat (Dr. Sara Karim)...');
+  const clinicRabat = await db.clinic.create({
+    data: {
+      name: 'Cabinet Pédiatrique Al-Andalus',
+      city: 'Rabat',
+      address: '78 Avenue Mohamed V, Agdal, Rabat',
+      phone: '+212 537 778899',
+      locale: 'fr',
+      timezone: 'Africa/Casablanca',
+      require_2fa_all: false,
+      first_day_of_week: 0,
+      subscription: {
+        create: {
+          plan: 'clinic',
+          status: 'active',
+          trial_ends_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+        },
+      },
+    },
+  });
+
+  const doctorSara = await db.user.create({
+    data: {
+      clinic_id: clinicRabat.id,
       email: 'doctor@clinic-b.test',
       password_hash: passwordHash,
       full_name: 'Dr. Sara Karim',
       role: 'doctor',
-      speciality: 'Pediatrics',
-      license_number: '67890',
-      clinic_id: clinicB.id,
-      is_clinic_admin: false,
+      speciality: 'Pédiatrie & Néonatalogie',
+      license_number: '109283741',
+      is_clinic_admin: true,
       is_active: true,
     },
   });
 
-  const clinicBSecretary = await db.user.create({
+  // =========================================================================
+  // CLINIC 3: Cabinet Médical Solo Dr. Yassine El Fassi (Marrakech)
+  // =========================================================================
+  console.log('Creating Clinic 3: Marrakech (Dr. Yassine El Fassi)...');
+  const clinicMarrakech = await db.clinic.create({
     data: {
-      email: 'secretary@clinic-b.test',
-      password_hash: passwordHash,
-      full_name: 'Youssef Tariq',
-      role: 'secretary',
-      clinic_id: clinicB.id,
-      is_clinic_admin: false,
-      is_active: true,
+      name: 'Cabinet Médical Solo Guéliz',
+      city: 'Marrakech',
+      address: '12 Avenue Hassan II, Guéliz, Marrakech',
+      phone: '+212 524 445566',
+      locale: 'fr',
+      timezone: 'Africa/Casablanca',
+      require_2fa_all: false,
+      first_day_of_week: 0,
+      subscription: {
+        create: {
+          plan: 'solo',
+          status: 'trialing',
+          trial_ends_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+      },
     },
   });
 
-  // Solo clinic staff (doctor who is also admin)
-  const soloDoctor = await db.user.create({
+  const doctorFassi = await db.user.create({
     data: {
+      clinic_id: clinicMarrakech.id,
       email: 'doctor@solo.test',
       password_hash: passwordHash,
-      full_name: 'Dr. Khalid Benali',
+      full_name: 'Dr. Yassine El Fassi',
       role: 'doctor',
-      speciality: 'General Practice',
-      license_number: '55555',
-      clinic_id: soloClinic.id,
-      is_clinic_admin: true, // Solo doctor acts as admin
+      speciality: 'Médecine Générale',
+      license_number: '105928172',
+      is_clinic_admin: true,
       is_active: true,
     },
   });
 
-  // Create a subscription for each clinic
-  await db.subscription.createMany({
-    data: [
-      {
-        clinic_id: clinicA.id,
-        plan: 'clinic',
-        status: 'trialing',
-        trial_ends_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-      },
-      {
-        clinic_id: clinicB.id,
-        plan: 'clinic',
-        status: 'trialing',
-        trial_ends_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-      {
-        clinic_id: soloClinic.id,
-        plan: 'solo',
-        status: 'trialing',
-        trial_ends_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-    ],
-  });
+  // =========================================================================
+  // PATIENTS WITH ENCRYPTED CINS & MEDICAL PROFILES (Casablanca)
+  // =========================================================================
+  console.log('Creating Moroccan Patients & Medical Records...');
 
-  // Create some sample sessions for testing
-  await db.session.createMany({
-    data: [
-      {
-        user_id: clinicAAAdmin.id,
-        clinic_id: clinicA.id,
-        family_id: 'fam-' + clinicAAAdmin.id,
-        refresh_token_hash: await hashPassword('sample-refresh-token-1'),
-        device_label: 'Chrome on Windows',
-        ip: '127.0.0.1',
-        expires_at: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours
-      },
-      {
-        user_id: clinicADoctor.id,
-        clinic_id: clinicA.id,
-        family_id: 'fam-' + clinicADoctor.id,
-        refresh_token_hash: await hashPassword('sample-refresh-token-2'),
-        device_label: 'Safari on iPad',
-        ip: '127.0.0.1',
-        expires_at: new Date(Date.now() + 12 * 60 * 60 * 1000),
-      },
-    ],
-  });
-
-  // Create some sample recovery codes for the admin of clinic A
-  const recoveryCodes = [];
-  for (let i = 0; i < 10; i++) {
-    recoveryCodes.push({
-      user_id: clinicAAAdmin.id,
-      code_hash: await hashPassword(`BACKUP${i.toString().padStart(4, '0')}`),
-    });
-  }
-  await db.recoveryCode.createMany({
-    data: recoveryCodes,
-  });
-
-  // Create some sample invites
-  await db.invite.createMany({
-    data: [
-      {
-        clinic_id: clinicA.id,
-        email: 'new.staff@clinic-a.test',
-        role: 'doctor',
-        token_hash: await hashPassword('sample-invite-token-1'),
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        invited_by: clinicAAAdmin.id,
-      },
-      {
-        clinic_id: clinicB.id,
-        email: 'new.staff@clinic-b.test',
-        role: 'secretary',
-        token_hash: await hashPassword('sample-invite-token-2'),
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        invited_by: clinicBAAdmin.id,
-      },
-    ],
-  });
-
-  // Create PasswordResetToken entries for seed/demo
-  await db.passwordResetToken.createMany({
-    data: [
-      {
-        clinic_id: clinicA.id,
-        user_id: clinicADoctor.id,
-        token_hash: await hashPassword('sample-reset-token-1'),
-        expires_at: new Date(Date.now() + 30 * 60 * 1000), // 30 min
-        used_at: null,
-      },
-      {
-        clinic_id: clinicB.id,
-        user_id: clinicBDoctor.id,
-        token_hash: await hashPassword('sample-reset-token-2'),
-        expires_at: new Date(Date.now() + 30 * 60 * 1000),
-        used_at: null,
-      },
-    ],
-  });
-
-  // ======================================
-  // SLICE 3 - Appointments & Agenda seed data
-  // ======================================
-
-  // Working hours for Dr. Ahmed (Clinic A): Mon-Fri 08:00-12:00, 13:30-17:30
-  // Minutes from midnight: 08:00=480, 12:00=720, 13:30=810, 17:30=1050
-  const workingHoursA = [];
-  for (let day = 0; day < 5; day++) { // Mon-Fri (0=Mon)
-    // Morning slot
-    workingHoursA.push({
-      clinic_id: clinicA.id,
-      doctor_id: clinicADoctor.id,
-      weekday: day,
-      start_minutes: 480,  // 08:00
-      end_minutes: 720,    // 12:00
-      is_active: true,
-      slot_length_minutes: 30,
-    });
-    // Afternoon slot
-    workingHoursA.push({
-      clinic_id: clinicA.id,
-      doctor_id: clinicADoctor.id,
-      weekday: day,
-      start_minutes: 810,  // 13:30
-      end_minutes: 1050,   // 17:30
-      is_active: true,
-      slot_length_minutes: 30,
-    });
-  }
-  await db.doctorWorkingHours.createMany({ data: workingHoursA });
-
-  // Working hours for Dr. Sara (Clinic B): Tue-Thu 09:00-17:00 (longer slots)
-  // 09:00=540, 17:00=1020
-  const workingHoursB = [];
-  for (let day = 1; day < 4; day++) { // Tue-Thu
-    workingHoursB.push({
-      clinic_id: clinicB.id,
-      doctor_id: clinicBDoctor.id,
-      weekday: day,
-      start_minutes: 540,
-      end_minutes: 1020,
-      slot_length_minutes: 60,
-      is_active: true,
-    });
-  }
-  await db.doctorWorkingHours.createMany({ data: workingHoursB });
-
-  // Dr. Ahmed takes a half-day off on Monday (10:00-14:00 in clinic timezone)
-  // Using a specific date for clarity
-  const mondayDate = new Date();
-  mondayDate.setDate(mondayDate.getDate() - mondayDate.getDay() + 1); // nearest Monday
-  mondayDate.setHours(0, 0, 0, 0);
-  const mondayStart = new Date(mondayDate);
-  mondayStart.setHours(10, 0, 0, 0);
-  const mondayEnd = new Date(mondayDate);
-  mondayEnd.setHours(14, 0, 0, 0);
-
-  await db.doctorTimeOff.create({
+  // Patient 1: Fatima Zahra Alami (Allergie Pénicilline)
+  const pAlami = await db.patient.create({
     data: {
-      clinic_id: clinicA.id,
-      doctor_id: clinicADoctor.id,
-      start_at: mondayStart,
-      end_at: mondayEnd,
-      reason: 'Conference',
-    },
-  });
-
-  // ======================================
-  // Slice 2 - Patients (one per appointment below)
-  // ======================================
-  const patientA1 = await db.patient.create({
-    data: {
-      clinic_id: clinicA.id,
-      file_number: 1,
-      first_name: 'Youssef',
-      last_name: 'Amrani',
-      birth_date: new Date('1985-06-12'),
-      gender: 'male',
-      phone: '+212600000001',
-      cin: 'AB123456',
-    },
-  });
-
-  const patientA2 = await db.patient.create({
-    data: {
-      clinic_id: clinicA.id,
-      file_number: 2,
-      first_name: 'Lina',
-      last_name: 'Bennis',
-      birth_date: new Date('1992-09-23'),
+      clinic_id: clinicCasablanca.id,
+      file_number: 1089,
+      first_name: 'Fatima Zahra',
+      last_name: 'Alami',
+      birth_date: new Date('1984-07-22'),
       gender: 'female',
-      phone: '+212600000002',
-      cin: 'CD789012',
+      phone: '+212 663-987654',
+      email: 'fz.alami@gmail.com',
+      address: '22 Rue d\'Agadir, Casablanca',
+      cin: encryptCin('BK654321'),
+      cin_hash: hashBlindIndex('BK654321'),
+      medical_profile: {
+        create: {
+          height_cm: 165,
+          weight_kg: 68.5,
+          blood_type: 'A_positive',
+          allergies: ['Pénicilline', 'Bêta-lactamines'],
+          chronic_conditions: ['Hypertension artérielle', 'Insuffisance veineuse'],
+        },
+      },
     },
   });
 
-  const patientA3 = await db.patient.create({
+  // Patient 2: Yassine Mansouri (Contrôle sain)
+  const pMansouri = await db.patient.create({
     data: {
-      clinic_id: clinicA.id,
-      file_number: 3,
+      clinic_id: clinicCasablanca.id,
+      file_number: 1042,
+      first_name: 'Yassine',
+      last_name: 'Mansouri',
+      birth_date: new Date('1992-03-15'),
+      gender: 'male',
+      phone: '+212 661-234567',
+      email: 'yassine.mansouri@outlook.com',
+      address: '14 Boulevard Ghandi, Casablanca',
+      cin: encryptCin('BE892142'),
+      cin_hash: hashBlindIndex('BE892142'),
+      medical_profile: {
+        create: {
+          height_cm: 178,
+          weight_kg: 74.0,
+          blood_type: 'O_positive',
+          allergies: [],
+          chronic_conditions: ['Hypercholestérolémie légère'],
+        },
+      },
+    },
+  });
+
+  // Patient 3: Omar Bennani (Bilan tensionnel)
+  const pBennani = await db.patient.create({
+    data: {
+      clinic_id: clinicCasablanca.id,
+      file_number: 1091,
       first_name: 'Omar',
-      last_name: 'Fettah',
-      birth_date: new Date('1978-01-05'),
+      last_name: 'Bennani',
+      birth_date: new Date('1976-11-04'),
       gender: 'male',
-      phone: '+212600000003',
-      cin: 'EF345678',
+      phone: '+212 664-554433',
+      address: '50 Rue Sebou, Maarif, Casablanca',
+      cin: encryptCin('C489102'),
+      cin_hash: hashBlindIndex('C489102'),
+      medical_profile: {
+        create: {
+          height_cm: 172,
+          weight_kg: 82.0,
+          blood_type: 'A_positive',
+          allergies: [],
+          chronic_conditions: ['Dyspnée d\'effort', 'Arythmie sinusale'],
+        },
+      },
     },
   });
 
-  const patientA4 = await db.patient.create({
+  // Patient 4: Khadija Tazi (Allergie Aspirine)
+  const pTazi = await db.patient.create({
     data: {
-      clinic_id: clinicA.id,
-      file_number: 4,
-      first_name: 'Sara',
-      last_name: 'Moussaoui',
-      birth_date: new Date('2001-11-30'),
+      clinic_id: clinicCasablanca.id,
+      file_number: 1077,
+      first_name: 'Khadija',
+      last_name: 'Tazi',
+      birth_date: new Date('1968-09-19'),
       gender: 'female',
-      phone: '+212600000004',
-      cin: 'GH901234',
+      phone: '+212 662-112233',
+      address: '8 Boulevard Abdelmoumen, Casablanca',
+      cin: encryptCin('A982145'),
+      cin_hash: hashBlindIndex('A982145'),
+      medical_profile: {
+        create: {
+          height_cm: 160,
+          weight_kg: 64.0,
+          blood_type: 'B_positive',
+          allergies: ['Aspirine', 'AINS'],
+          chronic_conditions: ['Palpitations', 'Asthme modéré'],
+        },
+      },
     },
   });
 
-  const patientA5 = await db.patient.create({
+  // Patient 5: Mehdi Chraibi (Stent coronarien)
+  const pChraibi = await db.patient.create({
     data: {
-      clinic_id: clinicA.id,
-      file_number: 5,
-      first_name: 'Tariq',
-      last_name: 'Zerouali',
-      birth_date: new Date('1965-04-17'),
+      clinic_id: clinicCasablanca.id,
+      file_number: 1095,
+      first_name: 'Mehdi',
+      last_name: 'Chraibi',
+      birth_date: new Date('1961-05-30'),
       gender: 'male',
-      phone: '+212600000005',
-      cin: 'IJ567890',
+      phone: '+212 665-998877',
+      address: '105 Avenue 2 Mars, Casablanca',
+      cin: encryptCin('D392011'),
+      cin_hash: hashBlindIndex('D392011'),
+      medical_profile: {
+        create: {
+          height_cm: 175,
+          weight_kg: 79.5,
+          blood_type: 'O_negative',
+          allergies: [],
+          chronic_conditions: ['Stent coronarien (2024)', 'Diabète type 2'],
+        },
+      },
     },
   });
 
-  const patientA6 = await db.patient.create({
-    data: {
-      clinic_id: clinicA.id,
-      file_number: 6,
-      first_name: 'Nadia',
-      last_name: 'Haddou',
-      birth_date: new Date('1988-08-02'),
-      gender: 'female',
-      phone: '+212600000006',
-      cin: 'KL123456',
-    },
-  });
-
-  const patientB1 = await db.patient.create({
-    data: {
-      clinic_id: clinicB.id,
-      file_number: 1,
-      first_name: 'Karim',
-      last_name: 'Bennis',
-      birth_date: new Date('1990-03-14'),
-      gender: 'male',
-      phone: '+212600000007',
-      cin: 'MN789012',
-    },
-  });
-
-  // Sample appointments for Clinic A (Dr. Ahmed)
-  // Base date: today at 09:00 in Morocco timezone
+  // =========================================================================
+  // TODAY'S APPOINTMENTS SCHEDULE (Dr. Benali - Casablanca)
+  // =========================================================================
+  console.log('Seeding today\'s clinical schedule...');
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const baseDate = new Date(today);
-  baseDate.setHours(9, 0, 0, 0);
 
-  const appointmentsA: any[] = [];
+  function getSlotTime(hour: number, minute: number): Date {
+    const d = new Date(today);
+    d.setHours(hour, minute, 0, 0);
+    return d;
+  }
 
-  // A confirmed appointment at 09:00-09:30 (first slot of the morning)
-  appointmentsA.push({
-    clinic_id: clinicA.id,
-    patient_id: patientA1.id,
-    doctor_id: clinicADoctor.id,
-    starts_at: new Date(baseDate.getTime()),
-    ends_at: new Date(baseDate.getTime() + 30 * 60 * 1000),
-    status: 'confirmed',
-    reason: 'Annual checkup',
-    source: 'staff',
-    created_by: clinicADoctor.id,
-  });
-
-  // An arrived appointment at 09:30-10:00
-  const arrivedStart = new Date(baseDate.getTime() + 30 * 60 * 1000);
-  appointmentsA.push({
-    clinic_id: clinicA.id,
-    patient_id: patientA2.id,
-    doctor_id: clinicADoctor.id,
-    starts_at: arrivedStart,
-    ends_at: new Date(arrivedStart.getTime() + 30 * 60 * 1000),
-    status: 'arrived',
-    reason: 'Follow-up',
-    source: 'staff',
-    created_by: clinicASecretary.id,
-  });
-
-  // An in_progress appointment at 10:00-10:30 (this is the one being seen)
-  const inProgStart = new Date(baseDate.getTime() + 60 * 60 * 1000);
-  appointmentsA.push({
-    clinic_id: clinicA.id,
-    patient_id: patientA3.id,
-    doctor_id: clinicADoctor.id,
-    starts_at: inProgStart,
-    ends_at: new Date(inProgStart.getTime() + 30 * 60 * 1000),
-    status: 'in_progress',
-    reason: 'Consultation',
-    source: 'staff',
-    created_by: clinicASecretary.id,
-  });
-
-  // A scheduled appointment at 10:30-11:00 (next patient waiting)
-  const schedStart = new Date(baseDate.getTime() + 90 * 60 * 1000);
-  appointmentsA.push({
-    clinic_id: clinicA.id,
-    patient_id: patientA4.id,
-    doctor_id: clinicADoctor.id,
-    starts_at: schedStart,
-    ends_at: new Date(schedStart.getTime() + 30 * 60 * 1000),
-    status: 'scheduled',
-    reason: 'New patient',
-    source: 'online',
-    created_by: clinicADoctor.id,
-  });
-
-  // A completed appointment earlier today (08:30-09:00) — terminal status, doesn't block the 09:00 slot
-  const completedStart = new Date(baseDate.getTime() - 30 * 60 * 1000);
-  appointmentsA.push({
-    clinic_id: clinicA.id,
-    patient_id: patientA5.id,
-    doctor_id: clinicADoctor.id,
-    starts_at: completedStart,
-    ends_at: new Date(completedStart.getTime() + 30 * 60 * 1000),
-    status: 'completed',
-    reason: 'Routine exam',
-    source: 'staff',
-    created_by: clinicADoctor.id,
-  });
-
-  // A cancelled appointment at 11:00-11:30 (terminal, doesn't block)
-  const cancelledStart = new Date(baseDate.getTime() + 120 * 60 * 1000);
-  appointmentsA.push({
-    clinic_id: clinicA.id,
-    patient_id: patientA6.id,
-    doctor_id: clinicADoctor.id,
-    starts_at: cancelledStart,
-    ends_at: new Date(cancelledStart.getTime() + 30 * 60 * 1000),
-    status: 'cancelled',
-    reason: 'Patient called in sick',
-    source: 'staff',
-    cancelled_at: new Date(),
-    cancel_reason: 'Patient called in sick',
-    created_by: clinicASecretary.id,
-  });
-
-  // A no_show appointment from yesterday (terminal)
-  const yesterday = new Date(baseDate.getTime() - 24 * 60 * 60 * 1000);
-  appointmentsA.push({
-    clinic_id: clinicA.id,
-    patient_id: patientA6.id, // same patient as cancelled, different appointment
-    doctor_id: clinicADoctor.id,
-    starts_at: yesterday,
-    ends_at: new Date(yesterday.getTime() + 30 * 60 * 1000),
-    status: 'no_show',
-    reason: 'Missed appointment',
-    source: 'staff',
-    created_by: clinicASecretary.id,
-  });
-
-  await db.appointment.createMany({ data: appointmentsA });
-
-  // Sample appointment for Clinic B (Dr. Sara), different day for isolation test
-  const day2 = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
-  const day2Start = new Date(day2.getTime() + 9 * 60 * 60 * 1000);
-  await db.appointment.create({
-    data: {
-      clinic_id: clinicB.id,
-      patient_id: patientB1.id,
-      doctor_id: clinicBDoctor.id,
-      starts_at: day2Start,
-      ends_at: new Date(day2Start.getTime() + 60 * 60 * 1000), // 60-min slot
-      status: 'confirmed',
-      reason: 'Routine checkup',
-      source: 'online',
-      created_by: clinicBDoctor.id,
+  const appointmentsData = [
+    // 09:00 - 09:30 : Completed (Yassine Mansouri, fee 350 DH)
+    {
+      clinic_id: clinicCasablanca.id,
+      patient_id: pMansouri.id,
+      doctor_id: doctorBenali.id,
+      starts_at: getSlotTime(9, 0),
+      ends_at: getSlotTime(9, 30),
+      status: 'completed' as const,
+      reason: 'Consultation de contrôle cardiologie annuelle. ECG normal.',
+      source: 'staff' as const,
+      created_by: secretaryMeryem.id,
     },
-  });
+    // 09:30 - 10:00 : In Progress (Fatima Zahra Alami)
+    {
+      clinic_id: clinicCasablanca.id,
+      patient_id: pAlami.id,
+      doctor_id: doctorBenali.id,
+      starts_at: getSlotTime(9, 30),
+      ends_at: getSlotTime(10, 0),
+      status: 'in_progress' as const,
+      reason: 'Première consultation - Hypertension artérielle et souffle systolique.',
+      source: 'staff' as const,
+      created_by: secretaryMeryem.id,
+    },
+    // 10:00 - 10:30 : Arrived in Waiting Room (Omar Bennani)
+    {
+      clinic_id: clinicCasablanca.id,
+      patient_id: pBennani.id,
+      doctor_id: doctorBenali.id,
+      starts_at: getSlotTime(10, 0),
+      ends_at: getSlotTime(10, 30),
+      status: 'arrived' as const,
+      reason: 'Bilan tensionnel et dyspnée d\'effort modérée.',
+      source: 'staff' as const,
+      created_by: secretaryMeryem.id,
+    },
+    // 10:30 - 11:00 : Arrived in Waiting Room (Khadija Tazi)
+    {
+      clinic_id: clinicCasablanca.id,
+      patient_id: pTazi.id,
+      doctor_id: doctorBenali.id,
+      starts_at: getSlotTime(10, 30),
+      ends_at: getSlotTime(11, 0),
+      status: 'arrived' as const,
+      reason: 'Renouvellement ordonnance et palpitations nocturnes.',
+      source: 'staff' as const,
+      created_by: secretaryMeryem.id,
+    },
+    // 11:30 - 12:00 : Scheduled (Mehdi Chraibi)
+    {
+      clinic_id: clinicCasablanca.id,
+      patient_id: pChraibi.id,
+      doctor_id: doctorBenali.id,
+      starts_at: getSlotTime(11, 30),
+      ends_at: getSlotTime(12, 0),
+      status: 'scheduled' as const,
+      reason: 'Suivi post-opératoire stent et bilan lipidique.',
+      source: 'online' as const,
+      created_by: doctorBenali.id,
+    },
+  ];
 
-  // Create audit log entries
+  await db.appointment.createMany({ data: appointmentsData });
+
+  // =========================================================================
+  // CNDP AUDIT TRAIL LOGS
+  // =========================================================================
+  console.log('Seeding CNDP Law 09-08 Audit Trail Logs...');
   await db.auditLog.createMany({
     data: [
       {
-        clinic_id: clinicA.id,
-        user_id: clinicAAAdmin.id,
+        clinic_id: clinicCasablanca.id,
+        user_id: doctorBenali.id,
         action: 'login',
         entity_type: 'User',
-        entity_id: clinicAAAdmin.id,
-        request_id: 'seed-init',
-        ip: '127.0.0.1',
-        user_agent: 'seed-script',
-        metadata: {},
+        entity_id: doctorBenali.id,
+        request_id: 'cndp-req-001',
+        ip: '196.200.145.22',
+        user_agent: 'Antigravity Medical Client (Casablanca)',
+        metadata: { method: '2FA_TOTP_VERIFIED', role: 'doctor' },
       },
       {
-        clinic_id: clinicA.id,
-        user_id: clinicADoctor.id,
-        action: 'login',
-        entity_type: 'User',
-        entity_id: clinicADoctor.id,
-        request_id: 'seed-init',
-        ip: '127.0.0.1',
-        user_agent: 'seed-script',
-        metadata: {},
+        clinic_id: clinicCasablanca.id,
+        user_id: doctorBenali.id,
+        action: 'read',
+        entity_type: 'Patient',
+        entity_id: pAlami.id,
+        request_id: 'cndp-req-002',
+        ip: '196.200.145.22',
+        user_agent: 'Antigravity Medical Client (Casablanca)',
+        metadata: { action: 'LECTURE_DOSSIER_MEDICAL', loi_09_08_compliance: true },
       },
       {
-        clinic_id: null, // platform action
-        user_id: null,
-        action: 'invite_created',
-        entity_type: 'Clinic',
-        entity_id: clinicA.id,
-        request_id: 'seed-init',
-        ip: '127.0.0.1',
-        user_agent: 'seed-script',
-        metadata: {},
+        clinic_id: clinicCasablanca.id,
+        user_id: secretaryMeryem.id,
+        action: 'create',
+        entity_type: 'Appointment',
+        entity_id: pBennani.id,
+        request_id: 'cndp-req-003',
+        ip: '196.200.145.22',
+        user_agent: 'Antigravity Reception Terminal',
+        metadata: { action: 'ENREGISTREMENT_ARRIVEE_SALLE_ATTENTE', status: 'arrived' },
       },
     ],
   });
 
-  console.log('Seed completed successfully.');
+  console.log('--- Database Seed Finished Successfully! ---');
+  console.log('Clinics seeded: Casablanca (Dr. Benali), Rabat (Dr. Sara), Marrakech (Dr. El Fassi)');
+  console.log('Test Credentials:');
+  console.log('  - Doctor: doctor@clinic-a.test / SeedPass123!');
+  console.log('  - Secretary: secretary@clinic-a.test / SeedPass123!');
+  console.log('  - Solo Doctor: doctor@solo.test / SeedPass123!');
 }
 
 main()
   .catch((e) => {
-    console.error('Error during seed:', e);
+    console.error('Seed execution error:', e);
     process.exit(1);
   })
   .finally(async () => {

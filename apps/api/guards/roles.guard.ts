@@ -1,12 +1,25 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
+/**
+ * Singleton Reflector instance.
+ *
+ * NestJS's InternalCoreModule (which provides Reflector) is NOT registered
+ * when building a TestingModule with Test.createTestingModule — the
+ * TestingModuleBuilder does not call registerCoreModule(). This means any
+ * provider that depends on Reflector (e.g. RolesGuard) gets `undefined`
+ * injected, because the token cannot be resolved in the test module tree.
+ *
+ * We work around this by lazily creating our own Reflector instance on
+ * first use. Reflector is a stateless wrapper around the native Reflect
+ * API, so this is safe.
+ */
+const reflector = new Reflector();
+
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
-
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<string[]>('roles', [
+    const requiredRoles = reflector.getAllAndOverride<string[]>('roles', [
       context.getHandler(),
       context.getClass(),
     ]);

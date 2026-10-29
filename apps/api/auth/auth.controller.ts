@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, Req, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Req, HttpStatus, Inject } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from '../guards/local.guard';
 import { TwoFaGuard } from '../guards/two-fa.guard';
@@ -9,7 +9,7 @@ import { ResponseFormat } from '../decorators/response.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(@Inject(AuthService) private authService: AuthService) {}
 
   @Post('login')
   @ResponseFormat()

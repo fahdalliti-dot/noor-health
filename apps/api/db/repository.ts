@@ -8,6 +8,17 @@ export class AuthRepository {
 
   // User methods
   async findByEmail(email: string): Promise<User | null> {
+    // Use SECURITY DEFINER function to bypass RLS during login,
+    // when app.clinic_id is not yet set (chicken-and-egg problem).
+    const users = await this.prisma.$queryRawUnsafe<User[]>(
+      `SELECT * FROM find_user_by_email_for_login($1)`,
+      email,
+    );
+    return users[0] ?? null;
+  }
+
+  async findByEmailWithRls(email: string): Promise<User | null> {
+    // Use standard Prisma query (RLS applies)
     return this.prisma.user.findUnique({ where: { email } });
   }
 
@@ -149,17 +160,19 @@ export class AuthRepository {
     ip?: string;
     expires_at: Date;
   }): Promise<Session> {
-    return this.prisma.session.create({
-      data: {
-        user: { connect: { id: data.user_id } },
-        clinic: { connect: { id: data.clinic_id } },
-        family_id: data.family_id,
-        refresh_token_hash: data.refresh_token_hash ?? '',
-        device_label: data.device_label,
-        ip: data.ip,
-        expires_at: data.expires_at,
-      },
-    });
+    // Use SECURITY DEFINER function to bypass RLS during login (when app.clinic_id is not yet set).
+    // The user is already validated via the SECURITY DEFINER login function.
+    const sessions = await this.prisma.$queryRawUnsafe<Session[]>(
+      `SELECT * FROM create_session_for_login($1, $2, $3, $4, $5, $6, $7)`,
+      data.user_id,
+      data.clinic_id,
+      data.family_id,
+      data.refresh_token_hash ?? '',
+      data.device_label ?? null,
+      data.ip ?? null,
+      data.expires_at,
+    );
+    return sessions[0];
   }
 
   async createPasswordResetToken(data: {

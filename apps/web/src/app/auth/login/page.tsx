@@ -40,41 +40,66 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-8">
-      <div className="max-w-md w-full space-y-6 p-8 bg-white rounded-xl shadow-xl border border-gray-200" dir={t('direction')}>
-        <h2 className="text-2xl font-bold text-center text-gray-900">{t('auth.login')}</h2>
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4 sm:p-8">
+      <div
+        className="max-w-md w-full space-y-6 p-6 sm:p-8 bg-white rounded-xl shadow-lg border border-gray-200"
+        dir={t('direction')}
+      >
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-bold text-gray-900">{t('auth.login')}</h1>
+          <p className="text-sm text-gray-500">Portail sécurisé des professionnels de santé</p>
+        </div>
 
         {error && (
-          <p className="text-red-600 text-sm text-center">
+          <div
+            role="alert"
+            className="p-3 bg-red-50 text-red-700 rounded-lg text-sm border border-red-200 text-center"
+          >
             {error}
-          </p>
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            type="email"
-            placeholder={t('placeholder.email')}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <div>
+            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">
+              Adresse e-mail
+            </label>
+            <Input
+              id="login-email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder={t('placeholder.email')}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-          <Input
-            type="password"
-            placeholder={t('placeholder.password')}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div>
+            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-1">
+              Mot de passe
+            </label>
+            <Input
+              id="login-password"
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              placeholder={t('placeholder.password')}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-          <Button type="submit" disabled={loading} className="w-full">
+          <Button type="submit" isLoading={loading} disabled={loading} className="w-full">
             {loading ? t('submitting') : t('login')}
           </Button>
         </form>
 
         <p className="text-center text-sm text-gray-500">
           {t('no_account')}{' '}
-          <span className="font-medium text-blue-600">
+          <span className="font-medium text-blue-600 hover:underline cursor-pointer">
             {t('register')}
           </span>
         </p>

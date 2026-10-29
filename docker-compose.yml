@@ -1,24 +1,53 @@
 version: "3.9"
 
 services:
+  # ====================================================================
+  # Database Service (PostgreSQL 16 with RLS and Moroccan init schema)
+  # ====================================================================
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: saas-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: saas_clinics
-      POSTGRES_USER: saas_user
+      POSTGRES_DB: saas_dev
+      POSTGRES_USER: saas_owner
       POSTGRES_PASSWORD: saas_pass
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "saas_user", "-d", "saas_clinics"]
+      test: ["CMD-SHELL", "pg_isready -U saas_owner -d saas_dev"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - saas-network
 
+  # ====================================================================
+  # Redis Cache & Session Store
+  # ====================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: saas-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - saas-network
+
+  # ====================================================================
+  # Mailpit Mock SMTP & Webmail for Clinic Invites & Password Resets
+  # ====================================================================
   mailpit:
     image: docker.io/frgnc/mailpit:latest
     container_name: saas-mailpit
@@ -31,6 +60,66 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - saas-network
+
+  # ====================================================================
+  # NestJS Clinical Backend API
+  # ====================================================================
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: saas-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://saas_owner:saas_pass@db:5432/saas_dev?schema=public
+      APP_DATABASE_URL: postgresql://saas_app:saas_pass@db:5432/saas_dev?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-a-strong-random-secret}
+      PATIENT_ENCRYPTION_KEY: ${PATIENT_ENCRYPTION_KEY:-920bd7f5c0e2dd2302f20e135f0b705977414a603ebe5fbef26071f393ce229f}
+      BLIND_INDEX_PEPPER: ${BLIND_INDEX_PEPPER:-a7b3c4d5e6f7890123456789abcdef0123456789abcdef0123456789abcdef01}
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - saas-network
+
+  # ====================================================================
+  # Next.js 14 Medical Web Frontend
+  # ====================================================================
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: saas-web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_DEFAULT_LOCALE: fr
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - saas-network
 
 volumes:
   pg_data:
+  redis_data:
+
+networks:
+  saas-network:
+    driver: bridge

@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
@@ -24,7 +25,7 @@ import {
 @Controller('patients')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class PatientsController {
-  constructor(private readonly patientsService: PatientsService) {}
+  constructor(@Inject(PatientsService) private readonly patientsService: PatientsService) {}
 
   // =====================
   // Patient Identity (demographics, contact)
@@ -37,6 +38,7 @@ export class PatientsController {
     @Body() dto: CreatePatientDto,
     @GetUser() user: any,
   ) {
+    console.log('[DEBUG createPatient] user:', JSON.stringify(user));
     const data = await this.patientsService.createPatient(
       dto,
       user.clinic_id,

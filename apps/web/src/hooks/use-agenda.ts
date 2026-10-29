@@ -26,6 +26,7 @@ export interface Appointment {
   created_at: string;
   updated_at: string;
   doctor: { id: string; full_name: string };
+  patient?: { id: string; first_name: string; last_name: string; phone?: string | null; cin?: string | null };
 }
 
 export interface WorkingHours {
