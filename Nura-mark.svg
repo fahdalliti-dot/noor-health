@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Nura — brand mark</title>
+  <desc>
+    Nura brand mark. An abstract interlocking N monogram inside a diamond.
+    The diamond references Moroccan zellige geometry without quoting it.
+    The broken diagonal of the N leaves negative space that reads as light
+    radiating — the meaning of the name (نور, nūr).
+    Single color, self-contained, works at any size including favicon.
+  </desc>
+
+  <defs>
+    <style>
+      .mark { fill: #B05A3A; }
+      .mark-light { fill: #F5F1E8; }
+      .frame { fill: none; stroke: #B05A3A; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <!-- Diamond frame — zellige-inspired, thin and confident -->
+  <polygon class="frame" points="100,14 186,100 100,186 14,100"
+           stroke-linejoin="round"/>
+
+  <!-- N monogram — interlocking, built from 4 strokes -->
+  <!-- Left vertical bar -->
+  <rect class="mark" x="48" y="30" width="16" height="140" rx="3"/>
+  <!-- Right vertical bar -->
+  <rect class="mark" x="136" y="30" width="16" height="140" rx="3"/>
+  <!-- Diagonal — top-left to bottom-right, broken once to suggest light passing through -->
+  <polygon class="mark" points="64,30 80,30 136,150 120,150"/>
+  <!-- The break: a sliver of background in the diagonal's middle, read as light -->
+  <polygon fill="#F5F1E8" points="92,72 108,72 108,88 92,88"/>
+  <!-- Counter-balance: small light triangle at the top of the diagonal's lower half -->
+  <polygon fill="#F5F1E8" points="108,104 120,104 114,116"/>
+
+  <!-- Radiating light — 4 thin rays in the open counter, subtle -->
+  <g stroke="#B05A3A" stroke-width="1.5" fill="none" stroke-linecap="round"
+     opacity="0.55">
+    <line x1="100" y1="46" x2="100" y2="24"/>
+    <line x1="100" y1="154" x2="100" y2="176"/>
+    <line x1="40" y1="100" x2="22" y2="100"/>
+    <line x1="160" y1="100" x2="178" y2="100"/>
+  </g>
+</svg>

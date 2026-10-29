@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" width="480" height="120">
+  <title>Nura — light lockup</title>
+  <desc>Mark + wordmark on sand background. Standard app-header lockup.</desc>
+
+  <rect width="480" height="120" fill="#F5F1E8"/>
+
+  <!-- mark, scaled to cap height of wordmark -->
+  <g transform="translate(40,20) scale(0.55)">
+    <polygon points="100,14 186,100 100,186 14,100"
+             fill="none" stroke="#B05A3A" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="48" y="30" width="16" height="140" rx="3" fill="#B05A3A"/>
+    <rect x="136" y="30" width="16" height="140" rx="3" fill="#B05A3A"/>
+    <polygon points="64,30 80,30 136,150 120,150" fill="#B05A3A"/>
+    <polygon fill="#F5F1E8" points="92,72 108,72 108,88 92,88"/>
+    <polygon fill="#F5F1E8" points="108,104 120,104 114,116"/>
+    <g stroke="#B05A3A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.55">
+      <line x1="100" y1="46" x2="100" y2="24"/>
+      <line x1="100" y1="154" x2="100" y2="176"/>
+      <line x1="40" y1="100" x2="22" y2="100"/>
+      <line x1="160" y1="100" x2="178" y2="100"/>
+    </g>
+  </g>
+
+  <!-- wordmark -->
+  <text x="160" y="68" fill="#1A1A1A"
+        font-family="'Cormorant Garamond', Georgia, serif"
+        font-size="64" font-weight="600" letter-spacing="2">Nura</text>
+  <text x="160" y="92" fill="#8C8C7A"
+        font-family="Inter, sans-serif" font-size="12" letter-spacing="5"
+        text-transform="uppercase">soin numérique</text>
+</svg>

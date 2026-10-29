@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 180" width="400" height="180">
+  <title>نور — Arabic calligraphic wordmark</title>
+  <desc>
+    Calligraphic treatment of نور (nūr, "light"). Naskh-inspired: the نun
+    forms a large lower bowl, the وwaw a head above, and the رa sweeps right
+    as a tail. Thick downstroke / thin upstroke contrast, drawn as paths —
+    not a font fallback.
+  </desc>
+
+  <defs>
+    <style>
+      .ink { fill: #1A1A1A; }
+    </style>
+  </defs>
+
+  <!--
+    Composition (right to left in source, as Arabic is written):
+    The ن (nun) bowl is the anchor, low and wide.
+    The و (waw) head sits above it.
+    The ر (ra) tail sweeps right.
+
+    Coordinates are left-to-right in the SVG viewBox; the visual reading
+    order is right-to-left as Arabic requires.
+  -->
+
+  <!-- ر (ra) — the tail, sweeping right from the nun's upper-right.
+       A single confident horizontal stroke, thick where it meets the nun,
+       tapering as it extends. -->
+  <path class="ink" d="M286,62
+                       C316,58 352,56 380,58
+                       L378,70
+                       C350,68 316,70 286,74
+                       C278,76 274,78 272,82
+                       L266,82
+                       C268,74 274,68 286,62 Z"/>
+
+  <!-- و (waw) — the head, above and left of the ra's start.
+       A small rounded head with a thin neck. -->
+  <path class="ink" d="M238,30
+                       C250,26 264,26 274,30
+                       C282,34 286,40 286,46
+                       C286,52 282,56 274,58
+                       C264,60 250,60 238,58
+                       C230,56 226,52 226,46
+                       C226,40 230,34 238,30 Z
+                       M256,46
+                       C256,48 254,50 252,50
+                       C250,50 248,48 248,46
+                       C248,44 250,42 252,42
+                       C254,42 256,44 256,46 Z"/>
+
+  <!-- ن (nun) — the large lower bowl, the anchor of the word.
+       Wide, grounded, with a counter (hole) in the middle. -->
+  <path class="ink" d="M150,120
+                       C140,130 120,134 100,134
+                       C70,134 46,124 34,106
+                       C24,90 22,70 30,54
+                       C38,40 54,32 74,30
+                       C98,28 118,32 132,42
+                       L132,42
+                       C130,58 124,72 114,82
+                       L114,82
+                       C124,88 130,96 132,106
+                       C134,116 132,124 128,130
+                       L128,130
+                       C136,130 142,128 146,124
+                       L150,120 Z
+                       M74,54
+                       C86,54 96,56 104,60
+                       C110,64 114,70 114,78
+                       C114,86 110,92 104,96
+                       C96,100 86,102 74,102
+                       C62,102 52,100 44,96
+                       C38,92 34,86 34,78
+                       C34,70 38,64 44,60
+                       C52,56 62,54 74,54 Z"/>
+</svg>

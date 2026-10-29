@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200" width="480" height="200">
+  <title>Nura — bilingual lockup</title>
+  <desc>
+    Latin wordmark stacked above the drawn Arabic calligraphic variant.
+    Mark on the left. For bilingual surfaces.
+  </desc>
+
+  <rect width="480" height="200" fill="#F5F1E8"/>
+
+  <!-- mark -->
+  <g transform="translate(40,30) scale(0.5)">
+    <polygon points="100,14 186,100 100,186 14,100"
+             fill="none" stroke="#B05A3A" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="48" y="30" width="16" height="140" rx="3" fill="#B05A3A"/>
+    <rect x="136" y="30" width="16" height="140" rx="3" fill="#B05A3A"/>
+    <polygon points="64,30 80,30 136,150 120,150" fill="#B05A3A"/>
+    <polygon fill="#F5F1E8" points="92,72 108,72 108,88 92,88"/>
+    <polygon fill="#F5F1E8" points="108,104 120,104 114,116"/>
+    <g stroke="#B05A3A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.55">
+      <line x1="100" y1="46" x2="100" y2="24"/>
+      <line x1="100" y1="154" x2="100" y2="176"/>
+      <line x1="40" y1="100" x2="22" y2="100"/>
+      <line x1="160" y1="100" x2="178" y2="100"/>
+    </g>
+  </g>
+
+  <!-- Latin wordmark -->
+  <text x="200" y="88" fill="#1A1A1A"
+        font-family="'Cormorant Garamond', Georgia, serif"
+        font-size="64" font-weight="600" letter-spacing="2">Nura</text>
+  <text x="200" y="112" fill="#8C8C7A"
+        font-family="Inter, sans-serif" font-size="12" letter-spacing="5"
+        text-transform="uppercase">soin numérique</text>
+
+  <!-- Arabic calligraphic variant — drawn paths, not a font.
+       Scaled from the 400x180 source (Nura-arabic.svg) to fit here. -->
+  <g transform="translate(200,118) scale(0.5)">
+    <!-- ر (ra) — tail sweeping right -->
+    <path fill="#1A1A1A" d="M286,62 C316,58 352,56 380,58 L378,70 C350,68 316,70 286,74 C278,76 274,78 272,82 L266,82 C268,74 274,68 286,62 Z"/>
+    <!-- و (waw) — head -->
+    <path fill="#1A1A1A" d="M238,30 C250,26 264,26 274,30 C282,34 286,40 286,46 C286,52 282,56 274,58 C264,60 250,60 238,58 C230,56 226,52 226,46 C226,40 230,34 238,30 Z M256,46 C256,48 254,50 252,50 C250,50 248,48 248,46 C248,44 250,42 252,42 C254,42 256,44 256,46 Z"/>
+    <!-- ن (nun) — large lower bowl -->
+    <path fill="#1A1A1A" d="M150,120 C140,130 120,134 100,134 C70,134 46,124 34,106 C24,90 22,70 30,54 C38,40 54,32 74,30 C98,28 118,32 132,42 L132,42 C130,58 124,72 114,82 L114,82 C124,88 130,96 132,106 C134,116 132,124 128,130 L128,130 C136,130 142,128 146,124 L150,120 Z M74,54 C86,54 96,56 104,60 C110,64 114,70 114,78 C114,86 110,92 104,96 C96,100 86,102 74,102 C62,102 52,100 44,96 C38,92 34,86 34,78 C34,70 38,64 44,60 C52,56 62,54 74,54 Z"/>
+  </g>
+</svg>

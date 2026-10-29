@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 140" width="520" height="140">
+  <title>Nura — custom wordmark</title>
+  <desc>
+    Custom-drawn serif wordmark for Nura. High-contrast editorial treatment:
+    thick stems, thin serifs, generous letter spacing. Designed to be drawn
+    (not a web font) so it renders in icons, PDFs, and print.
+  </desc>
+
+  <defs>
+    <style>
+      .ink { fill: #1A1A1A; }
+    </style>
+  </defs>
+
+  <!--
+    Layout: cap height y=25..115 (90px), stem width 20px, serif bars 6px tall.
+    Generous inter-letter spacing. Each letter is built from filled shapes.
+  -->
+
+  <!-- N — x 30..179 -->
+  <!-- left stem -->
+  <rect class="ink" x="30" y="25" width="20" height="90"/>
+  <!-- right stem -->
+  <rect class="ink" x="159" y="25" width="20" height="90"/>
+  <!-- diagonal -->
+  <polygon class="ink" points="50,25 70,25 159,115 139,115"/>
+  <!-- serifs -->
+  <rect class="ink" x="16" y="25" width="34" height="6"/>   <!-- top-left -->
+  <rect class="ink" x="50" y="25" width="14" height="6"/>   <!-- top-right of left stem -->
+  <rect class="ink" x="16" y="109" width="34" height="6"/>  <!-- bottom-left -->
+  <rect class="ink" x="139" y="25" width="20" height="6"/>  <!-- top-left of right stem -->
+  <rect class="ink" x="159" y="109" width="40" height="6"/>  <!-- bottom-right -->
+  <rect class="ink" x="139" y="109" width="20" height="6"/>  <!-- bottom-left of right stem -->
+
+  <!-- u — x 200..285 -->
+  <!-- left stem -->
+  <rect class="ink" x="200" y="25" width="20" height="90"/>
+  <!-- right stem -->
+  <rect class="ink" x="265" y="25" width="20" height="90"/>
+  <!-- bottom curve joining the stems -->
+  <path class="ink" d="M220,115 Q242,128 265,115 L265,115 Q242,128 220,115 Z"/>
+  <!-- serifs -->
+  <rect class="ink" x="186" y="25" width="34" height="6"/>  <!-- top-left -->
+  <rect class="ink" x="271" y="25" width="34" height="6"/>  <!-- top-right -->
+
+  <!-- r — x 300..370 -->
+  <!-- stem -->
+  <rect class="ink" x="300" y="25" width="20" height="90"/>
+  <!-- arm: curves right from top of stem -->
+  <path class="ink" d="M320,27 Q352,27 360,44 L350,50 Q338,36 320,34 Z"/>
+  <!-- serif -->
+  <rect class="ink" x="286" y="25" width="34" height="6"/>  <!-- top-left of stem -->
+
+  <!-- a — x 385..475 -->
+  <!-- right stem -->
+  <rect class="ink" x="455" y="25" width="20" height="90"/>
+  <!-- bowl (left of stem) -->
+  <path class="ink" d="M385,80
+                       a42,38 0 1,1 0,0.1
+                       L437,115
+                       L437,55
+                       a42,30 0 1,0 0,-0.1 Z"/>
+  <!-- serifs -->
+  <rect class="ink" x="441" y="25" width="34" height="6"/>  <!-- top of stem -->
+  <rect class="ink" x="455" y="109" width="40" height="6"/>  <!-- bottom of stem -->
+  <rect class="ink" x="385" y="109" width="70" height="6"/>  <!-- bottom of bowl -->
+</svg>
