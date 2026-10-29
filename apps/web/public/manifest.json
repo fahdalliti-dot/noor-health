@@ -1,0 +1,58 @@
+{
+  "name": "Noor Médecin — Soin Numérique (نُور)",
+  "short_name": "Noor نُور",
+  "description": "Gestion de cabinet médical au Maroc · Agenda clinique, DMP 360°, Ordonnances & Téléconsultation",
+  "start_url": "/agenda",
+  "display": "standalone",
+  "background_color": "#F7F4EF",
+  "theme_color": "#B05A3A",
+  "orientation": "portrait-primary",
+  "lang": "fr-MA",
+  "dir": "ltr",
+  "scope": "/",
+  "id": "ma.noor.health.doctor",
+  "icons": [
+    {
+      "src": "/brand/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agenda du Jour",
+      "short_name": "Agenda",
+      "description": "Consulter les rendez-vous et consultations du jour",
+      "url": "/agenda",
+      "icons": [{ "src": "/brand/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Dossiers Patients (DMP)",
+      "short_name": "Patients",
+      "description": "Recherche par CIN ou nom et fiches médicales 360°",
+      "url": "/patients",
+      "icons": [{ "src": "/brand/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tableau de Bord & Caisse",
+      "short_name": "Finances",
+      "description": "Chiffre d'affaires, statistiques et encaissements",
+      "url": "/dashboard",
+      "icons": [{ "src": "/brand/icon-192.svg", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["medical", "productivity", "health"]
+}

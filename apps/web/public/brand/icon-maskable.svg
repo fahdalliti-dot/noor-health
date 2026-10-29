@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+  <defs>
+    <linearGradient id="noor-maskable-grad" x1="100" y1="100" x2="412" y2="412" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E05D34" />
+      <stop offset="50%" stop-color="#B05A3A" />
+      <stop offset="100%" stop-color="#7B331A" />
+    </linearGradient>
+    <linearGradient id="noor-maskable-star" x1="256" y1="200" x2="256" y2="310" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDBA74" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+
+  <!-- Full Bleed Background for Adaptive Android Masks -->
+  <rect width="512" height="512" fill="#B05A3A" />
+  <circle cx="256" cy="256" r="160" fill="#FFF3EC" />
+
+  <!-- N Architecture Ribbon (Scaled within safe 80% zone) -->
+  <!-- Left Pillar -->
+  <path d="M164 340 V180 C164 166.7 174.7 156 188 156 C201.3 156 212 166.7 212 180 V324 C212 337.3 201.3 348 188 348 C174.7 348 164 337.3 164 324 Z" fill="url(#noor-maskable-grad)" />
+
+  <!-- Right Pillar -->
+  <path d="M296 188 C296 174.7 306.7 164 320 164 C333.3 164 344 174.7 344 188 V332 C344 345.3 333.3 356 320 356 C306.7 356 296 345.3 296 332 Z" fill="url(#noor-maskable-grad)" />
+
+  <!-- Diagonal Ribbon -->
+  <path d="M188 159 C198 159 206 164 214 174 L317 332 C322 338 330 341 338 338 C344 333 344 325 338 316 L235 157 C227 146 213 140 198 143 C187 146 183 154 188 159 Z" fill="url(#noor-maskable-grad)" />
+
+  <!-- Central Radiance Starlet -->
+  <g transform="translate(256, 252)">
+    <path d="M0 -28 C2 -10 10 -2 28 0 C10 2 2 10 0 28 C-2 10 -10 2 -28 0 C-10 -2 -2 -10 0 -28 Z" fill="url(#noor-maskable-star)" />
+    <circle cx="0" cy="0" r="6" fill="#FFFFFF" />
+  </g>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192" fill="none">
+  <defs>
+    <linearGradient id="noor-pwa-grad" x1="20" y1="20" x2="172" y2="172" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E05D34" />
+      <stop offset="50%" stop-color="#B05A3A" />
+      <stop offset="100%" stop-color="#7B331A" />
+    </linearGradient>
+    <linearGradient id="noor-pwa-star" x1="96" y1="65" x2="96" y2="127" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDBA74" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+
+  <!-- App Icon Solid Background -->
+  <rect width="192" height="192" rx="44" fill="#FFF3EC" stroke="#F0EBE2" stroke-width="2" />
+  <circle cx="96" cy="96" r="66" stroke="#E4DDD0" stroke-width="1.2" stroke-dasharray="3 5" />
+
+  <!-- N Architecture Ribbon -->
+  <!-- Left Pillar -->
+  <path d="M52 136 V56 C52 49.37 57.37 44 64 44 C70.63 44 76 49.37 76 56 V128 C76 134.63 70.63 140 64 140 C57.37 140 52 134.63 52 128 Z" fill="url(#noor-pwa-grad)" />
+
+  <!-- Right Pillar -->
+  <path d="M116 60 C116 53.37 121.37 48 128 48 C134.63 48 140 53.37 140 60 V132 C140 138.63 134.63 144 128 144 C121.37 144 116 138.63 116 132 Z" fill="url(#noor-pwa-grad)" />
+
+  <!-- Diagonal Ribbon -->
+  <path d="M64 46 C69 46 73 48 77 53 L127 131 C129 134 133 136 137 134 C140 132 140 128 137 123 L87 45 C83 39 76 36 69 38 C63 40 61 44 64 46 Z" fill="url(#noor-pwa-grad)" />
+
+  <!-- Radiance Noor Starlet -->
+  <g transform="translate(96, 94)">
+    <path d="M0 -14 C1 -5 5 -1 14 0 C5 1 1 5 0 14 C-1 5 -5 1 -14 0 C-5 -1 -1 -5 0 -14 Z" fill="url(#noor-pwa-star)" />
+    <circle cx="0" cy="0" r="3.2" fill="#FFFFFF" />
+  </g>
+</svg>

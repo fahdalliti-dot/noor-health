@@ -74,6 +74,14 @@ hr {
   z-index: 51;
 }
 
+/* Mobile notch and home-indicator safe-area support */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
+}
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 0.5rem);
+}
+
 /* Tabular numerics for dates, amounts, counts. */
 .tabular {
   font-variant-numeric: tabular-nums;

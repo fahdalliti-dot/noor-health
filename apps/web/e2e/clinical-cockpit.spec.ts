@@ -40,8 +40,7 @@ test.describe('Clinical Cockpit & DMP Inspector', () => {
     expect(stockBgColor).toBe('rgb(255, 255, 255)');
 
     // Close modal
-    await page.keyboard.press('Escape');
-    const closeBtn = page.locator('button:has-text("✕")').first();
+    const closeBtn = page.locator('.fixed.inset-0 button:has-text("✕")').first();
     if (await closeBtn.isVisible()) {
       await closeBtn.click();
     }
@@ -59,7 +58,7 @@ test.describe('Clinical Cockpit & DMP Inspector', () => {
     const bookingBgColor = await bookingPanel.evaluate((el) => window.getComputedStyle(el).backgroundColor);
     expect(bookingBgColor).toBe('rgb(255, 255, 255)');
 
-    await page.locator('button:has-text("✕")').first().click();
+    await page.locator('.fixed.inset-0 button:has-text("✕")').first().click();
 
     // 3. Test Cash Desk (Caisse du Jour) Modal
     const cashBtn = page.locator('button:has-text("Caisse du Jour")');
@@ -74,7 +73,7 @@ test.describe('Clinical Cockpit & DMP Inspector', () => {
     const cashBgColor = await cashPanel.evaluate((el) => window.getComputedStyle(el).backgroundColor);
     expect(cashBgColor).toBe('rgb(255, 255, 255)');
 
-    await page.locator('button:has-text("✕")').first().click();
+    await page.locator('.fixed.inset-0 button:has-text("✕")').first().click();
   });
 
   test('should navigate between Agenda, Horaires (working hours), and Absences (time-off) tabs without errors', async ({ page }) => {

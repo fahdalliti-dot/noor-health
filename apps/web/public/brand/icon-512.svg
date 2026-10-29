@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="none">
+  <defs>
+    <linearGradient id="noor-pwa-512-grad" x1="50" y1="50" x2="460" y2="460" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E05D34" />
+      <stop offset="50%" stop-color="#B05A3A" />
+      <stop offset="100%" stop-color="#7B331A" />
+    </linearGradient>
+    <linearGradient id="noor-pwa-512-star" x1="256" y1="180" x2="256" y2="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDBA74" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+    <filter id="pwa-depth" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#1A1A1A" flood-opacity="0.14" />
+    </filter>
+  </defs>
+
+  <!-- App Icon Solid Background -->
+  <rect width="512" height="512" rx="116" fill="#FFF3EC" stroke="#F0EBE2" stroke-width="4" />
+  <circle cx="256" cy="256" r="176" stroke="#E4DDD0" stroke-width="2.5" stroke-dasharray="6 14" opacity="0.8" />
+
+  <!-- N Architecture Ribbon -->
+  <!-- Left Pillar -->
+  <path d="M144 360 V160 C144 143.4 157.4 130 174 130 C190.6 130 204 143.4 204 160 V340 C204 356.6 190.6 370 174 370 C157.4 370 144 356.6 144 340 Z" fill="url(#noor-pwa-512-grad)" />
+
+  <!-- Right Pillar -->
+  <path d="M308 170 C308 153.4 321.4 140 338 140 C354.6 140 368 153.4 368 170 V350 C368 366.6 354.6 380 338 380 C321.4 380 308 366.6 308 350 Z" fill="url(#noor-pwa-512-grad)" />
+
+  <!-- Dynamic Sweeping Diagonal Ribbon -->
+  <path d="M174 134 C186 134 196 140 206 152 L334 350 C340 358 350 362 360 358 C368 352 368 342 360 330 L232 132 C222 118 204 110 186 114 C172 118 168 128 174 134 Z" fill="url(#noor-pwa-512-grad)" filter="url(#pwa-depth)" />
+
+  <!-- Central Radiance Noor Starlet -->
+  <g transform="translate(256, 252)">
+    <path d="M0 -36 C2.5 -13 13 -2.5 36 0 C13 2.5 2.5 13 0 36 C-2.5 13 -13 2.5 -36 0 C-13 -2.5 -2.5 -13 0 -36 Z" fill="url(#noor-pwa-512-star)" />
+    <circle cx="0" cy="0" r="8" fill="#FFFFFF" />
+  </g>
+</svg>
