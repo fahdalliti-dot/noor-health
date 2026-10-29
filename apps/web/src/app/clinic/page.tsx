@@ -198,7 +198,7 @@ export default function ClinicSettingsPage() {
           </div>
 
           <div className="pt-4 flex justify-end">
-            <Button type="submit" size="sm" className="bg-[#0077b6] hover:bg-[#02659c] text-white">
+            <Button type="submit" size="sm" className="bg-terracotta-600 hover:bg-terracotta-700 text-white">
               Enregistrer les modifications
             </Button>
           </div>
@@ -209,7 +209,7 @@ export default function ClinicSettingsPage() {
           <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-lg bg-blue-100 text-[#0077b6] flex items-center justify-center font-bold text-sm">
+                <span className="w-8 h-8 rounded-lg bg-blue-100 text-terracotta-600 flex items-center justify-center font-bold text-sm">
                   ⚖️
                 </span>
                 <div>
@@ -251,7 +251,7 @@ export default function ClinicSettingsPage() {
               <button
                 type="button"
                 onClick={() => alert('Export du registre CNDP téléchargé au format scellé.')}
-                className="text-[#0077b6] hover:underline font-semibold cursor-pointer"
+                className="text-terracotta-600 hover:underline font-semibold cursor-pointer"
               >
                 📥 Exporter l&apos;audit légal
               </button>

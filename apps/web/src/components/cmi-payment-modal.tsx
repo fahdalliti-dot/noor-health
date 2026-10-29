@@ -48,7 +48,7 @@ export function CmiPaymentModal({
         {/* Header with CMI brand styling */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-7 rounded bg-[#0077b6] text-white flex items-center justify-center font-bold text-[10px] tracking-wider">
+            <div className="w-10 h-7 rounded bg-terracotta-600 text-white flex items-center justify-center font-bold text-[10px] tracking-wider">
               CMI
             </div>
             <div>
@@ -89,7 +89,7 @@ export function CmiPaymentModal({
                 required
                 value={cardHolder}
                 onChange={(e) => setCardHolder(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg p-2 font-mono uppercase focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                className="w-full border border-slate-300 rounded-lg p-2 font-mono uppercase focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
               />
             </div>
 
@@ -100,7 +100,7 @@ export function CmiPaymentModal({
                 required
                 value={cardNumber}
                 onChange={(e) => setCardNumber(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg p-2 font-mono text-sm tracking-wider focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                className="w-full border border-slate-300 rounded-lg p-2 font-mono text-sm tracking-wider focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
               />
             </div>
 
@@ -112,7 +112,7 @@ export function CmiPaymentModal({
                   required
                   value={expiry}
                   onChange={(e) => setExpiry(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                  className="w-full border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
                 />
               </div>
               <div>
@@ -123,7 +123,7 @@ export function CmiPaymentModal({
                   required
                   value={cvv}
                   onChange={(e) => setCvv(e.target.value)}
-                  className="w-full border border-slate-300 rounded-lg p-2 font-mono text-center tracking-widest focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                  className="w-full border border-slate-300 rounded-lg p-2 font-mono text-center tracking-widest focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
                 />
               </div>
             </div>
@@ -132,7 +132,7 @@ export function CmiPaymentModal({
               <Button
                 type="submit"
                 size="sm"
-                className="w-full bg-[#0077b6] hover:bg-[#02659c] text-white font-bold py-2.5 text-xs"
+                className="w-full bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold py-2.5 text-xs"
               >
                 Valider et continuer vers 3D Secure
               </Button>
@@ -143,7 +143,7 @@ export function CmiPaymentModal({
         {/* STEP 2: 3D SECURE OTP SIMULATION */}
         {step === 'otp' && (
           <div className="space-y-4 text-center py-2 text-xs">
-            <div className="w-10 h-10 rounded-full bg-blue-100 text-[#0077b6] flex items-center justify-center text-lg mx-auto font-bold">
+            <div className="w-10 h-10 rounded-full bg-blue-100 text-terracotta-600 flex items-center justify-center text-lg mx-auto font-bold">
               🔒
             </div>
             <div>
@@ -163,7 +163,7 @@ export function CmiPaymentModal({
                 value={bankOtp}
                 onChange={(e) => setBankOtp(e.target.value)}
                 placeholder="884210"
-                className="w-full text-center text-xl font-mono border-2 border-slate-300 focus:border-[#0077b6] rounded-xl p-2 focus:outline-none"
+                className="w-full text-center text-xl font-mono border-2 border-slate-300 focus:border-terracotta-600 rounded-xl p-2 focus:outline-none"
               />
 
               <Button

@@ -60,12 +60,12 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
         {/* Doctor Header Card */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-[#0077b6] text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-terracotta-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
               AB
             </div>
             <div>
               <h1 className="text-lg font-bold text-slate-900">Dr. Amine Benali</h1>
-              <p className="text-xs text-[#0077b6] font-semibold">Spécialiste en Cardiologie & Maladies Vasculaires</p>
+              <p className="text-xs text-terracotta-600 font-semibold">Spécialiste en Cardiologie & Maladies Vasculaires</p>
               <p className="text-xs text-slate-500 mt-0.5">
                 📍 45 Boulevard Zerktouni, 3ème étage, Casablanca
               </p>
@@ -104,7 +104,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                     }}
                     className={`w-full text-left p-4 rounded-xl border transition cursor-pointer flex items-center justify-between ${
                       selectedService.title === s.title
-                        ? 'border-[#0077b6] bg-blue-50/50'
+                        ? 'border-terracotta-600 bg-blue-50/50'
                         : 'border-slate-200 hover:bg-slate-50'
                     }`}
                   >
@@ -114,7 +114,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-xs text-slate-900 font-mono">{s.tariff}</div>
-                      <span className="text-[10px] text-[#0077b6] font-semibold">Choisir →</span>
+                      <span className="text-[10px] text-terracotta-600 font-semibold">Choisir →</span>
                     </div>
                   </button>
                 ))}
@@ -153,8 +153,8 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                       !slot.available
                         ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60'
                         : selectedSlot === slot.time
-                        ? 'bg-[#0077b6] text-white border-[#0077b6] shadow-sm'
-                        : 'bg-white border-slate-200 text-slate-800 hover:border-[#0077b6] hover:bg-blue-50/40 cursor-pointer'
+                        ? 'bg-terracotta-600 text-white border-terracotta-600 shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-800 hover:border-terracotta-600 hover:bg-blue-50/40 cursor-pointer'
                     }`}
                   >
                     <div>{slot.time}</div>
@@ -197,7 +197,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value)}
                     placeholder="ex: Salma El Idrissi"
-                    className="w-full border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                    className="w-full border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
                   />
                 </div>
 
@@ -212,7 +212,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                       value={patientPhone}
                       onChange={(e) => setPatientPhone(e.target.value)}
                       placeholder="+212 6..."
-                      className="w-full border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                      className="w-full border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -224,7 +224,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                       value={patientCin}
                       onChange={(e) => setPatientCin(e.target.value)}
                       placeholder="ex: BE123456"
-                      className="w-full border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                      className="w-full border border-slate-300 rounded-lg p-2 font-mono focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -238,7 +238,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                     value={patientMotive}
                     onChange={(e) => setPatientMotive(e.target.value)}
                     placeholder="Symptômes ressentis, antécédents particuliers..."
-                    className="w-full border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                    className="w-full border border-slate-300 rounded-lg p-2 focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
                   />
                 </div>
 
@@ -246,7 +246,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                   <Button
                     size="sm"
                     onClick={handleSendOtp}
-                    className="w-full bg-[#0077b6] hover:bg-[#02659c] text-white font-semibold py-2.5 text-xs"
+                    className="w-full bg-terracotta-600 hover:bg-terracotta-700 text-white font-semibold py-2.5 text-xs"
                   >
                     Recevoir le code de confirmation SMS / WhatsApp
                   </Button>
@@ -278,7 +278,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value)}
                   placeholder="0000"
-                  className="w-full text-center tracking-widest text-2xl font-mono border-2 border-slate-300 focus:border-[#0077b6] rounded-xl p-2.5 focus:outline-none"
+                  className="w-full text-center tracking-widest text-2xl font-mono border-2 border-slate-300 focus:border-terracotta-600 rounded-xl p-2.5 focus:outline-none"
                 />
 
                 <Button
@@ -312,7 +312,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                 </div>
                 <div className="flex justify-between border-b border-slate-200 pb-2">
                   <span className="text-slate-500">Horaire :</span>
-                  <span className="font-bold font-mono text-[#0077b6]">Aujourd&apos;hui à {selectedSlot}</span>
+                  <span className="font-bold font-mono text-terracotta-600">Aujourd&apos;hui à {selectedSlot}</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-200 pb-2">
                   <span className="text-slate-500">Motif :</span>

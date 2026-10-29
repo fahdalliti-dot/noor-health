@@ -110,7 +110,7 @@ export function InventoryManagerModal({
           <button
             type="button"
             onClick={() => alert('Bon de commande fournisseur généré et pré-rempli pour les stocks bas.')}
-            className="px-3 py-1.5 bg-[#0077b6] hover:bg-[#02659c] text-white rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg font-semibold flex items-center gap-1.5 cursor-pointer"
           >
             <span>📝</span> Générer Bon de Commande Fournisseur
           </button>
@@ -168,7 +168,7 @@ export function InventoryManagerModal({
                         <button
                           type="button"
                           onClick={() => adjustQuantity(item.id, 1)}
-                          className="w-6 h-6 rounded bg-blue-50 hover:bg-blue-100 text-[#0077b6] font-bold flex items-center justify-center cursor-pointer"
+                          className="w-6 h-6 rounded bg-blue-50 hover:bg-blue-100 text-terracotta-600 font-bold flex items-center justify-center cursor-pointer"
                           title="Ajouter 1 unité"
                         >
                           +

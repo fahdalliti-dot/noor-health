@@ -213,7 +213,7 @@ export function PediatricTrackerModal({
                 alert('Données vaccinales et biométriques enregistrées au dossier pédiatrique.');
                 onOpenChange(false);
               }}
-              className="bg-[#0077b6] hover:bg-[#02659c] text-white text-xs font-semibold"
+              className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
             >
               Enregistrer au Carnet
             </Button>

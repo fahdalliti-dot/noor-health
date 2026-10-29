@@ -135,7 +135,7 @@ export function CashDeskModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-3">
-            <span className="w-9 h-9 rounded-lg bg-blue-100 text-[#0077b6] flex items-center justify-center text-lg font-bold">
+            <span className="w-9 h-9 rounded-lg bg-blue-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
               💰
             </span>
             <div>
@@ -250,7 +250,7 @@ export function CashDeskModal({
             <tbody className="divide-y divide-slate-100">
               {filteredList.map((item) => (
                 <tr key={item.id} className="hover:bg-slate-50/60 transition">
-                  <td className="p-3 font-mono text-[#0077b6] font-medium">{item.receiptNumber}</td>
+                  <td className="p-3 font-mono text-terracotta-600 font-medium">{item.receiptNumber}</td>
                   <td className="p-3 font-mono text-slate-600">{item.time}</td>
                   <td className="p-3 font-medium text-slate-900">{item.patientName}</td>
                   <td className="p-3 font-mono font-bold text-slate-900 tabular-nums">

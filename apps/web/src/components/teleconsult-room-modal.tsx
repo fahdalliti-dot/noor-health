@@ -78,7 +78,7 @@ export function TeleconsultRoomModal({
 
               {/* Doctor PiP Video (Self view) */}
               <div className="absolute bottom-4 right-4 w-40 h-28 bg-slate-800 rounded-lg border-2 border-slate-700 shadow-lg flex flex-col items-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-[#0077b6] text-white flex items-center justify-center font-bold text-xs mb-1">
+                <div className="w-8 h-8 rounded-full bg-terracotta-600 text-white flex items-center justify-center font-bold text-xs mb-1">
                   AB
                 </div>
                 <span className="text-[10px] text-slate-300 font-medium">Vous ({doctorName})</span>
@@ -116,7 +116,7 @@ export function TeleconsultRoomModal({
                 <button
                   type="button"
                   onClick={onOpenPrescription}
-                  className="px-4 py-3 bg-[#0077b6] hover:bg-[#02659c] text-white text-xs font-bold rounded-full flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-4 py-3 bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 transition cursor-pointer"
                 >
                   <span>💊 Rédiger Ordonnance</span>
                 </button>
@@ -154,7 +154,7 @@ export function TeleconsultRoomModal({
                   value={callNotes}
                   onChange={(e) => setCallNotes(e.target.value)}
                   placeholder="Patient rapporte céphalées et sensation d'oppression thoracique à l'effort..."
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#0077b6]"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-terracotta-600"
                 />
               </div>
 

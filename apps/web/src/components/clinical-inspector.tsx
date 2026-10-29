@@ -190,7 +190,7 @@ export function ClinicalInspector({
               <button
                 type="button"
                 onClick={onOpenPrescription}
-                className="p-2 rounded-lg border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 text-[#0077b6] text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer col-span-2"
+                className="p-2 rounded-lg border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 text-terracotta-600 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer col-span-2"
               >
                 <span>💊</span> Rédiger Ordonnance (DMP)
               </button>

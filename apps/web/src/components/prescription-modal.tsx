@@ -169,7 +169,7 @@ export function PrescriptionModal({
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <span className="w-9 h-9 rounded-lg bg-blue-100 text-[#0077b6] flex items-center justify-center text-lg font-bold">
+            <span className="w-9 h-9 rounded-lg bg-blue-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
               💊
             </span>
             <div>
@@ -214,7 +214,7 @@ export function PrescriptionModal({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Rechercher (ex: Augmentin, Doliprane, Tahor, Kardegic)..."
-                className="w-full text-xs bg-white border border-slate-300 rounded-lg px-3 py-2 focus:ring-1 focus:ring-[#0077b6] focus:outline-none"
+                className="w-full text-xs bg-white border border-slate-300 rounded-lg px-3 py-2 focus:ring-1 focus:ring-terracotta-600 focus:outline-none"
               />
 
               {searchResults.length > 0 && (
@@ -283,7 +283,7 @@ export function PrescriptionModal({
                   <Button
                     size="sm"
                     onClick={handleAddItem}
-                    className="bg-[#0077b6] hover:bg-[#02659c] text-white text-xs font-semibold self-end"
+                    className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold self-end"
                   >
                     + Ajouter
                   </Button>
@@ -407,7 +407,7 @@ export function PrescriptionModal({
                 alert('Ordonnance enregistrée dans le dossier médical du patient.');
                 onOpenChange(false);
               }}
-              className="bg-[#0077b6] hover:bg-[#02659c] text-white text-xs font-semibold"
+              className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
             >
               Enregistrer au Dossier
             </Button>

@@ -227,7 +227,7 @@ export default function AgendaPage() {
               href="/book/dr-amine-benali"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#0077b6] rounded-lg text-xs font-semibold border border-blue-200 transition"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-terracotta-600 rounded-lg text-xs font-semibold border border-blue-200 transition"
               title="Tester la page publique de prise de rendez-vous en ligne"
             >
               <span>🌐</span>
