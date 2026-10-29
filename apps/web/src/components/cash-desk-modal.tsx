@@ -135,7 +135,7 @@ export function CashDeskModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-3">
-            <span className="w-9 h-9 rounded-lg bg-blue-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
+            <span className="w-9 h-9 rounded-lg bg-terracotta-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
               💰
             </span>
             <div>
@@ -181,14 +181,14 @@ export function CashDeskModal({
           </div>
 
           {/* Checks / Chèques */}
-          <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-3">
+          <div className="bg-terracotta-50/50 border border-terracotta-200 rounded-xl p-3">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-800 block">
               Chèques
             </span>
             <div className="text-base font-bold text-blue-900 font-mono mt-0.5 tabular-nums">
               {totalCheck.toLocaleString('fr-FR')} <span className="text-xs font-normal">DH</span>
             </div>
-            <span className="text-[10px] text-blue-700">À déposer en banque</span>
+            <span className="text-[10px] text-terracotta-700">À déposer en banque</span>
           </div>
 
           {/* Pending */}
@@ -275,7 +275,7 @@ export function CashDeskModal({
                         <button
                           type="button"
                           onClick={() => togglePayment(item.id, 'check')}
-                          className="px-2 py-0.5 rounded text-[11px] bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-medium cursor-pointer"
+                          className="px-2 py-0.5 rounded text-[11px] bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-700 border border-terracotta-200 font-medium cursor-pointer"
                         >
                           + Chèque
                         </button>

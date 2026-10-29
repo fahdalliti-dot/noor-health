@@ -50,7 +50,7 @@ export function MedicalCertificateModal({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <span className="w-9 h-9 rounded-lg bg-blue-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
+            <span className="w-9 h-9 rounded-lg bg-terracotta-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
               📜
             </span>
             <div>
@@ -78,7 +78,7 @@ export function MedicalCertificateModal({
             onClick={() => setCertType('repos')}
             className={`p-2.5 rounded-lg border text-xs text-left cursor-pointer transition ${
               certType === 'repos'
-                ? 'bg-blue-50/80 border-terracotta-600 font-bold text-terracotta-600'
+                ? 'bg-terracotta-50/80 border-terracotta-600 font-bold text-terracotta-600'
                 : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
             }`}
           >
@@ -91,7 +91,7 @@ export function MedicalCertificateModal({
             onClick={() => setCertType('aptitude')}
             className={`p-2.5 rounded-lg border text-xs text-left cursor-pointer transition ${
               certType === 'aptitude'
-                ? 'bg-blue-50/80 border-terracotta-600 font-bold text-terracotta-600'
+                ? 'bg-terracotta-50/80 border-terracotta-600 font-bold text-terracotta-600'
                 : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
             }`}
           >
@@ -104,7 +104,7 @@ export function MedicalCertificateModal({
             onClick={() => setCertType('coups')}
             className={`p-2.5 rounded-lg border text-xs text-left cursor-pointer transition ${
               certType === 'coups'
-                ? 'bg-blue-50/80 border-terracotta-600 font-bold text-terracotta-600'
+                ? 'bg-terracotta-50/80 border-terracotta-600 font-bold text-terracotta-600'
                 : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
             }`}
           >

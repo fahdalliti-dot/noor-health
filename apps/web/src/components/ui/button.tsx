@@ -21,10 +21,10 @@ export function Button({
   [key: string]: any;
 }) {
   const baseClasses =
-    'inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer';
+    'inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer';
 
   const variantClasses = {
-    default: 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm',
+    default: 'bg-terracotta-600 text-white hover:bg-terracotta-700 shadow-sm',
     outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
     ghost: 'text-gray-700 hover:bg-gray-100',
     danger: 'bg-red-600 text-white hover:bg-red-700 shadow-sm',

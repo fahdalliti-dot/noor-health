@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Nura — brand foundation. Palette lives in tailwind.config.js as the single
+/* Noor — brand foundation. Palette lives in tailwind.config.js as the single
    source of truth. This file handles only what Tailwind can't: the base
    surface, the display typeface, and a couple of component-level utilities. */
 
@@ -23,9 +23,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Editorial serif for headings — the brand display face. */
+/* Editorial serif for headings — the brand display face.
+   The actual face is injected by next/font as --font-display; this rule
+   only sets the role (serif) and weight. No hardcoded fallback here, so the
+   variable always wins and there is no stale copy of the font name to drift. */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-display), Georgia, serif;
   font-weight: 600;
   letter-spacing: 0.01em;
 }

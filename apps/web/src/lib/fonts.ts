@@ -1,7 +1,7 @@
 import { Cormorant_Garamond, Inter } from 'next/font/google';
 
 /**
- * Nura typefaces.
+ * Noor typefaces.
  *
  * Display face (headings): Cormorant Garamond — high-contrast editorial serif.
  * UI face (body): Inter — geometric sans.

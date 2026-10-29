@@ -104,7 +104,7 @@ export function ClinicalInspector({
       {/* Header */}
       <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
         <div className="flex items-center gap-2.5">
-          <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
+          <span className="w-7 h-7 rounded-lg bg-terracotta-100 text-terracotta-700 font-bold text-xs flex items-center justify-center">
             {initials}
           </span>
           <div>
@@ -149,7 +149,7 @@ export function ClinicalInspector({
             </span>
             <a
               href={`tel:${appointment.patient.phone}`}
-              className="font-mono text-xs text-blue-700 hover:underline font-medium"
+              className="font-mono text-xs text-terracotta-700 hover:underline font-medium"
             >
               {appointment.patient.phone}
             </a>
@@ -172,7 +172,7 @@ export function ClinicalInspector({
                     : notificationLog.status === 'delivered'
                     ? 'bg-purple-100 text-purple-800'
                     : notificationLog.status === 'sent'
-                    ? 'bg-blue-100 text-blue-800'
+                    ? 'bg-terracotta-100 text-blue-800'
                     : 'bg-slate-200 text-slate-700'
                 }`}
               >
@@ -228,7 +228,7 @@ export function ClinicalInspector({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Saisir les observations cliniques..."
-              className="w-full rounded-lg border border-slate-300 p-2 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-300 p-2 text-xs focus:ring-1 focus:ring-terracotta-500 focus:outline-none"
             />
           ) : (
             <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded border border-slate-200">
@@ -268,7 +268,7 @@ export function ClinicalInspector({
               <button
                 type="button"
                 onClick={onOpenPrescription}
-                className="p-2 rounded-lg border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 text-terracotta-600 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer col-span-2"
+                className="p-2 rounded-lg border border-terracotta-200 bg-terracotta-50/60 hover:bg-terracotta-100/70 text-terracotta-600 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer col-span-2"
               >
                 <span>💊</span> Rédiger Ordonnance (DMP)
               </button>
@@ -318,7 +318,7 @@ export function ClinicalInspector({
               <button
                 type="button"
                 onClick={onOpenCmiPayment}
-                className="p-2 rounded-lg border border-blue-200 bg-blue-50/70 hover:bg-blue-100 text-blue-900 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer col-span-2"
+                className="p-2 rounded-lg border border-terracotta-200 bg-terracotta-50/70 hover:bg-terracotta-100 text-blue-900 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer col-span-2"
               >
                 <span>💳</span> Paiement en Ligne (CMI Maroc)
               </button>
@@ -352,7 +352,7 @@ export function ClinicalInspector({
                 isLoading={busy}
                 disabled={busy}
                 onClick={() => handleStatus('in_progress')}
-                className="w-full justify-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold"
+                className="w-full justify-center bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
               >
                 🩺 Démarrer la consultation
               </Button>

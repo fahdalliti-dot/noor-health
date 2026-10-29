@@ -1,43 +1,59 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 120" width="460" height="120" fill="none">
-  <!-- Nura Dark / Reverse Mode Brand Lockup -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 130" width="520" height="130" fill="none">
+  <!-- Noor Dark / Inverted Mode Brand Lockup -->
   <defs>
-    <linearGradient id="dark-grad" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#FF936A" />
-      <stop offset="100%" stop-color="#F07346" />
+    <!-- Luminous Terracotta Gradient for Dark Surfaces -->
+    <linearGradient id="dark-terracotta" x1="15" y1="15" x2="95" y2="95" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF7A45" />
+      <stop offset="100%" stop-color="#E05D34" />
+    </linearGradient>
+
+    <!-- Star Glow -->
+    <linearGradient id="dark-star" x1="55" y1="35" x2="55" y2="75" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFD8A8" />
+      <stop offset="100%" stop-color="#FFA94D" />
     </linearGradient>
   </defs>
 
-  <!-- Left Mark Section -->
-  <g transform="translate(10, 10) scale(0.5)">
-    <!-- Outer Diamond -->
-    <polygon points="100,12 188,100 100,188 12,100" fill="none" stroke="url(#dark-grad)" stroke-width="4" stroke-linejoin="round" />
-    <!-- Rays -->
-    <line x1="100" y1="26" x2="100" y2="42" stroke="#F07346" stroke-width="3" stroke-linecap="round" opacity="0.8" />
-    <line x1="100" y1="158" x2="100" y2="174" stroke="#F07346" stroke-width="3" stroke-linecap="round" opacity="0.8" />
-    <line x1="26" y1="100" x2="42" y2="100" stroke="#F07346" stroke-width="3" stroke-linecap="round" opacity="0.8" />
-    <line x1="158" y1="100" x2="174" y2="100" stroke="#F07346" stroke-width="3" stroke-linecap="round" opacity="0.8" />
-    <!-- Monogram N Columns -->
-    <rect x="52" y="44" width="20" height="112" rx="4" fill="#F07346" />
-    <rect x="128" y="44" width="20" height="112" rx="4" fill="#F07346" />
-    <!-- Split Diagonal -->
-    <polygon points="72,44 92,44 114,86 94,86" fill="url(#dark-grad)" />
-    <polygon points="106,114 126,114 148,156 128,156" fill="url(#dark-grad)" />
-    <!-- Center Spark -->
-    <polygon points="100,92 108,100 100,108 92,100" fill="#FFA480" />
+  <!-- Left Icon Mark (90x90) -->
+  <g transform="translate(15, 15)">
+    <!-- Deep Charcoal Base with Warm Glow Border -->
+    <rect width="100" height="100" rx="24" fill="#24211E" stroke="#38332E" stroke-width="1.2" />
+    
+    <!-- Outer Orbit Ring -->
+    <circle cx="50" cy="50" r="38" stroke="#4A4540" stroke-width="0.8" stroke-dasharray="2 4" opacity="0.6" />
+
+    <!-- Left Pillar Ribbon -->
+    <path d="M25 74 V30 C25 26.5 28 24 31.5 24 C35 24 38 26.5 38 30 V70 C38 73.5 35 76 31.5 76 C28 76 25 73.5 25 70 Z"
+          fill="url(#dark-terracotta)" />
+
+    <!-- Right Pillar Ribbon -->
+    <path d="M62 30 C62 26.5 65 24 68.5 24 C72 24 75 26.5 75 30 V70 C75 73.5 72 76 68.5 76 C65 76 62 73.5 62 70 Z"
+          fill="url(#dark-terracotta)" />
+
+    <!-- Diagonal Fluid Bridge -->
+    <path d="M31.5 25 C34.5 25 37 26.5 39 30 L67 71 C68.5 73 71 74 73 73 C75 71.5 75 69 73 66 L45 25 C43 22 39 20 35 21 C31 22 30 24 31.5 25 Z"
+          fill="url(#dark-terracotta)" />
+
+    <!-- Central Noor Radiance Star -->
+    <g transform="translate(50, 49)">
+      <path d="M0 -9 C0.8 -3.5 3.5 -0.8 9 0 C3.5 0.8 0.8 3.5 0 9 C-0.8 3.5 -3.5 0.8 -9 0 C-3.5 -0.8 -0.8 -3.5 0 -9 Z"
+            fill="url(#dark-star)" />
+      <circle cx="0" cy="0" r="2.2" fill="#FFFFFF" />
+    </g>
   </g>
 
-  <!-- Vertical Divider -->
-  <line x1="130" y1="28" x2="130" y2="92" stroke="#4A4540" stroke-width="1.5" />
+  <!-- Elegant Vertical Separator Line -->
+  <line x1="140" y1="30" x2="140" y2="100" stroke="#4A4540" stroke-width="1.5" stroke-linecap="round" />
 
-  <!-- Right Typography Section -->
-  <g transform="translate(150, 0)">
-    <!-- Wordmark "Nura" -->
-    <text x="0" y="62" font-family="'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="44" font-weight="600" fill="#F7F4EF" letter-spacing="2">Nura</text>
+  <!-- Right Typographic Group -->
+  <g transform="translate(162, 0)">
+    <!-- Wordmark "Noor" in Warm Sand White -->
+    <text x="0" y="68" font-family="'Cormorant Garamond', 'Didot', 'Bodoni MT', Georgia, serif" font-size="52" font-weight="600" fill="#F7F4EF" letter-spacing="1.5">Noor</text>
     
-    <!-- Arabic Calligraphy Text "نور" -->
-    <text x="126" y="58" font-family="'Amiri', 'Traditional Arabic', 'Noto Sans Arabic', serif" font-size="28" font-weight="700" fill="#F07346" opacity="0.95">نُور</text>
-    
-    <!-- Tagline & Regulatory Label -->
-    <text x="2" y="86" font-family="'Inter', -apple-system, sans-serif" font-size="10.5" font-weight="600" fill="#A89B88" letter-spacing="3.5">SOIN NUMÉRIQUE • MAROC</text>
+    <!-- Arabic Calligraphy "نُور" in Radiant Terracotta -->
+    <text x="142" y="64" font-family="'Amiri', 'Traditional Arabic', 'Noto Naskh Arabic', serif" font-size="34" font-weight="700" fill="#FF7A45">نُور</text>
+
+    <!-- Subtitle / Positioning Tagline -->
+    <text x="2" y="96" font-family="'Inter', -apple-system, sans-serif" font-size="11" font-weight="600" fill="#A89B88" letter-spacing="4">SOIN NUMÉRIQUE • MAROC</text>
   </g>
 </svg>

@@ -227,7 +227,7 @@ export default function AgendaPage() {
               href="/book/dr-amine-benali"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-terracotta-600 rounded-lg text-xs font-semibold border border-blue-200 transition"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-600 rounded-lg text-xs font-semibold border border-terracotta-200 transition"
               title="Tester la page publique de prise de rendez-vous en ligne"
             >
               <span>🌐</span>
@@ -246,7 +246,7 @@ export default function AgendaPage() {
                 type="button"
                 onClick={() => setView('day')}
                 className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                  view === 'day' ? 'bg-white text-blue-700 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+                  view === 'day' ? 'bg-white text-terracotta-700 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Jour
@@ -255,7 +255,7 @@ export default function AgendaPage() {
                 type="button"
                 onClick={() => setView('week')}
                 className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                  view === 'week' ? 'bg-white text-blue-700 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+                  view === 'week' ? 'bg-white text-terracotta-700 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Semaine
@@ -267,7 +267,7 @@ export default function AgendaPage() {
                 setSelectedSlot(null);
                 setModalOpen(true);
               }}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold"
+              className="bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-semibold"
             >
               + Nouveau RDV
             </Button>

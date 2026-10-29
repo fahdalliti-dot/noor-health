@@ -68,7 +68,7 @@ export default function TwoFaVerifyPage() {
 
         <p className="text-center text-sm text-gray-500 mt-4">
           {t('resend_code')}{' '}
-          <span className="font-medium text-blue-600">
+          <span className="font-medium text-terracotta-600">
             {t('here')}
           </span>
         </p>

@@ -107,8 +107,8 @@ export default function TeamPage() {
     switch (role) {
       case 'doctor':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium bg-terracotta-50 text-terracotta-700 border border-terracotta-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-terracotta-600"></span>
             Médecin Praticien
           </span>
         );
@@ -189,7 +189,7 @@ export default function TeamPage() {
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value as any)}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white h-[38px]"
+              className="w-full rounded border border-gray-300 px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-terracotta-500 bg-white h-[38px]"
             >
               <option value="doctor">Médecin (Accès DMP + Prescription)</option>
               <option value="secretary">Secrétaire (Accueil + Caisse sans DMP)</option>
@@ -197,7 +197,7 @@ export default function TeamPage() {
           </div>
 
           <div className="flex items-end">
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs h-[38px]">
+            <Button type="submit" className="w-full bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs h-[38px]">
               Envoyer l&apos;invitation
             </Button>
           </div>
@@ -231,7 +231,7 @@ export default function TeamPage() {
                   {member.specialty && (
                     <>
                       <span>•</span>
-                      <span className="text-blue-700 font-medium">{member.specialty}</span>
+                      <span className="text-terracotta-700 font-medium">{member.specialty}</span>
                     </>
                   )}
                 </div>
@@ -243,7 +243,7 @@ export default function TeamPage() {
                   <span
                     className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] ${
                       member.permissions.canViewDmp
-                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        ? 'bg-terracotta-50 text-terracotta-700 font-medium'
                         : 'bg-gray-100 text-gray-400 line-through'
                     }`}
                   >
@@ -252,7 +252,7 @@ export default function TeamPage() {
                   <span
                     className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] ${
                       member.permissions.canPrescribe
-                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        ? 'bg-terracotta-50 text-terracotta-700 font-medium'
                         : 'bg-gray-100 text-gray-400 line-through'
                     }`}
                   >

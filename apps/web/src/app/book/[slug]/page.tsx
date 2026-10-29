@@ -104,7 +104,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                     }}
                     className={`w-full text-left p-4 rounded-xl border transition cursor-pointer flex items-center justify-between ${
                       selectedService.title === s.title
-                        ? 'border-terracotta-600 bg-blue-50/50'
+                        ? 'border-terracotta-600 bg-terracotta-50/50'
                         : 'border-slate-200 hover:bg-slate-50'
                     }`}
                   >
@@ -154,7 +154,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                         ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed opacity-60'
                         : selectedSlot === slot.time
                         ? 'bg-terracotta-600 text-white border-terracotta-600 shadow-sm'
-                        : 'bg-white border-slate-200 text-slate-800 hover:border-terracotta-600 hover:bg-blue-50/40 cursor-pointer'
+                        : 'bg-white border-slate-200 text-slate-800 hover:border-terracotta-600 hover:bg-terracotta-50/40 cursor-pointer'
                     }`}
                   >
                     <div>{slot.time}</div>

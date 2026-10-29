@@ -65,7 +65,7 @@ export function AppointmentDetailModal({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 transition-opacity" />
         <Dialog.Content
-          className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl border border-gray-200 shadow-2xl p-6"
+          className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md sheet-card shadow-2xl p-6"
           aria-label="Détail du rendez-vous"
         >
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
@@ -84,7 +84,7 @@ export function AppointmentDetailModal({
             </div>
 
             {appt.patient && (
-              <div className="p-2.5 bg-blue-50/70 border border-blue-100 rounded-lg">
+              <div className="p-2.5 bg-terracotta-50/70 border border-terracotta-100 rounded-lg">
                 <span className="text-xs font-semibold text-blue-800 uppercase tracking-wide block mb-0.5">
                   Patient
                 </span>

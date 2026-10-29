@@ -7,7 +7,7 @@ import type { Slot, Appointment } from '../hooks/use-agenda';
 
 const STATUS_SPINES: Record<string, string> = {
   scheduled: 'border-l-slate-400 bg-slate-50/70',
-  confirmed: 'border-l-blue-500 bg-blue-50/50',
+  confirmed: 'border-l-blue-500 bg-terracotta-50/50',
   arrived: 'border-l-amber-500 bg-amber-50/60',
   in_progress: 'border-l-emerald-500 bg-emerald-50/60',
   completed: 'border-l-slate-400 bg-slate-50/50 opacity-80',
@@ -148,7 +148,7 @@ export function AgendaDayView({
                         available: true,
                       })
                     }
-                    className="w-full h-full min-h-[44px] rounded-lg border border-dashed border-transparent hover:border-slate-300 hover:bg-blue-50/40 flex items-center px-3 text-slate-400 text-xs transition-all cursor-pointer group-hover:text-blue-600"
+                    className="w-full h-full min-h-[44px] rounded-lg border border-dashed border-transparent hover:border-slate-300 hover:bg-terracotta-50/40 flex items-center px-3 text-slate-400 text-xs transition-all cursor-pointer group-hover:text-terracotta-600"
                     aria-label={`Créer un rendez-vous à ${hour.toFormat('HH:mm')}`}
                   >
                     <span className="opacity-0 group-hover:opacity-100 transition-opacity font-medium">
@@ -175,7 +175,7 @@ export function AgendaDayView({
                           STATUS_SPINES[appt.status] || 'border-l-slate-400 bg-slate-50'
                         } ${
                           isSelected
-                            ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-sm'
+                            ? 'border-blue-500 ring-2 ring-terracotta-500/20 shadow-sm'
                             : 'border-slate-200/80 hover:border-slate-300 hover:shadow-xs'
                         }`}
                       >

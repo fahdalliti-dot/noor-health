@@ -104,7 +104,7 @@ export default function ClinicSettingsPage() {
           <button
             type="button"
             onClick={() => setActiveTab('cndp')}
-            className={`px-3 py-1.5 rounded-md transition ${activeTab === 'cndp' ? 'bg-white font-semibold text-blue-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+            className={`px-3 py-1.5 rounded-md transition ${activeTab === 'cndp' ? 'bg-white font-semibold text-terracotta-700 shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
           >
             Registre CNDP & Audit Trail (Loi 09-08)
           </button>
@@ -189,7 +189,7 @@ export default function ClinicSettingsPage() {
                 type="checkbox"
                 checked={require2fa}
                 onChange={(e) => setRequire2fa(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-gray-300 text-terracotta-600 focus:ring-terracotta-500"
               />
               <span className="text-xs text-gray-700 font-medium">
                 Exiger obligatoirement l&apos;authentification à double facteur (2FA TOTP) pour tous les comptes.
@@ -209,7 +209,7 @@ export default function ClinicSettingsPage() {
           <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-lg bg-blue-100 text-terracotta-600 flex items-center justify-center font-bold text-sm">
+                <span className="w-8 h-8 rounded-lg bg-terracotta-100 text-terracotta-600 flex items-center justify-center font-bold text-sm">
                   ⚖️
                 </span>
                 <div>

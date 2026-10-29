@@ -168,7 +168,7 @@ export function InventoryManagerModal({
                         <button
                           type="button"
                           onClick={() => adjustQuantity(item.id, 1)}
-                          className="w-6 h-6 rounded bg-blue-50 hover:bg-blue-100 text-terracotta-600 font-bold flex items-center justify-center cursor-pointer"
+                          className="w-6 h-6 rounded bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-600 font-bold flex items-center justify-center cursor-pointer"
                           title="Ajouter 1 unité"
                         >
                           +

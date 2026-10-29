@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Authentication & Access Control', () => {
   test('should display the login portal with Moroccan health branding', async ({ page }) => {
     await page.goto('/auth/login');
-    await expect(page).toHaveTitle(/Nura|SaaS/i);
+    await expect(page).toHaveTitle(/Noor|SaaS/i);
 
     // Verify form elements exist
     const emailInput = page.locator('input[type="email"]');

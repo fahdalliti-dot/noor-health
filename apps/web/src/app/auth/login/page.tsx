@@ -99,7 +99,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-gray-500">
           {t('no_account')}{' '}
-          <span className="font-medium text-blue-600 hover:underline cursor-pointer">
+          <span className="font-medium text-terracotta-600 hover:underline cursor-pointer">
             {t('register')}
           </span>
         </p>

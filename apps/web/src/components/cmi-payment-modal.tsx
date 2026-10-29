@@ -68,7 +68,7 @@ export function CmiPaymentModal({
         </div>
 
         {/* Transaction Summary */}
-        <div className="bg-blue-50/60 border border-blue-200/80 rounded-xl p-3 flex justify-between items-center text-xs">
+        <div className="bg-terracotta-50/60 border border-terracotta-200/80 rounded-xl p-3 flex justify-between items-center text-xs">
           <div>
             <span className="text-slate-500 text-[11px] block">Montant à régler :</span>
             <span className="font-bold text-slate-900 text-sm font-mono">{amountMad} DH</span>
@@ -143,7 +143,7 @@ export function CmiPaymentModal({
         {/* STEP 2: 3D SECURE OTP SIMULATION */}
         {step === 'otp' && (
           <div className="space-y-4 text-center py-2 text-xs">
-            <div className="w-10 h-10 rounded-full bg-blue-100 text-terracotta-600 flex items-center justify-center text-lg mx-auto font-bold">
+            <div className="w-10 h-10 rounded-full bg-terracotta-100 text-terracotta-600 flex items-center justify-center text-lg mx-auto font-bold">
               🔒
             </div>
             <div>

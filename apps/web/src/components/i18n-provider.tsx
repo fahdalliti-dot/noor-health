@@ -78,7 +78,7 @@ export function LanguageSwitcher() {
         onClick={() => setLocale('fr')}
         className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
           locale === 'fr'
-            ? 'bg-white text-blue-700 shadow-sm font-semibold'
+            ? 'bg-white text-terracotta-700 shadow-sm font-semibold'
             : 'text-gray-500 hover:text-gray-900'
         }`}
       >
@@ -90,7 +90,7 @@ export function LanguageSwitcher() {
         onClick={() => setLocale('ar')}
         className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-display ${
           locale === 'ar'
-            ? 'bg-white text-blue-700 shadow-sm font-semibold'
+            ? 'bg-white text-terracotta-700 shadow-sm font-semibold'
             : 'text-gray-500 hover:text-gray-900'
         }`}
       >

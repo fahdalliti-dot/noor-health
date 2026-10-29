@@ -175,7 +175,7 @@ export function NewAppointmentModal({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 transition-opacity" />
         <Dialog.Content
-          className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-xl border border-gray-200 shadow-2xl p-6"
+          className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg max-h-[90vh] overflow-y-auto sheet-card shadow-2xl p-6"
           aria-label="Nouveau rendez-vous"
         >
           <div className="flex items-center justify-between pb-3 border-b border-gray-100">
@@ -210,7 +210,7 @@ export function NewAppointmentModal({
                   onClick={() => setPatientMode('existing')}
                   className={`py-1.5 rounded-md transition-all cursor-pointer ${
                     patientMode === 'existing'
-                      ? 'bg-white text-blue-700 shadow-xs font-semibold'
+                      ? 'bg-white text-terracotta-700 shadow-xs font-semibold'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -221,7 +221,7 @@ export function NewAppointmentModal({
                   onClick={() => setPatientMode('new')}
                   className={`py-1.5 rounded-md transition-all cursor-pointer ${
                     patientMode === 'new'
-                      ? 'bg-white text-blue-700 shadow-xs font-semibold'
+                      ? 'bg-white text-terracotta-700 shadow-xs font-semibold'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -232,12 +232,12 @@ export function NewAppointmentModal({
               {patientMode === 'existing' ? (
                 <div>
                   {selectedPatient ? (
-                    <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-terracotta-50 border border-terracotta-200 rounded-lg">
                       <div>
                         <p className="text-sm font-semibold text-blue-900">
                           {selectedPatient.first_name} {selectedPatient.last_name}
                         </p>
-                        <p className="text-xs text-blue-700">
+                        <p className="text-xs text-terracotta-700">
                           {selectedPatient.phone || 'Pas de numéro'} {selectedPatient.cin ? `· CIN: ${selectedPatient.cin}` : ''}
                         </p>
                       </div>
@@ -246,7 +246,7 @@ export function NewAppointmentModal({
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelectedPatient(null)}
-                        className="text-blue-700 hover:text-blue-900 hover:bg-blue-100"
+                        className="text-terracotta-700 hover:text-blue-900 hover:bg-terracotta-100"
                       >
                         Changer
                       </Button>
@@ -366,7 +366,7 @@ export function NewAppointmentModal({
                         id="patient-gender"
                         value={newGender}
                         onChange={(e) => setNewGender(e.target.value as any)}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-terracotta-500"
                       >
                         <option value="male">Homme</option>
                         <option value="female">Femme</option>

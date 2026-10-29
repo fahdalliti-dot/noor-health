@@ -141,7 +141,7 @@ export function CommandPalette({ open, onOpenChange, onSelectPatient, onAction }
                           onSelectPatient?.(p);
                           onOpenChange(false);
                         }}
-                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-blue-50/70 text-slate-900 transition-colors cursor-pointer text-left rtl:text-right"
+                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-terracotta-50/70 text-slate-900 transition-colors cursor-pointer text-left rtl:text-right"
                       >
                         <div>
                           <span className="font-semibold text-slate-900">

@@ -169,7 +169,7 @@ export function PrescriptionModal({
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <span className="w-9 h-9 rounded-lg bg-blue-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
+            <span className="w-9 h-9 rounded-lg bg-terracotta-100 text-terracotta-600 flex items-center justify-center text-lg font-bold">
               💊
             </span>
             <div>
@@ -251,7 +251,7 @@ export function PrescriptionModal({
             </div>
 
             {selectedDrug && (
-              <div className="bg-white p-3 rounded-lg border border-blue-200 space-y-2 text-xs">
+              <div className="bg-white p-3 rounded-lg border border-terracotta-200 space-y-2 text-xs">
                 <div className="font-bold text-slate-900">{selectedDrug.name}</div>
                 <div className="text-[11px] text-slate-500">DCI: {selectedDrug.dci}</div>
 
@@ -263,7 +263,7 @@ export function PrescriptionModal({
                     rows={2}
                     value={customPosology}
                     onChange={(e) => setCustomPosology(e.target.value)}
-                    className="w-full text-xs border border-slate-300 rounded p-1.5 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                    className="w-full text-xs border border-slate-300 rounded p-1.5 focus:ring-1 focus:ring-terracotta-500 focus:outline-none"
                   />
                 </div>
 

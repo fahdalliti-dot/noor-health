@@ -1,93 +1,66 @@
-# Nura — Brand Guide
+# Noor (نُور) — Brand Guide
 
-> **Status:** Draft v0.1. Logo mark is a starting point for a designer, not a finished
-> deliverable. Everything else here is decision-ready.
+> **Status:** Production Approved v2.1.  
+> **Name:** **Noor** (Latin) • **نُور** (Arabic).
 
 ---
 
-## 1. The name
+## 1. The Name
 
-**Nura** — Arabic **نور** (*nūr*), meaning light. Also reads as "nourish."
+**Noor** — Arabic **نُور** (*nūr*), meaning **light, clarity, and radiance**.
 
-Bilingual by nature: the same word carries in French, Arabic, and Latin script.
-One syllable, warm, luminous, expensive without trying.
+Bilingual by nature: phonetically identical in French, Arabic, and English.
+Warm, luminous, prestigious without pretense.
 
 ---
 
 ## 2. Positioning
 
-Private-practice EHR for Moroccan clinics. The software equivalent of a
-well-run private clinic: calm, trustworthy, quietly premium.
+Private-practice EHR & practice management for Moroccan clinics. The software equivalent of a well-run private clinic on Boulevard Zerktouni in Casablanca: calm, trustworthy, quietly premium.
 
-**We are not:** a hospital system, a generic health app, a blue-and-white
-"healthcare" product.
+**We are not:** a hospital system, a generic health app, or a cold blue-and-white IT utility.
 
 ---
 
-## 3. Brand attributes
+## 3. Brand Attributes
 
 | Attribute | Expression |
 |---|---|
-| Trust | Grounded, serious, no gimmicks |
-| Care | Warm, human, not cold software |
-| Prestige | Restrained typography, quiet confidence |
-| Moroccan identity | Subtle — inspired by craft, never themed |
+| Trust | Grounded, serious, cryptographic RLS isolation |
+| Care | Warm, human, not cold clinical software |
+| Prestige | Restrained editorial serif typography, quiet confidence |
+| Moroccan Identity | Subtle — inspired by craft and light architecture, never folkloric |
 
 ---
 
-## 4. Color palette
+## 4. Color Palette
 
 | Role | Hex | Usage |
 |---|---|---|
-| Primary | `#1A1A1A` | Headlines, wordmark, key UI |
-| Sand | `#F5F1E8` | App background, card surfaces |
-| Terracotta | `#B05A3A` | Accent, CTAs, highlights |
-| Sage | `#8C8C7A` | Secondary surfaces, muted text |
-| Warm white | `#FFFFFF` | Modals, elevated cards |
-
-**Never:** pure `#0000FF` blue, neon, stock gradients, glassmorphism.
+| Primary Accent | `#B05A3A` / `#D9582B` | Terracotta CTAs, ribbon mark, active states |
+| Canvas Sand | `#FBF8F3` / `#F7F4EF` | App background, card surfaces |
+| Deep Charcoal | `#1A1A1A` | Headlines, wordmark, dark mode base |
+| Body Charcoal | `#4A4540` | Patient notes, clinical records |
+| Sage | `#8C8C7A` | Secondary metadata, INPE, timestamps |
+| Moroccan Emerald | `#059669` | WhatsApp 1-Click confirmation |
 
 ---
 
 ## 5. Typography
 
-- **Wordmark / display:** Cormorant Garamond (serif) — refined, editorial,
-  presence at any size.
-- **Body / UI:** Satoshi or Inter — geometric, highly legible, no
-  personality clash with the serif wordmark.
+- **Wordmark / display:** Cormorant Garamond (serif) — refined, editorial, presence at any size.
+- **Body / UI:** Inter — geometric, highly legible, clean contrast.
+- **Arabic:** Amiri / Noto Sans Arabic — graceful calligraphic ligature **نُور**.
 
 ---
 
-## 6. Logo
+## 6. Logo & Visual Mark
 
 ### Mark
-A single abstract geometric glyph. Direction: an interlocking "N" monogram
-where the negative space suggests light radiating. Distilled from Moroccan
-zellige geometry — the *idea* of it, never the literal pattern.
+A continuous fluid ribbon forming the architectural **N**, framing a central Moroccan 8-point radiance starlet (*Noor*). Softly grounded within a squircle halo.
 
 ### Wordmark
-"Nura" in Cormorant Garamond, tracked slightly wide. Works at favicon size
-and at large format. **Arabic variant:** a considered Arabic treatment of
-نور — not a letter-for-letter transliteration, but its own balanced
-calligraphic composition.
+**"Noor"** in Cormorant Garamond, tracked with refined spacing, paired with the Arabic calligraphy **نُور** in warm terracotta.
 
 ### Lockup
-`[mark] Nura` — mark left, wordmark right, terracotta mark / charcoal wordmark.
-
----
-
-## 7. Tone of voice
-
-- French-first, warm, professional. Never clinical, never corporate-buzz.
-- Short sentences. No exclamation marks.
-- Address the clinic as a partner, not a customer.
-
----
-
-## 8. What to avoid
-
-- Medical symbols (caduceus, stethoscope, cross, heartbeat line)
-- Blue/white healthcare cliché
-- Cartoonish or rounded forms
-- 3D gloss, gradients, glassmorphism
-- Anything that reads as "hospital software" rather than "private practice"
+`[Ribbon Mark] | Noor نُور • SOIN NUMÉRIQUE • MAROC`

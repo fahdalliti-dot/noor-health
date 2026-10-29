@@ -12,7 +12,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_CLASSES: Record<string, string> = {
   scheduled: 'bg-gray-100 text-gray-700 border-gray-200',
-  confirmed: 'bg-blue-50 text-blue-700 border-blue-200',
+  confirmed: 'bg-terracotta-50 text-terracotta-700 border-terracotta-200',
   arrived: 'bg-amber-50 text-amber-800 border-amber-200',
   in_progress: 'bg-emerald-50 text-emerald-800 border-emerald-200',
   completed: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -22,7 +22,7 @@ const STATUS_CLASSES: Record<string, string> = {
 
 const STATUS_DOTS: Record<string, string> = {
   scheduled: 'bg-gray-400',
-  confirmed: 'bg-blue-500',
+  confirmed: 'bg-terracotta-500',
   arrived: 'bg-amber-500',
   in_progress: 'bg-emerald-500 animate-pulse',
   completed: 'bg-slate-500',

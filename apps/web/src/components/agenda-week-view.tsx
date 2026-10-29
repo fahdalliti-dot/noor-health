@@ -70,7 +70,7 @@ export function AgendaWeekView({
   }, [appointments, days, tz]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="sheet-card shadow-sm overflow-hidden">
       <div
         className="grid"
         style={{ gridTemplateColumns: `60px repeat(${doctors.length}, 1fr)` }}
@@ -152,7 +152,7 @@ export function AgendaWeekView({
                         available: true,
                       })
                     }
-                    className="absolute inset-0 hover:bg-blue-50 transition-colors"
+                    className="absolute inset-0 hover:bg-terracotta-50 transition-colors"
                     aria-label={`Créer un rendez-vous pour ${doctor.full_name} à ${hour.toFormat('HH:mm')}`}
                   />
                 </div>

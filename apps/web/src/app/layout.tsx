@@ -1,8 +1,8 @@
-import Link from 'next/link';
 import Button from '@/components/ui/button';
 import { AuthProvider } from '@/lib/auth';
 import { I18nProvider, LanguageSwitcher } from '@/components/i18n-provider';
-import { NuraMark } from '@/components/nura-mark';
+import { NoorMark } from '@/components/nura-mark';
+import { SiteNav } from '@/components/site-nav';
 import { routing } from '@/i18n/routing';
 import { displayFont, sansFont } from '@/lib/fonts';
 import './globals.css';
@@ -12,8 +12,8 @@ export function generateStaticParams() {
 }
 
 export const metadata = {
-  title: 'Nura — soin numérique',
-  description: 'Gestion de cabinet médical multi-clinique au Maroc',
+  title: 'Noor — soin numérique',
+  description: 'Noor : gestion de cabinet médical multi-clinique au Maroc',
 };
 
 export default function RootLayout({
@@ -24,53 +24,7 @@ export default function RootLayout({
       <body className={`${sansFont.variable} ${displayFont.variable} font-sans antialiased`}>
         <I18nProvider>
           <AuthProvider>
-            <nav className="border-b border-gray-200 bg-white shadow-xs">
-              <div className="max-w-[1400px] mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-6">
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2.5 text-charcoal hover:text-terracotta-700 transition-colors"
-                    aria-label="Nura — accueil"
-                  >
-                    <NuraMark />
-                    <span className="font-display text-xl leading-none tracking-tight">
-                      Nura
-                    </span>
-                  </Link>
-
-                  <div className="hidden md:flex items-center gap-6">
-                    <Link
-                      href="/agenda"
-                      className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      Agenda
-                    </Link>
-                    <Link
-                      href="/clinic"
-                      className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      Cabinet
-                    </Link>
-                    <Link
-                      href="/team"
-                      className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      Équipe
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <LanguageSwitcher />
-                  <Link href="/auth/login">
-                    <Button variant="outline" size="sm">
-                      Connexion
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </nav>
-
+            <SiteNav />
             <main className="min-h-[calc(100vh-140px)] px-4 py-8 max-w-[1400px] mx-auto">
               {children}
             </main>
