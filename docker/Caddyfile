@@ -1,0 +1,60 @@
+# ==============================================================================
+# Caddyfile: Production Reverse Proxy with Automatic Let's Encrypt SSL
+# Compliant with Moroccan CNDP Law 09-08 Security Guidelines
+# ==============================================================================
+
+{$DOMAIN_NAME:localhost} {
+    # --------------------------------------------------------------------------
+    # Moroccan Healthcare Security Headers (CNDP Law 09-08 & OWASP Recommended)
+    # --------------------------------------------------------------------------
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(self), microphone=(self), geolocation=()"
+        -Server
+    }
+
+    # --------------------------------------------------------------------------
+    # Compression (Gzip & Zstandard)
+    # --------------------------------------------------------------------------
+    encode zstd gzip
+
+    # --------------------------------------------------------------------------
+    # Route 1: NestJS Medical API Backend (/api/*)
+    # --------------------------------------------------------------------------
+    handle /api/* {
+        reverse_proxy api:4000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # --------------------------------------------------------------------------
+    # Route 2: Next.js 14 Medical Web Application (Cockpit, Agenda, DMP, Booking)
+    # --------------------------------------------------------------------------
+    handle {
+        reverse_proxy web:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # --------------------------------------------------------------------------
+    # Operational Logging
+    # --------------------------------------------------------------------------
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 50mb
+            roll_keep 14
+            roll_keep_for 720h
+        }
+        format json
+    }
+}

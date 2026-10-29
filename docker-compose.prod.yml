@@ -1,0 +1,57 @@
+version: "3.9"
+
+# ==============================================================================
+# Production Docker Compose Override
+# Exposes only Caddy (80/443) to the public web.
+# All backend, database, and cache networks remain strictly internal.
+# ==============================================================================
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: saas-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME:-nura.ma}
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    depends_on:
+      - web
+      - api
+    networks:
+      - saas-network
+
+  # Override internal services to remove host port exposure in production
+  db:
+    ports: [] # Not exposed to host network
+
+  redis:
+    ports: [] # Not exposed to host network
+
+  api:
+    ports: [] # Only reached via Caddy internal proxy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://saas_owner:${DB_OWNER_PASSWORD}@db:5432/saas_prod?schema=public
+      APP_DATABASE_URL: postgresql://saas_app:${DB_APP_PASSWORD}@db:5432/saas_prod?schema=public
+      JWT_SECRET: ${JWT_SECRET}
+      PATIENT_ENCRYPTION_KEY: ${PATIENT_ENCRYPTION_KEY}
+      BLIND_INDEX_PEPPER: ${BLIND_INDEX_PEPPER}
+
+  web:
+    ports: [] # Only reached via Caddy internal proxy
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: https://${DOMAIN_NAME:-nura.ma}
+      NEXT_PUBLIC_APP_URL: https://${DOMAIN_NAME:-nura.ma}
+
+volumes:
+  caddy_data:
+  caddy_config:
+  caddy_logs:

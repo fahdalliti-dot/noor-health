@@ -62,30 +62,50 @@ NEXT_PUBLIC_DEFAULT_LOCALE="fr"
 
 ---
 
-## 3. Démarrage Rapide via Docker Compose
+## 3. Déploiement Automatisé en 1 Commande (Production)
 
-### Étape 1 : Lancement de l'infrastructure
+Pour déployer sur un serveur Ubuntu 22.04 / 24.04 LTS (Hébergement Cloud au Maroc ou VPS) :
+
 ```bash
-docker compose up -d db redis mailpit
+# 1. Rendre les scripts exécutables
+chmod +x scripts/deploy.sh scripts/backup-cndp.sh
+
+# 2. Lancer le déploiement automatisé
+./scripts/deploy.sh
 ```
 
-### Étape 2 : Application des migrations Prisma & Seed
-```bash
-# Déploiement des tables et politiques RLS
-pnpm db:migrate
+Ce script effectue automatiquement :
+- La génération des clés cryptographiques AES-256 et des mots de passe dans `.env.production`
+- La construction multi-stage optimisée des conteneurs
+- L'initialisation de PostgreSQL avec extensions cryptographiques (`pgcrypto`, `uuid-ossp`, `btree_gist`)
+- Le démarrage du reverse proxy **Caddy** avec obtention et renouvellement automatique des certificats SSL Let's Encrypt / ZeroSSL
+- L'isolation réseau (les bases de données et services internes ne sont pas exposés à Internet)
 
-# Injection du jeu de données cliniques marocaines
-pnpm db:seed
-```
+---
 
-### Étape 3 : Démarrage des applications
+## 4. Reverse Proxy Caddy & SSL Automatique (`docker-compose.prod.yml`)
+
+En production, seul le port `443` (HTTPS) et `80` (redirection HTTP vers HTTPS) sont exposés au public.
+
 ```bash
-docker compose up -d --build
+# Démarrer manuellement en mode production
+docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production up -d --build
 ```
 
 ---
 
-## 4. Politique de Sécurité & Conformité Réglementaire Marocaine
+## 5. Sauvegardes Chiffrées Conformes CNDP (`scripts/backup-cndp.sh`)
+
+La Loi 09-08 impose le chiffrement au repos des sauvegardes contenant des données de santé :
+
+```bash
+# Configuration de la tâche Cron quotidienne (chaque nuit à 02:00 heure de Casablanca)
+0 2 * * * BACKUP_PASSPHRASE="votre-cle-de-chiffrement" /opt/saas/scripts/backup-cndp.sh >> /var/log/nura-backup.log 2>&1
+```
+
+---
+
+## 6. Politique de Sécurité & Conformité Réglementaire Marocaine
 
 1. **Isolation Multi-Clinique (PostgreSQL RLS) :**
    - L'API s'exécute sous le rôle restreint `saas_app` avec le flag `NOBYPASSRLS`.
