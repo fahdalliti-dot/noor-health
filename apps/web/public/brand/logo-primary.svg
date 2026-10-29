@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 120" width="460" height="120" fill="none">
+  <!-- Nura Primary Horizontal Brand Lockup -->
+  <defs>
+    <linearGradient id="primary-grad" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#D9582B" />
+      <stop offset="100%" stop-color="#B05A3A" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Mark Section (Centered in 120x120 area) -->
+  <g transform="translate(10, 10) scale(0.5)">
+    <!-- Outer Diamond -->
+    <polygon points="100,12 188,100 100,188 12,100" fill="none" stroke="url(#primary-grad)" stroke-width="4" stroke-linejoin="round" />
+    <!-- Rays -->
+    <line x1="100" y1="26" x2="100" y2="42" stroke="#B05A3A" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+    <line x1="100" y1="158" x2="100" y2="174" stroke="#B05A3A" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+    <line x1="26" y1="100" x2="42" y2="100" stroke="#B05A3A" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+    <line x1="158" y1="100" x2="174" y2="100" stroke="#B05A3A" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+    <!-- Monogram N Columns -->
+    <rect x="52" y="44" width="20" height="112" rx="4" fill="#B05A3A" />
+    <rect x="128" y="44" width="20" height="112" rx="4" fill="#B05A3A" />
+    <!-- Split Diagonal -->
+    <polygon points="72,44 92,44 114,86 94,86" fill="url(#primary-grad)" />
+    <polygon points="106,114 126,114 148,156 128,156" fill="url(#primary-grad)" />
+    <!-- Center Spark -->
+    <polygon points="100,92 108,100 100,108 92,100" fill="#D9582B" />
+  </g>
+
+  <!-- Vertical Divider -->
+  <line x1="130" y1="28" x2="130" y2="92" stroke="#E4DDD0" stroke-width="1.5" />
+
+  <!-- Right Typography Section -->
+  <g transform="translate(150, 0)">
+    <!-- Wordmark "Nura" -->
+    <text x="0" y="62" font-family="'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="44" font-weight="600" fill="#1A1A1A" letter-spacing="2">Nura</text>
+    
+    <!-- Arabic Calligraphy Text "نور" -->
+    <text x="126" y="58" font-family="'Amiri', 'Traditional Arabic', 'Noto Sans Arabic', serif" font-size="28" font-weight="700" fill="#B05A3A" opacity="0.85">نُور</text>
+    
+    <!-- Tagline & Regulatory Label -->
+    <text x="2" y="86" font-family="'Inter', -apple-system, sans-serif" font-size="10.5" font-weight="600" fill="#8C8C7A" letter-spacing="3.5">SOIN NUMÉRIQUE • MAROC</text>
+  </g>
+</svg>

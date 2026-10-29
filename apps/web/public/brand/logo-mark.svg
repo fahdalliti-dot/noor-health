@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <!-- Nura Brand Mark (Diamond Zellige & Radiating N Monogram) -->
+  <defs>
+    <linearGradient id="nura-terracotta" x1="20" y1="20" x2="180" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#D9582B" />
+      <stop offset="100%" stop-color="#B05A3A" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Moroccan Diamond / Zellige Geometry Frame -->
+  <polygon points="100,12 188,100 100,188 12,100" fill="none" stroke="url(#nura-terracotta)" stroke-width="3" stroke-linejoin="round" />
+
+  <!-- Radiating Subtle Rays (Light / Noor) -->
+  <line x1="100" y1="26" x2="100" y2="42" stroke="#B05A3A" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+  <line x1="100" y1="158" x2="100" y2="174" stroke="#B05A3A" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+  <line x1="26" y1="100" x2="42" y2="100" stroke="#B05A3A" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+  <line x1="158" y1="100" x2="174" y2="100" stroke="#B05A3A" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+
+  <!-- Monogram N (Left Column) -->
+  <rect x="52" y="44" width="18" height="112" rx="4" fill="#B05A3A" />
+
+  <!-- Monogram N (Right Column) -->
+  <rect x="130" y="44" width="18" height="112" rx="4" fill="#B05A3A" />
+
+  <!-- Interlocking Diagonal with Radiance Split -->
+  <!-- Top Diagonal Segment -->
+  <polygon points="70,44 88,44 112,86 94,86" fill="url(#nura-terracotta)" />
+  <!-- Bottom Diagonal Segment -->
+  <polygon points="106,114 124,114 148,156 130,156" fill="url(#nura-terracotta)" />
+
+  <!-- Center Core Radiance Particle (The Noor Spark) -->
+  <polygon points="100,92 108,100 100,108 92,100" fill="#D9582B" />
+</svg>

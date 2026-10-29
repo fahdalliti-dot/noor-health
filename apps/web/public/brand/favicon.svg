@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Rounded Base for High-Res Favicon & App Icon -->
+  <rect width="64" height="64" rx="14" fill="#1A1A1A" />
+  
+  <!-- Outer Diamond -->
+  <polygon points="32,8 54,32 32,56 10,32" fill="none" stroke="#D9582B" stroke-width="2" stroke-linejoin="round" />
+  
+  <!-- Monogram N Columns -->
+  <rect x="20" y="18" width="5" height="28" rx="1" fill="#B05A3A" />
+  <rect x="39" y="18" width="5" height="28" rx="1" fill="#B05A3A" />
+  
+  <!-- Diagonal -->
+  <polygon points="25,18 29,18 39,36 35,36" fill="#D9582B" />
+  <polygon points="31,34 35,34 44,46 40,46" fill="#D9582B" />
+  
+  <!-- Center Radiance Particle -->
+  <circle cx="32" cy="32" r="2" fill="#FFA480" />
+</svg>
