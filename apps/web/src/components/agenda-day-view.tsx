@@ -193,7 +193,18 @@ export function AgendaDayView({
                               </span>
                             )}
                           </div>
-                          <AppointmentStatusBadge status={appt.status} />
+                          <div className="flex items-center gap-1.5">
+                            {appt.status === 'confirmed' && (
+                              <span
+                                className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-2xs"
+                                title="Confirmé via WhatsApp (1-Clic)"
+                              >
+                                <span>💬</span>
+                                <span className="hidden sm:inline font-mono">1-Clic</span>
+                              </span>
+                            )}
+                            <AppointmentStatusBadge status={appt.status} />
+                          </div>
                         </div>
                         {appt.reason && (
                           <div className="text-[11px] text-slate-600 truncate mt-0.5">

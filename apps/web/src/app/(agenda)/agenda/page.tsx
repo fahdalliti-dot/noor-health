@@ -361,6 +361,7 @@ export default function AgendaPage() {
         onOpenChange={setWhatsAppOpen}
         appointment={selectedAppt}
         timezone={TZ}
+        onReminderSent={load}
       />
 
       {/* Phase 2: Cash & Cheque Register Modal */}

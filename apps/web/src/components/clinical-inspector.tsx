@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DateTime } from 'luxon';
 import Button from '@/components/ui/button';
 import { AppointmentStatusBadge } from './appointment-status-badge';
 import type { Appointment } from '@/hooks/use-agenda';
+import { api } from '@/lib/api';
 
 interface Props {
   appointment: Appointment | null;
@@ -43,6 +44,32 @@ export function ClinicalInspector({
 }: Props) {
   const [busy, setBusy] = useState(false);
   const [notes, setNotes] = useState('');
+  const [notificationLog, setNotificationLog] = useState<any | null>(null);
+
+  useEffect(() => {
+    if (!appointment?.id) {
+      setNotificationLog(null);
+      return;
+    }
+    let isMounted = true;
+    api.get<any>(`/notifications/logs?appointment_id=${appointment.id}`)
+      .then((res: any) => {
+        if (!isMounted) return;
+        const logs = res?.data || res;
+        if (Array.isArray(logs) && logs.length > 0) {
+          setNotificationLog(logs[0]);
+        } else {
+          setNotificationLog(null);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setNotificationLog(null);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [appointment?.id, appointment?.status]);
 
   if (!appointment) return null;
 
@@ -128,6 +155,57 @@ export function ClinicalInspector({
             </a>
           </div>
         )}
+
+        {/* WhatsApp Cloud API Reminder Status Badge */}
+        <div className="p-2.5 rounded-lg border border-slate-200 bg-slate-50/80 space-y-1.5 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1">
+              <span>💬</span> Rappel WhatsApp (Cloud API)
+            </span>
+            {notificationLog ? (
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                  appointment.status === 'confirmed'
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : appointment.status === 'cancelled'
+                    ? 'bg-rose-100 text-rose-800'
+                    : notificationLog.status === 'delivered'
+                    ? 'bg-purple-100 text-purple-800'
+                    : notificationLog.status === 'sent'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                {appointment.status === 'confirmed'
+                  ? '✓ Confirmé (1-Clic)'
+                  : appointment.status === 'cancelled'
+                  ? '✕ Annulé'
+                  : notificationLog.status === 'delivered'
+                  ? '✓✓ Délivré'
+                  : '✓ Envoyé'}
+              </span>
+            ) : (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-200 text-slate-600">
+                Non envoyé
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-600">
+            <span className="truncate max-w-[160px] font-mono text-[10px]">
+              {notificationLog?.recipient_phone || appointment.patient?.phone || 'Sans contact'}
+            </span>
+            {onOpenWhatsApp && (
+              <button
+                type="button"
+                onClick={onOpenWhatsApp}
+                className="text-emerald-700 hover:text-emerald-900 font-semibold hover:underline cursor-pointer text-[11px]"
+              >
+                {notificationLog ? 'Renvoyer ↗' : 'Envoyer ↗'}
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* Doctor & Motive */}
         <div>

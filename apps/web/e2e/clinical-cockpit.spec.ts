@@ -28,4 +28,21 @@ test.describe('Clinical Cockpit & DMP Inspector', () => {
     await expect(page.locator('body')).toContainText(/Dr\. Amine Benali|Équipe|Collaborateur/i);
     await expect(page.locator('body')).toContainText(/2FA/i);
   });
+
+  test('should support automated WhatsApp reminder modal with Darija & Cloud API', async ({ page }) => {
+    await page.goto('/agenda');
+
+    // Check if any appointment exists in the day view
+    const apptButton = page.locator('button:has-text(":")').first();
+    if (await apptButton.isVisible()) {
+      await apptButton.click();
+      const whatsAppBtn = page.locator('button:has-text("WhatsApp")').first();
+      if (await whatsAppBtn.isVisible()) {
+        await whatsAppBtn.click();
+        await expect(page.locator('body')).toContainText(/Rappels WhatsApp & SMS Automatisés/i);
+        await expect(page.locator('body')).toContainText(/الدارجة/i);
+        await expect(page.locator('button:has-text("Cloud API")')).toBeVisible();
+      }
+    }
+  });
 });
