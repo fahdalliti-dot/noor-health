@@ -50,7 +50,7 @@ jobs:
 
       - name: Extract metadata for Web image
         id: meta-web
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-web
           tags: |
@@ -72,7 +72,7 @@ jobs:
 
       - name: Extract metadata for API image
         id: meta-api
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-api
           tags: |
