@@ -94,4 +94,4 @@ CREATE POLICY "PatientMedicalProfile_read" ON "PatientMedicalProfile"
 
 -- Grants (consistent with initial migration)
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "Patient", "PatientMedicalProfile" TO saas_app;
-GRANT USAGE, SELECT ON SEQUENCES IN SCHEMA public TO saas_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO saas_app;
