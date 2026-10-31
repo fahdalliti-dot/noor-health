@@ -69,7 +69,7 @@ export function useAgenda() {
         const res = await api.get<{ appointments: Appointment[] }>(
           `/appointments?${query.toString()}`,
         );
-        return res.data.appointments;
+        return res.data?.appointments || [];
       } catch (e: any) {
         setError(e.message);
         return [];

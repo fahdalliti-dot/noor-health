@@ -1,6 +1,7 @@
 'use client';
 
 function getApiBaseUrl(): string {
+  if (process.env.INTERNAL_API_URL) return process.env.INTERNAL_API_URL;
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
   if (typeof window !== 'undefined') return '';
   return 'http://localhost:4000';
@@ -8,14 +9,19 @@ function getApiBaseUrl(): string {
 
 export interface ApiError {
   error?: string;
-  message?: string | string[];
-  statusCode?: number;
+  code?: string;
+  message?: string;
+  details?: Array<{ field: string; issue: string }>;
 }
 
-export interface ApiResponse<T> {
-  data: T | null;
-  error: ApiError | null;
+export interface ApiResponse<T = unknown> {
   status: number;
+  data: T;
+}
+
+export interface TokenStore {
+  access_token: string | null;
+  refresh_token: string | null;
 }
 
 function getToken(): string | null {
@@ -23,14 +29,16 @@ function getToken(): string | null {
   return localStorage.getItem('access_token');
 }
 
-export function setToken(token: string): void {
+function storeToken(access: string, refresh: string | null) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem('access_token', token);
+  localStorage.setItem('access_token', access);
+  if (refresh) localStorage.setItem('refresh_token', refresh);
 }
 
-export function removeToken(): void {
+function clearToken() {
   if (typeof window === 'undefined') return;
   localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
 }
 
 async function request<T>(
@@ -48,52 +56,42 @@ async function request<T>(
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   });
 
-  const status = res.status;
-
-  if (status === 204) {
-    return { data: null, error: null, status };
-  }
-
-  let json: unknown;
-  try {
-    json = await res.json();
-  } catch {
-    return {
-      data: null,
-      error: { error: 'Failed to parse response JSON', statusCode: status },
-      status,
-    };
-  }
+  const json = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    const err = json as ApiError;
-    return {
-      data: null,
-      error: {
-        error: err.error || 'Request failed',
-        message: err.message,
-        statusCode: status,
-      },
-      status,
+    const err: ApiError = json?.data || json;
+    const error = new Error(err?.message || err?.error || `Request failed: ${res.status}`) as Error & {
+      code?: string;
+      status?: number;
     };
+    error.code = err?.code;
+    error.status = res.status;
+    throw error;
   }
 
-  return { data: json as T, error: null, status };
+  return json as ApiResponse<T>;
 }
 
 export const api = {
   get: <T>(path: string, headers?: Record<string, string>) =>
     request<T>('GET', path, undefined, headers),
-
   post: <T>(path: string, body?: unknown, headers?: Record<string, string>) =>
     request<T>('POST', path, body, headers),
-
   patch: <T>(path: string, body?: unknown, headers?: Record<string, string>) =>
     request<T>('PATCH', path, body, headers),
-
   delete: <T>(path: string, headers?: Record<string, string>) =>
     request<T>('DELETE', path, undefined, headers),
+};
+
+export const tokenStore = {
+  get: getToken,
+  set: storeToken,
+  clear: clearToken,
+  has: () => {
+    if (typeof window === 'undefined') return false;
+    return !!localStorage.getItem('access_token');
+  },
 };
