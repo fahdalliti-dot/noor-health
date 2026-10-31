@@ -1,6 +1,11 @@
 'use client';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+function getApiBaseUrl(): string {
+  if (process.env.INTERNAL_API_URL) return process.env.INTERNAL_API_URL;
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== 'undefined') return '';
+  return 'http://localhost:4000';
+}
 
 export interface ApiError {
   error?: string;
@@ -43,7 +48,8 @@ async function request<T>(
   headers: Record<string, string> = {},
 ): Promise<ApiResponse<T>> {
   const token = getToken();
-  const res = await fetch(`${API_BASE_URL}/api/v1${path}`, {
+  const baseUrl = getApiBaseUrl();
+  const res = await fetch(`${baseUrl}/api/v1${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',

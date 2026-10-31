@@ -181,7 +181,8 @@ export default function DashboardPage() {
       try {
         setLoading(true);
         const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-        const res = await fetch(`http://localhost:4000/api/v1/analytics/dashboard?period=${period}`, {
+        const baseUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? '' : 'http://localhost:4000');
+        const res = await fetch(`${baseUrl}/api/v1/analytics/dashboard?period=${period}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         if (res.ok) {

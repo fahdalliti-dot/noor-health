@@ -24,7 +24,12 @@ export interface AuthContextType {
   logout: () => void;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+function getApiBaseUrl(): string {
+  if (process.env.INTERNAL_API_URL) return process.env.INTERNAL_API_URL;
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== 'undefined') return '';
+  return 'http://localhost:4000';
+}
 
 const AuthContext = createContext<AuthContextType>({
   login: async () => {},
@@ -94,7 +99,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const verify2fa = async (sessionId: string, totpCode: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/v1/auth/2fa/verify`, {
+      const baseUrl = getApiBaseUrl();
+      const res = await fetch(`${baseUrl}/api/v1/auth/2fa/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: sessionId, totp_code: totpCode }),
@@ -124,7 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+      const baseUrl = getApiBaseUrl();
+      const res = await fetch(`${baseUrl}/api/v1/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailOrSessionId, password: passwordOrTotp }),
@@ -179,7 +186,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Fetch the current user to hydrate context
-    fetch(`${API_BASE_URL}/api/v1/auth/me`, {
+    const baseUrl = getApiBaseUrl();
+    fetch(`${baseUrl}/api/v1/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
