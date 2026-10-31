@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InteractiveMessagePayload } from '../templates/whatsapp-reminder.templates';
 import * as crypto from 'crypto';
@@ -17,9 +17,9 @@ export class WhatsAppClientService {
   private readonly accessToken: string | undefined;
   private readonly phoneNumberId: string | undefined;
 
-  constructor(private readonly config: ConfigService) {
-    this.accessToken = this.config.get<string>('WHATSAPP_ACCESS_TOKEN');
-    this.phoneNumberId = this.config.get<string>('WHATSAPP_PHONE_NUMBER_ID');
+  constructor(@Optional() private readonly config?: ConfigService) {
+    this.accessToken = this.config?.get<string>('WHATSAPP_ACCESS_TOKEN');
+    this.phoneNumberId = this.config?.get<string>('WHATSAPP_PHONE_NUMBER_ID');
   }
 
   /**
